@@ -1,0 +1,6861 @@
+[
+  {
+    "time": "2026-02-23T05:50:43.392Z",
+    "name": "synthetic.status.reconnected",
+    "isError": false,
+    "isSynthetic": true,
+    "unique_id": "synthetic.1771825843392"
+  },
+  {
+    "time": "2026-02-23T05:50:37.623Z",
+    "name": "synthetic.status.closed",
+    "isError": false,
+    "isSynthetic": true,
+    "unique_id": "synthetic.1771825837623"
+  },
+  {
+    "name": "as.down.data.forward",
+    "time": "2026-02-23T05:49:11.041388639Z",
+    "identifiers": [
+      {
+        "device_ids": {
+          "device_id": "lora-wled-ca48",
+          "application_ids": {
+            "application_id": "henke"
+          },
+          "dev_eui": "0000CCC63C43CA48",
+          "join_eui": "0000000000000000"
+        }
+      }
+    ],
+    "data": {
+      "@type": "type.googleapis.com/ttn.lorawan.v3.ApplicationDownlink",
+      "session_key_id": "AZyJCryqLxQvgMNRVfdkng==",
+      "f_port": 1,
+      "f_cnt": 1,
+      "frm_payload": "BA==",
+      "correlation_ids": [
+        "as:downlink:01KJ4GPRZVE205ZKYZCWN0WVFH",
+        "rpc:/ttn.lorawan.v3.AppAs/DownlinkQueueReplace:2154e462-984a-448c-a670-ae627c295f18"
+      ]
+    },
+    "correlation_ids": [
+      "as:downlink:01KJ4GPRZVE205ZKYZCWN0WVFH",
+      "rpc:/ttn.lorawan.v3.AppAs/DownlinkQueueReplace:2154e462-984a-448c-a670-ae627c295f18"
+    ],
+    "origin": "ip-10-22-14-101.us-west-1.compute.internal",
+    "context": {
+      "tenant-id": "CgtmbXNpb3RjbG91ZA=="
+    },
+    "visibility": {
+      "rights": [
+        "RIGHT_APPLICATION_TRAFFIC_READ"
+      ]
+    },
+    "authentication": {
+      "type": "Bearer",
+      "token_type": "AccessToken",
+      "token_id": "ISDB3LUN4HC5XR6EFDE32OEF5XEWELBW24Q6ENY"
+    },
+    "remote_ip": "70.112.121.77",
+    "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36",
+    "unique_id": "01KJ4GPS01H0WQKA2GS0T9B0A8"
+  },
+  {
+    "name": "as.down.data.receive",
+    "time": "2026-02-23T05:49:11.037070639Z",
+    "identifiers": [
+      {
+        "device_ids": {
+          "device_id": "lora-wled-ca48",
+          "application_ids": {
+            "application_id": "henke"
+          },
+          "dev_eui": "0000CCC63C43CA48",
+          "join_eui": "0000000000000000"
+        }
+      }
+    ],
+    "data": {
+      "@type": "type.googleapis.com/ttn.lorawan.v3.ApplicationDownlink",
+      "f_port": 1,
+      "frm_payload": "AA==",
+      "correlation_ids": [
+        "as:downlink:01KJ4GPRZVE205ZKYZCWN0WVFH",
+        "rpc:/ttn.lorawan.v3.AppAs/DownlinkQueueReplace:2154e462-984a-448c-a670-ae627c295f18"
+      ]
+    },
+    "correlation_ids": [
+      "as:downlink:01KJ4GPRZVE205ZKYZCWN0WVFH",
+      "rpc:/ttn.lorawan.v3.AppAs/DownlinkQueueReplace:2154e462-984a-448c-a670-ae627c295f18"
+    ],
+    "origin": "ip-10-22-14-101.us-west-1.compute.internal",
+    "context": {
+      "tenant-id": "CgtmbXNpb3RjbG91ZA=="
+    },
+    "visibility": {
+      "rights": [
+        "RIGHT_APPLICATION_TRAFFIC_READ"
+      ]
+    },
+    "authentication": {
+      "type": "Bearer",
+      "token_type": "AccessToken",
+      "token_id": "ISDB3LUN4HC5XR6EFDE32OEF5XEWELBW24Q6ENY"
+    },
+    "remote_ip": "70.112.121.77",
+    "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36",
+    "unique_id": "01KJ4GPRZXXNAVZZH2NSJ1MGV0"
+  },
+  {
+    "name": "ns.down.transmission.success",
+    "time": "2026-02-23T05:48:30.191322106Z",
+    "identifiers": [
+      {
+        "device_ids": {
+          "device_id": "lora-wled-ca48",
+          "application_ids": {
+            "application_id": "henke"
+          },
+          "dev_eui": "0000CCC63C43CA48",
+          "join_eui": "0000000000000000",
+          "dev_addr": "27FD483E"
+        }
+      }
+    ],
+    "data": {
+      "@type": "type.googleapis.com/ttn.lorawan.v3.DownlinkMessage",
+      "payload": {
+        "m_hdr": {
+          "m_type": "JOIN_ACCEPT"
+        },
+        "join_accept_payload": {
+          "net_id": "000013",
+          "dev_addr": "27FD483E",
+          "dl_settings": {
+            "rx2_dr": 8
+          },
+          "rx_delay": 5,
+          "cf_list": {
+            "type": "CHANNEL_MASKS",
+            "ch_masks": [
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              true,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false
+            ]
+          }
+        }
+      },
+      "end_device_ids": {
+        "device_id": "lora-wled-ca48",
+        "application_ids": {
+          "application_id": "henke"
+        },
+        "dev_eui": "0000CCC63C43CA48",
+        "join_eui": "0000000000000000",
+        "dev_addr": "27FD483E"
+      },
+      "request": {
+        "downlink_paths": [
+          {
+            "uplink_token": "ChcKFQoJaGVua2Vjb3ZlEgioQEH//yBb1BCEgdDKARoLCKzU78wGEKni71kgoIeIga/PugE="
+          }
+        ],
+        "rx1_delay": 5,
+        "rx1_data_rate": {
+          "lora": {
+            "bandwidth": 500000,
+            "spreading_factor": 10,
+            "coding_rate": "4/5"
+          }
+        },
+        "rx1_frequency": "927500000",
+        "rx2_data_rate": {
+          "lora": {
+            "bandwidth": 500000,
+            "spreading_factor": 12,
+            "coding_rate": "4/5"
+          }
+        },
+        "rx2_frequency": "923300000",
+        "priority": "HIGHEST",
+        "frequency_plan_id": "US_902_928_FSB_2"
+      },
+      "correlation_ids": [
+        "gs:tx_ack:01KJ4GNH3DTBBG0TWCGR8ABKY6",
+        "gs:uplink:01KJ4GNF4WPHM6S0KFZNCSSX9R",
+        "ns:downlink:01KJ4GNGXAA9GWR5P5331EB6R5",
+        "ns:transmission:01KJ4GNGXBACPNBRBESWG69DGB"
+      ],
+      "session_key_id": "AZyJCryqLxQvgMNRVfdkng=="
+    },
+    "correlation_ids": [
+      "gs:tx_ack:01KJ4GNH3DTBBG0TWCGR8ABKY6",
+      "gs:uplink:01KJ4GNF4WPHM6S0KFZNCSSX9R",
+      "ns:downlink:01KJ4GNGXAA9GWR5P5331EB6R5",
+      "ns:transmission:01KJ4GNGXBACPNBRBESWG69DGB"
+    ],
+    "origin": "ip-10-22-14-115.us-west-1.compute.internal",
+    "context": {
+      "tenant-id": "CgtmbXNpb3RjbG91ZA=="
+    },
+    "visibility": {
+      "rights": [
+        "RIGHT_APPLICATION_TRAFFIC_READ"
+      ]
+    },
+    "unique_id": "01KJ4GNH3F1XBKSGJFS0KCF4CY"
+  },
+  {
+    "name": "ns.up.join.accept.forward",
+    "time": "2026-02-23T05:48:30.137577431Z",
+    "identifiers": [
+      {
+        "device_ids": {
+          "device_id": "lora-wled-ca48",
+          "application_ids": {
+            "application_id": "henke"
+          },
+          "dev_eui": "0000CCC63C43CA48",
+          "join_eui": "0000000000000000",
+          "dev_addr": "27FD483E"
+        }
+      }
+    ],
+    "data": {
+      "@type": "type.googleapis.com/ttn.lorawan.v3.ApplicationUp",
+      "end_device_ids": {
+        "device_id": "lora-wled-ca48",
+        "application_ids": {
+          "application_id": "henke"
+        },
+        "dev_eui": "0000CCC63C43CA48",
+        "join_eui": "0000000000000000",
+        "dev_addr": "27FD483E"
+      },
+      "correlation_ids": [
+        "gs:uplink:01KJ4GNF4WPHM6S0KFZNCSSX9R"
+      ],
+      "join_accept": {
+        "session_key_id": "AZyJCryqLxQvgMNRVfdkng==",
+        "received_at": "2026-02-23T05:48:28.189415975Z"
+      }
+    },
+    "correlation_ids": [
+      "gs:uplink:01KJ4GNF4WPHM6S0KFZNCSSX9R"
+    ],
+    "origin": "ip-10-22-15-7.us-west-1.compute.internal",
+    "context": {
+      "tenant-id": "CgtmbXNpb3RjbG91ZA=="
+    },
+    "visibility": {
+      "rights": [
+        "RIGHT_APPLICATION_TRAFFIC_READ"
+      ]
+    },
+    "unique_id": "01KJ4GNH1SF8BC42902BGK5PK0"
+  },
+  {
+    "name": "as.up.join.forward",
+    "time": "2026-02-23T05:48:30.137428015Z",
+    "identifiers": [
+      {
+        "device_ids": {
+          "device_id": "lora-wled-ca48",
+          "application_ids": {
+            "application_id": "henke"
+          },
+          "dev_eui": "0000CCC63C43CA48",
+          "join_eui": "0000000000000000",
+          "dev_addr": "27FD483E"
+        }
+      }
+    ],
+    "data": {
+      "@type": "type.googleapis.com/ttn.lorawan.v3.ApplicationUp",
+      "end_device_ids": {
+        "device_id": "lora-wled-ca48",
+        "application_ids": {
+          "application_id": "henke"
+        },
+        "dev_eui": "0000CCC63C43CA48",
+        "join_eui": "0000000000000000",
+        "dev_addr": "27FD483E"
+      },
+      "correlation_ids": [
+        "gs:uplink:01KJ4GNF4WPHM6S0KFZNCSSX9R"
+      ],
+      "received_at": "2026-02-23T05:48:30.132101020Z",
+      "join_accept": {
+        "session_key_id": "AZyJCryqLxQvgMNRVfdkng==",
+        "received_at": "2026-02-23T05:48:28.189415975Z"
+      }
+    },
+    "correlation_ids": [
+      "gs:uplink:01KJ4GNF4WPHM6S0KFZNCSSX9R"
+    ],
+    "origin": "ip-10-22-15-251.us-west-1.compute.internal",
+    "context": {
+      "tenant-id": "CgtmbXNpb3RjbG91ZA=="
+    },
+    "visibility": {
+      "rights": [
+        "RIGHT_APPLICATION_TRAFFIC_READ"
+      ]
+    },
+    "unique_id": "01KJ4GNH1SW6VTY2A5ZZSC0HR9"
+  },
+  {
+    "name": "as.up.join.receive",
+    "time": "2026-02-23T05:48:30.133377547Z",
+    "identifiers": [
+      {
+        "device_ids": {
+          "device_id": "lora-wled-ca48",
+          "application_ids": {
+            "application_id": "henke"
+          },
+          "dev_eui": "0000CCC63C43CA48",
+          "join_eui": "0000000000000000",
+          "dev_addr": "27FD483E"
+        }
+      }
+    ],
+    "correlation_ids": [
+      "gs:uplink:01KJ4GNF4WPHM6S0KFZNCSSX9R"
+    ],
+    "origin": "ip-10-22-15-251.us-west-1.compute.internal",
+    "context": {
+      "tenant-id": "CgtmbXNpb3RjbG91ZA=="
+    },
+    "visibility": {
+      "rights": [
+        "RIGHT_APPLICATION_TRAFFIC_READ"
+      ]
+    },
+    "unique_id": "01KJ4GNH1NSRHHRTY1C1NNXYTC"
+  },
+  {
+    "name": "ns.down.join.schedule.success",
+    "time": "2026-02-23T05:48:30.129888848Z",
+    "identifiers": [
+      {
+        "device_ids": {
+          "device_id": "lora-wled-ca48",
+          "application_ids": {
+            "application_id": "henke"
+          },
+          "dev_eui": "0000CCC63C43CA48",
+          "join_eui": "0000000000000000",
+          "dev_addr": "27FD483E"
+        }
+      }
+    ],
+    "data": {
+      "@type": "type.googleapis.com/ttn.lorawan.v3.ScheduleDownlinkResponse",
+      "delay": "3.059974601s",
+      "downlink_path": {
+        "fixed": {
+          "gateway_ids": {
+            "gateway_id": "henkecove",
+            "eui": "A84041FFFF205BD4"
+          }
+        }
+      },
+      "rx1": true
+    },
+    "correlation_ids": [
+      "gs:uplink:01KJ4GNF4WPHM6S0KFZNCSSX9R",
+      "ns:downlink:01KJ4GNGXAA9GWR5P5331EB6R5",
+      "ns:transmission:01KJ4GNGXBACPNBRBESWG69DGB"
+    ],
+    "origin": "ip-10-22-15-7.us-west-1.compute.internal",
+    "context": {
+      "tenant-id": "CgtmbXNpb3RjbG91ZA=="
+    },
+    "visibility": {
+      "rights": [
+        "RIGHT_APPLICATION_TRAFFIC_READ"
+      ]
+    },
+    "unique_id": "01KJ4GNH1HZDGJC9N4TKVXP2RP"
+  },
+  {
+    "name": "ns.down.join.schedule.attempt",
+    "time": "2026-02-23T05:48:29.995005346Z",
+    "identifiers": [
+      {
+        "device_ids": {
+          "device_id": "lora-wled-ca48",
+          "application_ids": {
+            "application_id": "henke"
+          },
+          "dev_eui": "0000CCC63C43CA48",
+          "join_eui": "0000000000000000",
+          "dev_addr": "27FD483E"
+        }
+      }
+    ],
+    "data": {
+      "@type": "type.googleapis.com/ttn.lorawan.v3.DownlinkMessage",
+      "raw_payload": "IJxBLyia6NBh2tfXSyTzZYpFXAWrTMI1HjkHkT8i7grv",
+      "payload": {
+        "m_hdr": {
+          "m_type": "JOIN_ACCEPT"
+        },
+        "join_accept_payload": {
+          "net_id": "000013",
+          "dev_addr": "27FD483E",
+          "dl_settings": {
+            "rx2_dr": 8
+          },
+          "rx_delay": 5,
+          "cf_list": {
+            "type": "CHANNEL_MASKS",
+            "ch_masks": [
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              true,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false
+            ]
+          }
+        }
+      },
+      "request": {
+        "downlink_paths": [
+          {
+            "uplink_token": "ChcKFQoJaGVua2Vjb3ZlEgioQEH//yBb1BCEgdDKARoLCKzU78wGEKni71kgoIeIga/PugE="
+          }
+        ],
+        "rx1_delay": 5,
+        "rx1_data_rate": {
+          "lora": {
+            "bandwidth": 500000,
+            "spreading_factor": 10,
+            "coding_rate": "4/5"
+          }
+        },
+        "rx1_frequency": "927500000",
+        "rx2_data_rate": {
+          "lora": {
+            "bandwidth": 500000,
+            "spreading_factor": 12,
+            "coding_rate": "4/5"
+          }
+        },
+        "rx2_frequency": "923300000",
+        "priority": "HIGHEST",
+        "frequency_plan_id": "US_902_928_FSB_2"
+      },
+      "correlation_ids": [
+        "gs:uplink:01KJ4GNF4WPHM6S0KFZNCSSX9R",
+        "ns:downlink:01KJ4GNGXAA9GWR5P5331EB6R5",
+        "ns:transmission:01KJ4GNGXBACPNBRBESWG69DGB"
+      ]
+    },
+    "correlation_ids": [
+      "gs:uplink:01KJ4GNF4WPHM6S0KFZNCSSX9R",
+      "ns:downlink:01KJ4GNGXAA9GWR5P5331EB6R5",
+      "ns:transmission:01KJ4GNGXBACPNBRBESWG69DGB"
+    ],
+    "origin": "ip-10-22-15-7.us-west-1.compute.internal",
+    "context": {
+      "tenant-id": "CgtmbXNpb3RjbG91ZA=="
+    },
+    "visibility": {
+      "rights": [
+        "RIGHT_APPLICATION_TRAFFIC_READ"
+      ]
+    },
+    "unique_id": "01KJ4GNGXBCSJNWY8PT9V2E1P3"
+  },
+  {
+    "name": "ns.up.join.process",
+    "time": "2026-02-23T05:48:28.394245544Z",
+    "identifiers": [
+      {
+        "device_ids": {
+          "device_id": "lora-wled-ca48",
+          "application_ids": {
+            "application_id": "henke"
+          },
+          "dev_eui": "0000CCC63C43CA48",
+          "join_eui": "0000000000000000",
+          "dev_addr": "27FD483E"
+        }
+      }
+    ],
+    "data": {
+      "@type": "type.googleapis.com/ttn.lorawan.v3.UplinkMessage",
+      "raw_payload": "AAAAAAAAAAAASMpDPMbMAACdq7IBorg=",
+      "payload": {
+        "m_hdr": {},
+        "mic": "sgGiuA==",
+        "join_request_payload": {
+          "join_eui": "0000000000000000",
+          "dev_eui": "0000CCC63C43CA48",
+          "dev_nonce": "AB9D"
+        }
+      },
+      "settings": {
+        "data_rate": {
+          "lora": {
+            "bandwidth": 125000,
+            "spreading_factor": 10,
+            "coding_rate": "4/5"
+          }
+        },
+        "frequency": "905300000",
+        "timestamp": 424935556,
+        "time": "2026-02-23T05:48:28.154566Z"
+      },
+      "rx_metadata": [
+        {
+          "gateway_ids": {
+            "gateway_id": "henkecove",
+            "eui": "A84041FFFF205BD4"
+          },
+          "time": "2026-02-23T05:48:28.154566Z",
+          "timestamp": 424935556,
+          "rssi": -105,
+          "channel_rssi": -105,
+          "snr": -2.5,
+          "uplink_token": "ChcKFQoJaGVua2Vjb3ZlEgioQEH//yBb1BCEgdDKARoLCKzU78wGEKni71kgoIeIga/PugE=",
+          "channel_index": 7,
+          "received_at": "2026-02-23T05:48:28.154841796Z"
+        }
+      ],
+      "received_at": "2026-02-23T05:48:28.189415975Z",
+      "correlation_ids": [
+        "gs:uplink:01KJ4GNF4WPHM6S0KFZNCSSX9R"
+      ],
+      "device_channel_index": 15,
+      "consumed_airtime": "0.370688s"
+    },
+    "correlation_ids": [
+      "gs:uplink:01KJ4GNF4WPHM6S0KFZNCSSX9R"
+    ],
+    "origin": "ip-10-22-14-115.us-west-1.compute.internal",
+    "context": {
+      "tenant-id": "CgtmbXNpb3RjbG91ZA=="
+    },
+    "visibility": {
+      "rights": [
+        "RIGHT_APPLICATION_TRAFFIC_READ"
+      ]
+    },
+    "unique_id": "01KJ4GNFBAMD4GEVYMMEGH312T"
+  },
+  {
+    "name": "ns.up.join.cluster.success",
+    "time": "2026-02-23T05:48:28.215651717Z",
+    "identifiers": [
+      {
+        "device_ids": {
+          "device_id": "lora-wled-ca48",
+          "application_ids": {
+            "application_id": "henke"
+          },
+          "dev_eui": "0000CCC63C43CA48",
+          "join_eui": "0000000000000000",
+          "dev_addr": "27FD483E"
+        }
+      }
+    ],
+    "data": {
+      "@type": "type.googleapis.com/ttn.lorawan.v3.JoinResponse",
+      "raw_payload": "IJxBLyia6NBh2tfXSyTzZYpFXAWrTMI1HjkHkT8i7grv",
+      "session_keys": {
+        "session_key_id": "AZyJCryqLxQvgMNRVfdkng=="
+      }
+    },
+    "correlation_ids": [
+      "gs:uplink:01KJ4GNF4WPHM6S0KFZNCSSX9R"
+    ],
+    "origin": "ip-10-22-14-115.us-west-1.compute.internal",
+    "context": {
+      "tenant-id": "CgtmbXNpb3RjbG91ZA=="
+    },
+    "visibility": {
+      "rights": [
+        "RIGHT_APPLICATION_TRAFFIC_READ"
+      ]
+    },
+    "unique_id": "01KJ4GNF5Q3VARK8FHFXJ775R1"
+  },
+  {
+    "name": "js.join.accept",
+    "time": "2026-02-23T05:48:28.215075348Z",
+    "identifiers": [
+      {
+        "device_ids": {
+          "device_id": "lora-wled-ca48",
+          "application_ids": {
+            "application_id": "henke"
+          },
+          "dev_eui": "0000CCC63C43CA48",
+          "join_eui": "0000000000000000",
+          "dev_addr": "27FD483E"
+        }
+      }
+    ],
+    "origin": "ip-10-22-6-30.us-west-1.compute.internal",
+    "context": {
+      "tenant-id": "CgtmbXNpb3RjbG91ZA=="
+    },
+    "visibility": {
+      "rights": [
+        "RIGHT_APPLICATION_TRAFFIC_READ"
+      ]
+    },
+    "unique_id": "01KJ4GNF5Q1BTF23YZZF9Y6ZF5"
+  },
+  {
+    "name": "ns.up.join.cluster.attempt",
+    "time": "2026-02-23T05:48:28.194815590Z",
+    "identifiers": [
+      {
+        "device_ids": {
+          "device_id": "lora-wled-ca48",
+          "application_ids": {
+            "application_id": "henke"
+          },
+          "dev_eui": "0000CCC63C43CA48",
+          "join_eui": "0000000000000000",
+          "dev_addr": "27FD483E"
+        }
+      }
+    ],
+    "data": {
+      "@type": "type.googleapis.com/ttn.lorawan.v3.JoinRequest",
+      "raw_payload": "AAAAAAAAAAAASMpDPMbMAACdq7IBorg=",
+      "payload": {
+        "m_hdr": {},
+        "mic": "sgGiuA==",
+        "join_request_payload": {
+          "join_eui": "0000000000000000",
+          "dev_eui": "0000CCC63C43CA48",
+          "dev_nonce": "AB9D"
+        }
+      },
+      "dev_addr": "27FD483E",
+      "selected_mac_version": "MAC_V1_0_3",
+      "net_id": "000013",
+      "downlink_settings": {
+        "rx2_dr": 8
+      },
+      "rx_delay": 5,
+      "cf_list": {
+        "type": "CHANNEL_MASKS",
+        "ch_masks": [
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          true,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false
+        ]
+      },
+      "correlation_ids": [
+        "gs:uplink:01KJ4GNF4WPHM6S0KFZNCSSX9R"
+      ],
+      "consumed_airtime": "0.370688s"
+    },
+    "correlation_ids": [
+      "gs:uplink:01KJ4GNF4WPHM6S0KFZNCSSX9R"
+    ],
+    "origin": "ip-10-22-14-115.us-west-1.compute.internal",
+    "context": {
+      "tenant-id": "CgtmbXNpb3RjbG91ZA=="
+    },
+    "visibility": {
+      "rights": [
+        "RIGHT_APPLICATION_TRAFFIC_READ"
+      ]
+    },
+    "unique_id": "01KJ4GNF52M9D8DY9YFQDRFQ1G"
+  },
+  {
+    "name": "ns.up.join.receive",
+    "time": "2026-02-23T05:48:28.194747213Z",
+    "identifiers": [
+      {
+        "device_ids": {
+          "device_id": "lora-wled-ca48",
+          "application_ids": {
+            "application_id": "henke"
+          },
+          "dev_eui": "0000CCC63C43CA48",
+          "join_eui": "0000000000000000",
+          "dev_addr": "27FD483E"
+        }
+      }
+    ],
+    "data": {
+      "@type": "type.googleapis.com/ttn.lorawan.v3.UplinkMessage",
+      "raw_payload": "AAAAAAAAAAAASMpDPMbMAACdq7IBorg=",
+      "payload": {
+        "m_hdr": {},
+        "mic": "sgGiuA==",
+        "join_request_payload": {
+          "join_eui": "0000000000000000",
+          "dev_eui": "0000CCC63C43CA48",
+          "dev_nonce": "AB9D"
+        }
+      },
+      "settings": {
+        "data_rate": {
+          "lora": {
+            "bandwidth": 125000,
+            "spreading_factor": 10,
+            "coding_rate": "4/5"
+          }
+        },
+        "frequency": "905300000",
+        "timestamp": 424935556,
+        "time": "2026-02-23T05:48:28.154566Z"
+      },
+      "rx_metadata": [
+        {
+          "gateway_ids": {
+            "gateway_id": "henkecove",
+            "eui": "A84041FFFF205BD4"
+          },
+          "time": "2026-02-23T05:48:28.154566Z",
+          "timestamp": 424935556,
+          "rssi": -105,
+          "channel_rssi": -105,
+          "snr": -2.5,
+          "uplink_token": "ChcKFQoJaGVua2Vjb3ZlEgioQEH//yBb1BCEgdDKARoLCKzU78wGEKni71kgoIeIga/PugE=",
+          "channel_index": 7,
+          "received_at": "2026-02-23T05:48:28.154841796Z"
+        }
+      ],
+      "received_at": "2026-02-23T05:48:28.189415975Z",
+      "correlation_ids": [
+        "gs:uplink:01KJ4GNF4WPHM6S0KFZNCSSX9R"
+      ],
+      "device_channel_index": 15,
+      "consumed_airtime": "0.370688s"
+    },
+    "correlation_ids": [
+      "gs:uplink:01KJ4GNF4WPHM6S0KFZNCSSX9R"
+    ],
+    "origin": "ip-10-22-14-115.us-west-1.compute.internal",
+    "context": {
+      "tenant-id": "CgtmbXNpb3RjbG91ZA=="
+    },
+    "visibility": {
+      "rights": [
+        "RIGHT_APPLICATION_TRAFFIC_READ"
+      ]
+    },
+    "unique_id": "01KJ4GNF52R3TF6VT6HF02KXJD"
+  },
+  {
+    "name": "as.down.data.forward",
+    "time": "2026-02-23T05:47:53.403259543Z",
+    "identifiers": [
+      {
+        "device_ids": {
+          "device_id": "lora-wled-ca48",
+          "application_ids": {
+            "application_id": "henke"
+          },
+          "dev_eui": "0000CCC63C43CA48",
+          "join_eui": "0000000000000000"
+        }
+      }
+    ],
+    "data": {
+      "@type": "type.googleapis.com/ttn.lorawan.v3.ApplicationDownlink",
+      "session_key_id": "AZyJAxAvjqs9TQuLlphouw==",
+      "f_port": 1,
+      "f_cnt": 4,
+      "frm_payload": "Hw==",
+      "correlation_ids": [
+        "as:downlink:01KJ4GMD5M4C6K38KEDAPSTV8X",
+        "rpc:/ttn.lorawan.v3.AppAs/DownlinkQueueReplace:5c7f3626-732b-4de0-966c-5cbf158c4215"
+      ]
+    },
+    "correlation_ids": [
+      "as:downlink:01KJ4GMD5M4C6K38KEDAPSTV8X",
+      "rpc:/ttn.lorawan.v3.AppAs/DownlinkQueueReplace:5c7f3626-732b-4de0-966c-5cbf158c4215"
+    ],
+    "origin": "ip-10-22-14-101.us-west-1.compute.internal",
+    "context": {
+      "tenant-id": "CgtmbXNpb3RjbG91ZA=="
+    },
+    "visibility": {
+      "rights": [
+        "RIGHT_APPLICATION_TRAFFIC_READ"
+      ]
+    },
+    "authentication": {
+      "type": "Bearer",
+      "token_type": "AccessToken",
+      "token_id": "ISDB3LUN4HC5XR6EFDE32OEF5XEWELBW24Q6ENY"
+    },
+    "remote_ip": "70.112.121.77",
+    "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36",
+    "unique_id": "01KJ4GMD5VW5NPFZZ4SSG0W2MK"
+  },
+  {
+    "name": "as.down.data.receive",
+    "time": "2026-02-23T05:47:53.398781027Z",
+    "identifiers": [
+      {
+        "device_ids": {
+          "device_id": "lora-wled-ca48",
+          "application_ids": {
+            "application_id": "henke"
+          },
+          "dev_eui": "0000CCC63C43CA48",
+          "join_eui": "0000000000000000"
+        }
+      }
+    ],
+    "data": {
+      "@type": "type.googleapis.com/ttn.lorawan.v3.ApplicationDownlink",
+      "f_port": 1,
+      "frm_payload": "AA==",
+      "correlation_ids": [
+        "as:downlink:01KJ4GMD5M4C6K38KEDAPSTV8X",
+        "rpc:/ttn.lorawan.v3.AppAs/DownlinkQueueReplace:5c7f3626-732b-4de0-966c-5cbf158c4215"
+      ]
+    },
+    "correlation_ids": [
+      "as:downlink:01KJ4GMD5M4C6K38KEDAPSTV8X",
+      "rpc:/ttn.lorawan.v3.AppAs/DownlinkQueueReplace:5c7f3626-732b-4de0-966c-5cbf158c4215"
+    ],
+    "origin": "ip-10-22-14-101.us-west-1.compute.internal",
+    "context": {
+      "tenant-id": "CgtmbXNpb3RjbG91ZA=="
+    },
+    "visibility": {
+      "rights": [
+        "RIGHT_APPLICATION_TRAFFIC_READ"
+      ]
+    },
+    "authentication": {
+      "type": "Bearer",
+      "token_type": "AccessToken",
+      "token_id": "ISDB3LUN4HC5XR6EFDE32OEF5XEWELBW24Q6ENY"
+    },
+    "remote_ip": "70.112.121.77",
+    "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36",
+    "unique_id": "01KJ4GMD5PQZT1RP384ZYCQ8CP"
+  },
+  {
+    "name": "as.down.data.forward",
+    "time": "2026-02-23T05:45:49.473368355Z",
+    "identifiers": [
+      {
+        "device_ids": {
+          "device_id": "lora-wled-ca48",
+          "application_ids": {
+            "application_id": "henke"
+          },
+          "dev_eui": "0000CCC63C43CA48",
+          "join_eui": "0000000000000000"
+        }
+      }
+    ],
+    "data": {
+      "@type": "type.googleapis.com/ttn.lorawan.v3.ApplicationDownlink",
+      "session_key_id": "AZyJAxAvjqs9TQuLlphouw==",
+      "f_port": 1,
+      "f_cnt": 3,
+      "frm_payload": "VA==",
+      "correlation_ids": [
+        "as:downlink:01KJ4GGM4SNQ84HPSWZKA2PM54",
+        "rpc:/ttn.lorawan.v3.AppAs/DownlinkQueueReplace:ac021549-0164-4979-8341-bbdf5216dd45"
+      ]
+    },
+    "correlation_ids": [
+      "as:downlink:01KJ4GGM4SNQ84HPSWZKA2PM54",
+      "rpc:/ttn.lorawan.v3.AppAs/DownlinkQueueReplace:ac021549-0164-4979-8341-bbdf5216dd45"
+    ],
+    "origin": "ip-10-22-15-251.us-west-1.compute.internal",
+    "context": {
+      "tenant-id": "CgtmbXNpb3RjbG91ZA=="
+    },
+    "visibility": {
+      "rights": [
+        "RIGHT_APPLICATION_TRAFFIC_READ"
+      ]
+    },
+    "authentication": {
+      "type": "Bearer",
+      "token_type": "AccessToken",
+      "token_id": "ISDB3LUN4HC5XR6EFDE32OEF5XEWELBW24Q6ENY"
+    },
+    "remote_ip": "70.112.121.77",
+    "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36",
+    "unique_id": "01KJ4GGM51KRG2F93YA6J7SGK2"
+  },
+  {
+    "name": "as.down.data.receive",
+    "time": "2026-02-23T05:45:49.467636869Z",
+    "identifiers": [
+      {
+        "device_ids": {
+          "device_id": "lora-wled-ca48",
+          "application_ids": {
+            "application_id": "henke"
+          },
+          "dev_eui": "0000CCC63C43CA48",
+          "join_eui": "0000000000000000"
+        }
+      }
+    ],
+    "data": {
+      "@type": "type.googleapis.com/ttn.lorawan.v3.ApplicationDownlink",
+      "f_port": 1,
+      "frm_payload": "qg==",
+      "correlation_ids": [
+        "as:downlink:01KJ4GGM4SNQ84HPSWZKA2PM54",
+        "rpc:/ttn.lorawan.v3.AppAs/DownlinkQueueReplace:ac021549-0164-4979-8341-bbdf5216dd45"
+      ]
+    },
+    "correlation_ids": [
+      "as:downlink:01KJ4GGM4SNQ84HPSWZKA2PM54",
+      "rpc:/ttn.lorawan.v3.AppAs/DownlinkQueueReplace:ac021549-0164-4979-8341-bbdf5216dd45"
+    ],
+    "origin": "ip-10-22-15-251.us-west-1.compute.internal",
+    "context": {
+      "tenant-id": "CgtmbXNpb3RjbG91ZA=="
+    },
+    "visibility": {
+      "rights": [
+        "RIGHT_APPLICATION_TRAFFIC_READ"
+      ]
+    },
+    "authentication": {
+      "type": "Bearer",
+      "token_type": "AccessToken",
+      "token_id": "ISDB3LUN4HC5XR6EFDE32OEF5XEWELBW24Q6ENY"
+    },
+    "remote_ip": "70.112.121.77",
+    "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36",
+    "unique_id": "01KJ4GGM4V2HFEKXXVW81DF445"
+  },
+  {
+    "name": "as.down.data.forward",
+    "time": "2026-02-23T05:44:36.408842168Z",
+    "identifiers": [
+      {
+        "device_ids": {
+          "device_id": "lora-wled-ca48",
+          "application_ids": {
+            "application_id": "henke"
+          },
+          "dev_eui": "0000CCC63C43CA48",
+          "join_eui": "0000000000000000"
+        }
+      }
+    ],
+    "data": {
+      "@type": "type.googleapis.com/ttn.lorawan.v3.ApplicationDownlink",
+      "session_key_id": "AZyJAxAvjqs9TQuLlphouw==",
+      "f_port": 1,
+      "f_cnt": 2,
+      "frm_payload": "Jw==",
+      "correlation_ids": [
+        "as:downlink:01KJ4GECSJXSW7ZWXV8H9V4ED1",
+        "rpc:/ttn.lorawan.v3.AppAs/DownlinkQueueReplace:21b6f932-8c2e-4935-b68c-002fb5948e27"
+      ]
+    },
+    "correlation_ids": [
+      "as:downlink:01KJ4GECSJXSW7ZWXV8H9V4ED1",
+      "rpc:/ttn.lorawan.v3.AppAs/DownlinkQueueReplace:21b6f932-8c2e-4935-b68c-002fb5948e27"
+    ],
+    "origin": "ip-10-22-14-101.us-west-1.compute.internal",
+    "context": {
+      "tenant-id": "CgtmbXNpb3RjbG91ZA=="
+    },
+    "visibility": {
+      "rights": [
+        "RIGHT_APPLICATION_TRAFFIC_READ"
+      ]
+    },
+    "authentication": {
+      "type": "Bearer",
+      "token_type": "AccessToken",
+      "token_id": "ISDB3LUN4HC5XR6EFDE32OEF5XEWELBW24Q6ENY"
+    },
+    "remote_ip": "70.112.121.77",
+    "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36",
+    "unique_id": "01KJ4GECSR64508V6XYB1SQ47D"
+  },
+  {
+    "name": "as.down.data.receive",
+    "time": "2026-02-23T05:44:36.404520376Z",
+    "identifiers": [
+      {
+        "device_ids": {
+          "device_id": "lora-wled-ca48",
+          "application_ids": {
+            "application_id": "henke"
+          },
+          "dev_eui": "0000CCC63C43CA48",
+          "join_eui": "0000000000000000"
+        }
+      }
+    ],
+    "data": {
+      "@type": "type.googleapis.com/ttn.lorawan.v3.ApplicationDownlink",
+      "f_port": 1,
+      "frm_payload": "qg==",
+      "correlation_ids": [
+        "as:downlink:01KJ4GECSJXSW7ZWXV8H9V4ED1",
+        "rpc:/ttn.lorawan.v3.AppAs/DownlinkQueueReplace:21b6f932-8c2e-4935-b68c-002fb5948e27"
+      ]
+    },
+    "correlation_ids": [
+      "as:downlink:01KJ4GECSJXSW7ZWXV8H9V4ED1",
+      "rpc:/ttn.lorawan.v3.AppAs/DownlinkQueueReplace:21b6f932-8c2e-4935-b68c-002fb5948e27"
+    ],
+    "origin": "ip-10-22-14-101.us-west-1.compute.internal",
+    "context": {
+      "tenant-id": "CgtmbXNpb3RjbG91ZA=="
+    },
+    "visibility": {
+      "rights": [
+        "RIGHT_APPLICATION_TRAFFIC_READ"
+      ]
+    },
+    "authentication": {
+      "type": "Bearer",
+      "token_type": "AccessToken",
+      "token_id": "ISDB3LUN4HC5XR6EFDE32OEF5XEWELBW24Q6ENY"
+    },
+    "remote_ip": "70.112.121.77",
+    "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36",
+    "unique_id": "01KJ4GECSMAS6EJ2QKP6CNAY0X"
+  },
+  {
+    "name": "ns.end_device.update",
+    "time": "2026-02-23T05:43:38.416264658Z",
+    "identifiers": [
+      {
+        "device_ids": {
+          "device_id": "lora-wled-ca48",
+          "application_ids": {
+            "application_id": "henke"
+          }
+        }
+      }
+    ],
+    "data": {
+      "@type": "type.googleapis.com/google.protobuf.Value",
+      "value": [
+        "supports_class_c",
+        "mac_settings.status_count_periodicity",
+        "mac_settings.status_time_periodicity",
+        "mac_settings.adr",
+        "mac_settings.adr_margin",
+        "mac_settings.use_adr",
+        "mac_settings.desired_max_duty_cycle",
+        "mac_settings.supports_32_bit_f_cnt",
+        "mac_settings.desired_rx2_frequency",
+        "mac_settings.desired_rx2_data_rate_index",
+        "mac_settings.desired_rx1_data_rate_offset",
+        "mac_settings.desired_rx1_delay"
+      ]
+    },
+    "correlation_ids": [
+      "rpc:/ttn.lorawan.v3.NsEndDeviceRegistry/Set:81ac4fa0-bf7b-4c74-9dc3-65f05b19945b"
+    ],
+    "origin": "ip-10-22-15-7.us-west-1.compute.internal",
+    "context": {
+      "tenant-id": "CgtmbXNpb3RjbG91ZA=="
+    },
+    "visibility": {
+      "rights": [
+        "RIGHT_APPLICATION_DEVICES_READ"
+      ]
+    },
+    "authentication": {
+      "type": "Bearer",
+      "token_type": "AccessToken",
+      "token_id": "ISDB3LUN4HC5XR6EFDE32OEF5XEWELBW24Q6ENY"
+    },
+    "remote_ip": "70.112.121.77",
+    "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36",
+    "unique_id": "01KJ4GCM5GBHHQADNKT627B7EM"
+  },
+  {
+    "name": "as.down.data.forward",
+    "time": "2026-02-23T05:40:28.577250861Z",
+    "identifiers": [
+      {
+        "device_ids": {
+          "device_id": "lora-wled-ca48",
+          "application_ids": {
+            "application_id": "henke"
+          },
+          "dev_eui": "0000CCC63C43CA48",
+          "join_eui": "0000000000000000"
+        }
+      }
+    ],
+    "data": {
+      "@type": "type.googleapis.com/ttn.lorawan.v3.ApplicationDownlink",
+      "session_key_id": "AZyJAxAvjqs9TQuLlphouw==",
+      "f_port": 1,
+      "f_cnt": 1,
+      "frm_payload": "bA==",
+      "correlation_ids": [
+        "as:downlink:01KJ4G6TRN971PQ5FB9GDCYSKB",
+        "rpc:/ttn.lorawan.v3.AppAs/DownlinkQueueReplace:7a94aef1-0e25-42a6-81ff-ee43204fe579"
+      ]
+    },
+    "correlation_ids": [
+      "as:downlink:01KJ4G6TRN971PQ5FB9GDCYSKB",
+      "rpc:/ttn.lorawan.v3.AppAs/DownlinkQueueReplace:7a94aef1-0e25-42a6-81ff-ee43204fe579"
+    ],
+    "origin": "ip-10-22-14-101.us-west-1.compute.internal",
+    "context": {
+      "tenant-id": "CgtmbXNpb3RjbG91ZA=="
+    },
+    "visibility": {
+      "rights": [
+        "RIGHT_APPLICATION_TRAFFIC_READ"
+      ]
+    },
+    "authentication": {
+      "type": "Bearer",
+      "token_type": "AccessToken",
+      "token_id": "ISDB3LUN4HC5XR6EFDE32OEF5XEWELBW24Q6ENY"
+    },
+    "remote_ip": "70.112.121.77",
+    "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36",
+    "unique_id": "01KJ4G6TS1XWCQYVPMFN83J3N5"
+  },
+  {
+    "name": "as.down.data.receive",
+    "time": "2026-02-23T05:40:28.567119027Z",
+    "identifiers": [
+      {
+        "device_ids": {
+          "device_id": "lora-wled-ca48",
+          "application_ids": {
+            "application_id": "henke"
+          },
+          "dev_eui": "0000CCC63C43CA48",
+          "join_eui": "0000000000000000"
+        }
+      }
+    ],
+    "data": {
+      "@type": "type.googleapis.com/ttn.lorawan.v3.ApplicationDownlink",
+      "f_port": 1,
+      "frm_payload": "qg==",
+      "correlation_ids": [
+        "as:downlink:01KJ4G6TRN971PQ5FB9GDCYSKB",
+        "rpc:/ttn.lorawan.v3.AppAs/DownlinkQueueReplace:7a94aef1-0e25-42a6-81ff-ee43204fe579"
+      ]
+    },
+    "correlation_ids": [
+      "as:downlink:01KJ4G6TRN971PQ5FB9GDCYSKB",
+      "rpc:/ttn.lorawan.v3.AppAs/DownlinkQueueReplace:7a94aef1-0e25-42a6-81ff-ee43204fe579"
+    ],
+    "origin": "ip-10-22-14-101.us-west-1.compute.internal",
+    "context": {
+      "tenant-id": "CgtmbXNpb3RjbG91ZA=="
+    },
+    "visibility": {
+      "rights": [
+        "RIGHT_APPLICATION_TRAFFIC_READ"
+      ]
+    },
+    "authentication": {
+      "type": "Bearer",
+      "token_type": "AccessToken",
+      "token_id": "ISDB3LUN4HC5XR6EFDE32OEF5XEWELBW24Q6ENY"
+    },
+    "remote_ip": "70.112.121.77",
+    "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36",
+    "unique_id": "01KJ4G6TRQFRSRAVE9CVHF5YMF"
+  },
+  {
+    "name": "ns.down.transmission.success",
+    "time": "2026-02-23T05:40:07.162696215Z",
+    "identifiers": [
+      {
+        "device_ids": {
+          "device_id": "lora-wled-ca48",
+          "application_ids": {
+            "application_id": "henke"
+          },
+          "dev_eui": "0000CCC63C43CA48",
+          "join_eui": "0000000000000000",
+          "dev_addr": "27FD483E"
+        }
+      }
+    ],
+    "data": {
+      "@type": "type.googleapis.com/ttn.lorawan.v3.DownlinkMessage",
+      "payload": {
+        "m_hdr": {
+          "m_type": "JOIN_ACCEPT"
+        },
+        "join_accept_payload": {
+          "net_id": "000013",
+          "dev_addr": "27FD4834",
+          "dl_settings": {
+            "rx2_dr": 8
+          },
+          "rx_delay": 5,
+          "cf_list": {
+            "type": "CHANNEL_MASKS",
+            "ch_masks": [
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              true,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false
+            ]
+          }
+        }
+      },
+      "end_device_ids": {
+        "device_id": "lora-wled-ca48",
+        "application_ids": {
+          "application_id": "henke"
+        },
+        "dev_eui": "0000CCC63C43CA48",
+        "join_eui": "0000000000000000",
+        "dev_addr": "27FD483E"
+      },
+      "request": {
+        "downlink_paths": [
+          {
+            "uplink_token": "ChcKFQoJaGVua2Vjb3ZlEgioQEH//yBb1BDsheraDxoMCLXQ78wGEKmusYgBIODTvczdwLoB"
+          }
+        ],
+        "rx1_delay": 5,
+        "rx1_data_rate": {
+          "lora": {
+            "bandwidth": 500000,
+            "spreading_factor": 10,
+            "coding_rate": "4/5"
+          }
+        },
+        "rx1_frequency": "925100000",
+        "rx2_data_rate": {
+          "lora": {
+            "bandwidth": 500000,
+            "spreading_factor": 12,
+            "coding_rate": "4/5"
+          }
+        },
+        "rx2_frequency": "923300000",
+        "priority": "HIGHEST",
+        "frequency_plan_id": "US_902_928_FSB_2"
+      },
+      "correlation_ids": [
+        "gs:tx_ack:01KJ4G65VS48EQ97PGQV87E55S",
+        "gs:uplink:01KJ4G6416YVCEHE2G11F6ZR6J",
+        "ns:downlink:01KJ4G65SMDXBT82F8MNN3EVEM",
+        "ns:transmission:01KJ4G65SM2ZJFMZ2XS3D7HCPM"
+      ],
+      "session_key_id": "AZyJAxAvjqs9TQuLlphouw=="
+    },
+    "correlation_ids": [
+      "gs:tx_ack:01KJ4G65VS48EQ97PGQV87E55S",
+      "gs:uplink:01KJ4G6416YVCEHE2G11F6ZR6J",
+      "ns:downlink:01KJ4G65SMDXBT82F8MNN3EVEM",
+      "ns:transmission:01KJ4G65SM2ZJFMZ2XS3D7HCPM"
+    ],
+    "origin": "ip-10-22-15-7.us-west-1.compute.internal",
+    "context": {
+      "tenant-id": "CgtmbXNpb3RjbG91ZA=="
+    },
+    "visibility": {
+      "rights": [
+        "RIGHT_APPLICATION_TRAFFIC_READ"
+      ]
+    },
+    "unique_id": "01KJ4G65VTNY6GHZAAN1XKBKXB"
+  },
+  {
+    "name": "ns.up.join.accept.forward",
+    "time": "2026-02-23T05:40:07.104233893Z",
+    "identifiers": [
+      {
+        "device_ids": {
+          "device_id": "lora-wled-ca48",
+          "application_ids": {
+            "application_id": "henke"
+          },
+          "dev_eui": "0000CCC63C43CA48",
+          "join_eui": "0000000000000000",
+          "dev_addr": "27FD4834"
+        }
+      }
+    ],
+    "data": {
+      "@type": "type.googleapis.com/ttn.lorawan.v3.ApplicationUp",
+      "end_device_ids": {
+        "device_id": "lora-wled-ca48",
+        "application_ids": {
+          "application_id": "henke"
+        },
+        "dev_eui": "0000CCC63C43CA48",
+        "join_eui": "0000000000000000",
+        "dev_addr": "27FD4834"
+      },
+      "correlation_ids": [
+        "gs:uplink:01KJ4G6416YVCEHE2G11F6ZR6J"
+      ],
+      "join_accept": {
+        "session_key_id": "AZyJAxAvjqs9TQuLlphouw==",
+        "received_at": "2026-02-23T05:40:05.286990834Z"
+      }
+    },
+    "correlation_ids": [
+      "gs:uplink:01KJ4G6416YVCEHE2G11F6ZR6J"
+    ],
+    "origin": "ip-10-22-15-7.us-west-1.compute.internal",
+    "context": {
+      "tenant-id": "CgtmbXNpb3RjbG91ZA=="
+    },
+    "visibility": {
+      "rights": [
+        "RIGHT_APPLICATION_TRAFFIC_READ"
+      ]
+    },
+    "unique_id": "01KJ4G65T0D8H3E4A3DCC7683B"
+  },
+  {
+    "name": "as.up.join.forward",
+    "time": "2026-02-23T05:40:07.103325731Z",
+    "identifiers": [
+      {
+        "device_ids": {
+          "device_id": "lora-wled-ca48",
+          "application_ids": {
+            "application_id": "henke"
+          },
+          "dev_eui": "0000CCC63C43CA48",
+          "join_eui": "0000000000000000",
+          "dev_addr": "27FD4834"
+        }
+      }
+    ],
+    "data": {
+      "@type": "type.googleapis.com/ttn.lorawan.v3.ApplicationUp",
+      "end_device_ids": {
+        "device_id": "lora-wled-ca48",
+        "application_ids": {
+          "application_id": "henke"
+        },
+        "dev_eui": "0000CCC63C43CA48",
+        "join_eui": "0000000000000000",
+        "dev_addr": "27FD4834"
+      },
+      "correlation_ids": [
+        "gs:uplink:01KJ4G6416YVCEHE2G11F6ZR6J"
+      ],
+      "received_at": "2026-02-23T05:40:07.098499250Z",
+      "join_accept": {
+        "session_key_id": "AZyJAxAvjqs9TQuLlphouw==",
+        "received_at": "2026-02-23T05:40:05.286990834Z"
+      }
+    },
+    "correlation_ids": [
+      "gs:uplink:01KJ4G6416YVCEHE2G11F6ZR6J"
+    ],
+    "origin": "ip-10-22-15-251.us-west-1.compute.internal",
+    "context": {
+      "tenant-id": "CgtmbXNpb3RjbG91ZA=="
+    },
+    "visibility": {
+      "rights": [
+        "RIGHT_APPLICATION_TRAFFIC_READ"
+      ]
+    },
+    "unique_id": "01KJ4G65SZE4DHRWSYQDVHYPYH"
+  },
+  {
+    "name": "as.up.join.receive",
+    "time": "2026-02-23T05:40:07.099446153Z",
+    "identifiers": [
+      {
+        "device_ids": {
+          "device_id": "lora-wled-ca48",
+          "application_ids": {
+            "application_id": "henke"
+          },
+          "dev_eui": "0000CCC63C43CA48",
+          "join_eui": "0000000000000000",
+          "dev_addr": "27FD4834"
+        }
+      }
+    ],
+    "correlation_ids": [
+      "gs:uplink:01KJ4G6416YVCEHE2G11F6ZR6J"
+    ],
+    "origin": "ip-10-22-15-251.us-west-1.compute.internal",
+    "context": {
+      "tenant-id": "CgtmbXNpb3RjbG91ZA=="
+    },
+    "visibility": {
+      "rights": [
+        "RIGHT_APPLICATION_TRAFFIC_READ"
+      ]
+    },
+    "unique_id": "01KJ4G65SVAZWBPQRR0PY7K4YD"
+  },
+  {
+    "name": "ns.down.join.schedule.success",
+    "time": "2026-02-23T05:40:07.096703160Z",
+    "identifiers": [
+      {
+        "device_ids": {
+          "device_id": "lora-wled-ca48",
+          "application_ids": {
+            "application_id": "henke"
+          },
+          "dev_eui": "0000CCC63C43CA48",
+          "join_eui": "0000000000000000",
+          "dev_addr": "27FD483E"
+        }
+      }
+    ],
+    "data": {
+      "@type": "type.googleapis.com/ttn.lorawan.v3.ScheduleDownlinkResponse",
+      "delay": "3.197391144s",
+      "downlink_path": {
+        "fixed": {
+          "gateway_ids": {
+            "gateway_id": "henkecove",
+            "eui": "A84041FFFF205BD4"
+          }
+        }
+      },
+      "rx1": true
+    },
+    "correlation_ids": [
+      "gs:uplink:01KJ4G6416YVCEHE2G11F6ZR6J",
+      "ns:downlink:01KJ4G65SMDXBT82F8MNN3EVEM",
+      "ns:transmission:01KJ4G65SM2ZJFMZ2XS3D7HCPM"
+    ],
+    "origin": "ip-10-22-15-7.us-west-1.compute.internal",
+    "context": {
+      "tenant-id": "CgtmbXNpb3RjbG91ZA=="
+    },
+    "visibility": {
+      "rights": [
+        "RIGHT_APPLICATION_TRAFFIC_READ"
+      ]
+    },
+    "unique_id": "01KJ4G65SRGQANW3NFT50EZG21"
+  },
+  {
+    "name": "ns.down.join.schedule.attempt",
+    "time": "2026-02-23T05:40:07.092779048Z",
+    "identifiers": [
+      {
+        "device_ids": {
+          "device_id": "lora-wled-ca48",
+          "application_ids": {
+            "application_id": "henke"
+          },
+          "dev_eui": "0000CCC63C43CA48",
+          "join_eui": "0000000000000000",
+          "dev_addr": "27FD483E"
+        }
+      }
+    ],
+    "data": {
+      "@type": "type.googleapis.com/ttn.lorawan.v3.DownlinkMessage",
+      "raw_payload": "IEUcjC0TFI8hlkqCXDGxQTqlrrRnFypk65+uuuZUpO9Y",
+      "payload": {
+        "m_hdr": {
+          "m_type": "JOIN_ACCEPT"
+        },
+        "join_accept_payload": {
+          "net_id": "000013",
+          "dev_addr": "27FD4834",
+          "dl_settings": {
+            "rx2_dr": 8
+          },
+          "rx_delay": 5,
+          "cf_list": {
+            "type": "CHANNEL_MASKS",
+            "ch_masks": [
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              true,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false
+            ]
+          }
+        }
+      },
+      "request": {
+        "downlink_paths": [
+          {
+            "uplink_token": "ChcKFQoJaGVua2Vjb3ZlEgioQEH//yBb1BDsheraDxoMCLXQ78wGEKmusYgBIODTvczdwLoB"
+          }
+        ],
+        "rx1_delay": 5,
+        "rx1_data_rate": {
+          "lora": {
+            "bandwidth": 500000,
+            "spreading_factor": 10,
+            "coding_rate": "4/5"
+          }
+        },
+        "rx1_frequency": "925100000",
+        "rx2_data_rate": {
+          "lora": {
+            "bandwidth": 500000,
+            "spreading_factor": 12,
+            "coding_rate": "4/5"
+          }
+        },
+        "rx2_frequency": "923300000",
+        "priority": "HIGHEST",
+        "frequency_plan_id": "US_902_928_FSB_2"
+      },
+      "correlation_ids": [
+        "gs:uplink:01KJ4G6416YVCEHE2G11F6ZR6J",
+        "ns:downlink:01KJ4G65SMDXBT82F8MNN3EVEM",
+        "ns:transmission:01KJ4G65SM2ZJFMZ2XS3D7HCPM"
+      ]
+    },
+    "correlation_ids": [
+      "gs:uplink:01KJ4G6416YVCEHE2G11F6ZR6J",
+      "ns:downlink:01KJ4G65SMDXBT82F8MNN3EVEM",
+      "ns:transmission:01KJ4G65SM2ZJFMZ2XS3D7HCPM"
+    ],
+    "origin": "ip-10-22-15-7.us-west-1.compute.internal",
+    "context": {
+      "tenant-id": "CgtmbXNpb3RjbG91ZA=="
+    },
+    "visibility": {
+      "rights": [
+        "RIGHT_APPLICATION_TRAFFIC_READ"
+      ]
+    },
+    "unique_id": "01KJ4G65SMF5736VEH2YWCJ6AP"
+  },
+  {
+    "name": "ns.up.join.process",
+    "time": "2026-02-23T05:40:05.490783129Z",
+    "identifiers": [
+      {
+        "device_ids": {
+          "device_id": "lora-wled-ca48",
+          "application_ids": {
+            "application_id": "henke"
+          },
+          "dev_eui": "0000CCC63C43CA48",
+          "join_eui": "0000000000000000",
+          "dev_addr": "27FD483E"
+        }
+      }
+    ],
+    "data": {
+      "@type": "type.googleapis.com/ttn.lorawan.v3.UplinkMessage",
+      "raw_payload": "AAAAAAAAAAAASMpDPMbMAABG02Vob0k=",
+      "payload": {
+        "m_hdr": {},
+        "mic": "ZWhvSQ==",
+        "join_request_payload": {
+          "join_eui": "0000000000000000",
+          "dev_eui": "0000CCC63C43CA48",
+          "dev_nonce": "D346"
+        }
+      },
+      "settings": {
+        "data_rate": {
+          "lora": {
+            "bandwidth": 125000,
+            "spreading_factor": 10,
+            "coding_rate": "4/5"
+          }
+        },
+        "frequency": "904500000",
+        "timestamp": 4217012972,
+        "time": "2026-02-23T05:40:05.255124Z"
+      },
+      "rx_metadata": [
+        {
+          "gateway_ids": {
+            "gateway_id": "henkecove",
+            "eui": "A84041FFFF205BD4"
+          },
+          "time": "2026-02-23T05:40:05.255124Z",
+          "timestamp": 4217012972,
+          "rssi": -104,
+          "channel_rssi": -104,
+          "snr": -5.2,
+          "uplink_token": "ChcKFQoJaGVua2Vjb3ZlEgioQEH//yBb1BDsheraDxoMCLXQ78wGEKmusYgBIODTvczdwLoB",
+          "channel_index": 3,
+          "received_at": "2026-02-23T05:40:05.253131100Z"
+        }
+      ],
+      "received_at": "2026-02-23T05:40:05.286990834Z",
+      "correlation_ids": [
+        "gs:uplink:01KJ4G6416YVCEHE2G11F6ZR6J"
+      ],
+      "device_channel_index": 11,
+      "consumed_airtime": "0.370688s"
+    },
+    "correlation_ids": [
+      "gs:uplink:01KJ4G6416YVCEHE2G11F6ZR6J"
+    ],
+    "origin": "ip-10-22-14-115.us-west-1.compute.internal",
+    "context": {
+      "tenant-id": "CgtmbXNpb3RjbG91ZA=="
+    },
+    "visibility": {
+      "rights": [
+        "RIGHT_APPLICATION_TRAFFIC_READ"
+      ]
+    },
+    "unique_id": "01KJ4G647JPHYZM129NSVRTFAG"
+  },
+  {
+    "name": "ns.up.join.cluster.success",
+    "time": "2026-02-23T05:40:05.300709558Z",
+    "identifiers": [
+      {
+        "device_ids": {
+          "device_id": "lora-wled-ca48",
+          "application_ids": {
+            "application_id": "henke"
+          },
+          "dev_eui": "0000CCC63C43CA48",
+          "join_eui": "0000000000000000",
+          "dev_addr": "27FD483E"
+        }
+      }
+    ],
+    "data": {
+      "@type": "type.googleapis.com/ttn.lorawan.v3.JoinResponse",
+      "raw_payload": "IEUcjC0TFI8hlkqCXDGxQTqlrrRnFypk65+uuuZUpO9Y",
+      "session_keys": {
+        "session_key_id": "AZyJAxAvjqs9TQuLlphouw=="
+      }
+    },
+    "correlation_ids": [
+      "gs:uplink:01KJ4G6416YVCEHE2G11F6ZR6J"
+    ],
+    "origin": "ip-10-22-14-115.us-west-1.compute.internal",
+    "context": {
+      "tenant-id": "CgtmbXNpb3RjbG91ZA=="
+    },
+    "visibility": {
+      "rights": [
+        "RIGHT_APPLICATION_TRAFFIC_READ"
+      ]
+    },
+    "unique_id": "01KJ4G641MYQX0MYDWM0AV8W0D"
+  },
+  {
+    "name": "js.join.accept",
+    "time": "2026-02-23T05:40:05.300461765Z",
+    "identifiers": [
+      {
+        "device_ids": {
+          "device_id": "lora-wled-ca48",
+          "application_ids": {
+            "application_id": "henke"
+          },
+          "dev_eui": "0000CCC63C43CA48",
+          "join_eui": "0000000000000000",
+          "dev_addr": "27FD4834"
+        }
+      }
+    ],
+    "origin": "ip-10-22-13-106.us-west-1.compute.internal",
+    "context": {
+      "tenant-id": "CgtmbXNpb3RjbG91ZA=="
+    },
+    "visibility": {
+      "rights": [
+        "RIGHT_APPLICATION_TRAFFIC_READ"
+      ]
+    },
+    "unique_id": "01KJ4G641M3J5MQXYX908ASZGE"
+  },
+  {
+    "name": "ns.up.join.cluster.attempt",
+    "time": "2026-02-23T05:40:05.292857942Z",
+    "identifiers": [
+      {
+        "device_ids": {
+          "device_id": "lora-wled-ca48",
+          "application_ids": {
+            "application_id": "henke"
+          },
+          "dev_eui": "0000CCC63C43CA48",
+          "join_eui": "0000000000000000",
+          "dev_addr": "27FD483E"
+        }
+      }
+    ],
+    "data": {
+      "@type": "type.googleapis.com/ttn.lorawan.v3.JoinRequest",
+      "raw_payload": "AAAAAAAAAAAASMpDPMbMAABG02Vob0k=",
+      "payload": {
+        "m_hdr": {},
+        "mic": "ZWhvSQ==",
+        "join_request_payload": {
+          "join_eui": "0000000000000000",
+          "dev_eui": "0000CCC63C43CA48",
+          "dev_nonce": "D346"
+        }
+      },
+      "dev_addr": "27FD4834",
+      "selected_mac_version": "MAC_V1_0_3",
+      "net_id": "000013",
+      "downlink_settings": {
+        "rx2_dr": 8
+      },
+      "rx_delay": 5,
+      "cf_list": {
+        "type": "CHANNEL_MASKS",
+        "ch_masks": [
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          true,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false
+        ]
+      },
+      "correlation_ids": [
+        "gs:uplink:01KJ4G6416YVCEHE2G11F6ZR6J"
+      ],
+      "consumed_airtime": "0.370688s"
+    },
+    "correlation_ids": [
+      "gs:uplink:01KJ4G6416YVCEHE2G11F6ZR6J"
+    ],
+    "origin": "ip-10-22-14-115.us-west-1.compute.internal",
+    "context": {
+      "tenant-id": "CgtmbXNpb3RjbG91ZA=="
+    },
+    "visibility": {
+      "rights": [
+        "RIGHT_APPLICATION_TRAFFIC_READ"
+      ]
+    },
+    "unique_id": "01KJ4G641C18FSQC1RHA29G4HE"
+  },
+  {
+    "name": "ns.up.join.receive",
+    "time": "2026-02-23T05:40:05.292787507Z",
+    "identifiers": [
+      {
+        "device_ids": {
+          "device_id": "lora-wled-ca48",
+          "application_ids": {
+            "application_id": "henke"
+          },
+          "dev_eui": "0000CCC63C43CA48",
+          "join_eui": "0000000000000000",
+          "dev_addr": "27FD483E"
+        }
+      }
+    ],
+    "data": {
+      "@type": "type.googleapis.com/ttn.lorawan.v3.UplinkMessage",
+      "raw_payload": "AAAAAAAAAAAASMpDPMbMAABG02Vob0k=",
+      "payload": {
+        "m_hdr": {},
+        "mic": "ZWhvSQ==",
+        "join_request_payload": {
+          "join_eui": "0000000000000000",
+          "dev_eui": "0000CCC63C43CA48",
+          "dev_nonce": "D346"
+        }
+      },
+      "settings": {
+        "data_rate": {
+          "lora": {
+            "bandwidth": 125000,
+            "spreading_factor": 10,
+            "coding_rate": "4/5"
+          }
+        },
+        "frequency": "904500000",
+        "timestamp": 4217012972,
+        "time": "2026-02-23T05:40:05.255124Z"
+      },
+      "rx_metadata": [
+        {
+          "gateway_ids": {
+            "gateway_id": "henkecove",
+            "eui": "A84041FFFF205BD4"
+          },
+          "time": "2026-02-23T05:40:05.255124Z",
+          "timestamp": 4217012972,
+          "rssi": -104,
+          "channel_rssi": -104,
+          "snr": -5.2,
+          "uplink_token": "ChcKFQoJaGVua2Vjb3ZlEgioQEH//yBb1BDsheraDxoMCLXQ78wGEKmusYgBIODTvczdwLoB",
+          "channel_index": 3,
+          "received_at": "2026-02-23T05:40:05.253131100Z"
+        }
+      ],
+      "received_at": "2026-02-23T05:40:05.286990834Z",
+      "correlation_ids": [
+        "gs:uplink:01KJ4G6416YVCEHE2G11F6ZR6J"
+      ],
+      "device_channel_index": 11,
+      "consumed_airtime": "0.370688s"
+    },
+    "correlation_ids": [
+      "gs:uplink:01KJ4G6416YVCEHE2G11F6ZR6J"
+    ],
+    "origin": "ip-10-22-14-115.us-west-1.compute.internal",
+    "context": {
+      "tenant-id": "CgtmbXNpb3RjbG91ZA=="
+    },
+    "visibility": {
+      "rights": [
+        "RIGHT_APPLICATION_TRAFFIC_READ"
+      ]
+    },
+    "unique_id": "01KJ4G641CZ4CJTNXMEY6M37XV"
+  },
+  {
+    "name": "ns.end_device.update",
+    "time": "2026-02-23T05:39:42.916110862Z",
+    "identifiers": [
+      {
+        "device_ids": {
+          "device_id": "lora-wled-ca48",
+          "application_ids": {
+            "application_id": "henke"
+          }
+        }
+      }
+    ],
+    "data": {
+      "@type": "type.googleapis.com/google.protobuf.Value",
+      "value": [
+        "mac_settings.status_count_periodicity",
+        "mac_settings.status_time_periodicity",
+        "mac_settings.adr",
+        "mac_settings.adr_margin",
+        "mac_settings.use_adr",
+        "mac_settings.desired_max_duty_cycle",
+        "mac_settings.supports_32_bit_f_cnt",
+        "mac_settings.desired_rx2_frequency",
+        "mac_settings.desired_rx2_data_rate_index",
+        "mac_settings.desired_rx1_data_rate_offset",
+        "mac_settings.desired_rx1_delay",
+        "mac_settings.class_c_timeout"
+      ]
+    },
+    "correlation_ids": [
+      "rpc:/ttn.lorawan.v3.NsEndDeviceRegistry/Set:845ee77b-a5fe-4717-ba8a-ebb90229cf5f"
+    ],
+    "origin": "ip-10-22-15-7.us-west-1.compute.internal",
+    "context": {
+      "tenant-id": "CgtmbXNpb3RjbG91ZA=="
+    },
+    "visibility": {
+      "rights": [
+        "RIGHT_APPLICATION_DEVICES_READ"
+      ]
+    },
+    "authentication": {
+      "type": "Bearer",
+      "token_type": "AccessToken",
+      "token_id": "ISDB3LUN4HC5XR6EFDE32OEF5XEWELBW24Q6ENY"
+    },
+    "remote_ip": "70.112.121.77",
+    "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36",
+    "unique_id": "01KJ4G5E64CE34STVGCRKXBD47"
+  },
+  {
+    "name": "as.down.data.drop",
+    "time": "2026-02-23T05:39:24.623104143Z",
+    "identifiers": [
+      {
+        "device_ids": {
+          "device_id": "lora-wled-ca48",
+          "application_ids": {
+            "application_id": "henke"
+          },
+          "dev_eui": "0000CCC63C43CA48",
+          "join_eui": "0000000000000000"
+        }
+      }
+    ],
+    "data": {
+      "@type": "type.googleapis.com/ttn.lorawan.v3.ErrorDetails",
+      "namespace": "pkg/applicationserver",
+      "name": "no_device_session",
+      "message_format": "no device session; check device activation",
+      "correlation_id": "2102c2fded744e779b5d96bf9ad2834a",
+      "code": 9
+    },
+    "correlation_ids": [
+      "as:downlink:01KJ4G4WAAK5V9K9YTG1T5V963",
+      "rpc:/ttn.lorawan.v3.AppAs/DownlinkQueueReplace:934c5299-ea0e-49ba-a96d-b71886c1ee8c"
+    ],
+    "origin": "ip-10-22-15-251.us-west-1.compute.internal",
+    "context": {
+      "tenant-id": "CgtmbXNpb3RjbG91ZA=="
+    },
+    "visibility": {
+      "rights": [
+        "RIGHT_APPLICATION_TRAFFIC_READ"
+      ]
+    },
+    "unique_id": "01KJ4G4WAF8YEVP51KP4MX2MNN"
+  },
+  {
+    "name": "as.down.data.receive",
+    "time": "2026-02-23T05:39:24.620287966Z",
+    "identifiers": [
+      {
+        "device_ids": {
+          "device_id": "lora-wled-ca48",
+          "application_ids": {
+            "application_id": "henke"
+          },
+          "dev_eui": "0000CCC63C43CA48",
+          "join_eui": "0000000000000000"
+        }
+      }
+    ],
+    "data": {
+      "@type": "type.googleapis.com/ttn.lorawan.v3.ApplicationDownlink",
+      "f_port": 1,
+      "frm_payload": "qg==",
+      "correlation_ids": [
+        "as:downlink:01KJ4G4WAAK5V9K9YTG1T5V963",
+        "rpc:/ttn.lorawan.v3.AppAs/DownlinkQueueReplace:934c5299-ea0e-49ba-a96d-b71886c1ee8c"
+      ]
+    },
+    "correlation_ids": [
+      "as:downlink:01KJ4G4WAAK5V9K9YTG1T5V963",
+      "rpc:/ttn.lorawan.v3.AppAs/DownlinkQueueReplace:934c5299-ea0e-49ba-a96d-b71886c1ee8c"
+    ],
+    "origin": "ip-10-22-15-251.us-west-1.compute.internal",
+    "context": {
+      "tenant-id": "CgtmbXNpb3RjbG91ZA=="
+    },
+    "visibility": {
+      "rights": [
+        "RIGHT_APPLICATION_TRAFFIC_READ"
+      ]
+    },
+    "authentication": {
+      "type": "Bearer",
+      "token_type": "AccessToken",
+      "token_id": "ISDB3LUN4HC5XR6EFDE32OEF5XEWELBW24Q6ENY"
+    },
+    "remote_ip": "70.112.121.77",
+    "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36",
+    "unique_id": "01KJ4G4WACS1HY80HRZ0ECR96J"
+  },
+  {
+    "name": "as.down.data.drop",
+    "time": "2026-02-23T05:39:10.329357550Z",
+    "identifiers": [
+      {
+        "device_ids": {
+          "device_id": "lora-wled-ca48",
+          "application_ids": {
+            "application_id": "henke"
+          },
+          "dev_eui": "0000CCC63C43CA48",
+          "join_eui": "0000000000000000"
+        }
+      }
+    ],
+    "data": {
+      "@type": "type.googleapis.com/ttn.lorawan.v3.ErrorDetails",
+      "namespace": "pkg/applicationserver",
+      "name": "no_device_session",
+      "message_format": "no device session; check device activation",
+      "correlation_id": "258bcd9c33e14a5ea952ddb1f9febe47",
+      "code": 9
+    },
+    "correlation_ids": [
+      "as:downlink:01KJ4G4EBKSDD15EEWQ0CV9AQP",
+      "rpc:/ttn.lorawan.v3.AppAs/DownlinkQueueReplace:5a49ec61-f1d9-49af-98b9-5f2cf56a6ab4"
+    ],
+    "origin": "ip-10-22-15-251.us-west-1.compute.internal",
+    "context": {
+      "tenant-id": "CgtmbXNpb3RjbG91ZA=="
+    },
+    "visibility": {
+      "rights": [
+        "RIGHT_APPLICATION_TRAFFIC_READ"
+      ]
+    },
+    "unique_id": "01KJ4G4EBSP0NNRSP9T722Z0MP"
+  },
+  {
+    "name": "as.down.data.receive",
+    "time": "2026-02-23T05:39:10.325696492Z",
+    "identifiers": [
+      {
+        "device_ids": {
+          "device_id": "lora-wled-ca48",
+          "application_ids": {
+            "application_id": "henke"
+          },
+          "dev_eui": "0000CCC63C43CA48",
+          "join_eui": "0000000000000000"
+        }
+      }
+    ],
+    "data": {
+      "@type": "type.googleapis.com/ttn.lorawan.v3.ApplicationDownlink",
+      "f_port": 1,
+      "frm_payload": "qg==",
+      "correlation_ids": [
+        "as:downlink:01KJ4G4EBKSDD15EEWQ0CV9AQP",
+        "rpc:/ttn.lorawan.v3.AppAs/DownlinkQueueReplace:5a49ec61-f1d9-49af-98b9-5f2cf56a6ab4"
+      ]
+    },
+    "correlation_ids": [
+      "as:downlink:01KJ4G4EBKSDD15EEWQ0CV9AQP",
+      "rpc:/ttn.lorawan.v3.AppAs/DownlinkQueueReplace:5a49ec61-f1d9-49af-98b9-5f2cf56a6ab4"
+    ],
+    "origin": "ip-10-22-15-251.us-west-1.compute.internal",
+    "context": {
+      "tenant-id": "CgtmbXNpb3RjbG91ZA=="
+    },
+    "visibility": {
+      "rights": [
+        "RIGHT_APPLICATION_TRAFFIC_READ"
+      ]
+    },
+    "authentication": {
+      "type": "Bearer",
+      "token_type": "AccessToken",
+      "token_id": "ISDB3LUN4HC5XR6EFDE32OEF5XEWELBW24Q6ENY"
+    },
+    "remote_ip": "70.112.121.77",
+    "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36",
+    "unique_id": "01KJ4G4EBN9C6BXPV5V5845WZS"
+  },
+  {
+    "name": "js.end_device.update",
+    "time": "2026-02-23T05:38:54.275258214Z",
+    "identifiers": [
+      {
+        "device_ids": {
+          "device_id": "lora-wled-ca48",
+          "application_ids": {
+            "application_id": "henke"
+          },
+          "dev_eui": "0000CCC63C43CA48",
+          "join_eui": "0000000000000000"
+        }
+      }
+    ],
+    "data": {
+      "@type": "type.googleapis.com/google.protobuf.Value",
+      "value": [
+        "used_dev_nonces",
+        "last_dev_nonce"
+      ]
+    },
+    "correlation_ids": [
+      "rpc:/ttn.lorawan.v3.JsEndDeviceRegistry/Set:16967c54-4cf9-4bf6-a32d-d7bd4eaadfae"
+    ],
+    "origin": "ip-10-22-6-30.us-west-1.compute.internal",
+    "context": {
+      "tenant-id": "CgtmbXNpb3RjbG91ZA=="
+    },
+    "visibility": {
+      "rights": [
+        "RIGHT_APPLICATION_DEVICES_READ"
+      ]
+    },
+    "authentication": {
+      "type": "Bearer",
+      "token_type": "AccessToken",
+      "token_id": "ISDB3LUN4HC5XR6EFDE32OEF5XEWELBW24Q6ENY"
+    },
+    "remote_ip": "70.112.121.77",
+    "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36",
+    "unique_id": "01KJ4G3YP381354XN6BK4X2J9W"
+  },
+  {
+    "name": "ns.end_device.update",
+    "time": "2026-02-23T05:38:46.331695131Z",
+    "identifiers": [
+      {
+        "device_ids": {
+          "device_id": "lora-wled-ca48",
+          "application_ids": {
+            "application_id": "henke"
+          }
+        }
+      }
+    ],
+    "data": {
+      "@type": "type.googleapis.com/google.protobuf.Value",
+      "value": [
+        "supports_class_c",
+        "supports_class_b",
+        "mac_settings.status_count_periodicity",
+        "mac_settings.status_time_periodicity",
+        "mac_settings.adr",
+        "mac_settings.adr_margin",
+        "mac_settings.use_adr",
+        "mac_settings.desired_max_duty_cycle",
+        "mac_settings.supports_32_bit_f_cnt",
+        "mac_settings.desired_rx2_frequency",
+        "mac_settings.desired_rx2_data_rate_index",
+        "mac_settings.desired_rx1_data_rate_offset",
+        "mac_settings.desired_rx1_delay",
+        "mac_settings.class_c_timeout"
+      ]
+    },
+    "correlation_ids": [
+      "rpc:/ttn.lorawan.v3.NsEndDeviceRegistry/Set:9592c22f-29dd-428e-9d10-bb5e997ac15a"
+    ],
+    "origin": "ip-10-22-15-7.us-west-1.compute.internal",
+    "context": {
+      "tenant-id": "CgtmbXNpb3RjbG91ZA=="
+    },
+    "visibility": {
+      "rights": [
+        "RIGHT_APPLICATION_DEVICES_READ"
+      ]
+    },
+    "authentication": {
+      "type": "Bearer",
+      "token_type": "AccessToken",
+      "token_id": "ISDB3LUN4HC5XR6EFDE32OEF5XEWELBW24Q6ENY"
+    },
+    "remote_ip": "70.112.121.77",
+    "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36",
+    "unique_id": "01KJ4G3PXV1XDBJWNVJWXP54ME"
+  },
+  {
+    "name": "as.down.data.forward",
+    "time": "2026-02-23T05:36:01.936865683Z",
+    "identifiers": [
+      {
+        "device_ids": {
+          "device_id": "lora-wled-ca48",
+          "application_ids": {
+            "application_id": "henke"
+          },
+          "dev_eui": "0000CCC63C43CA48",
+          "join_eui": "0000000000000000"
+        }
+      }
+    ],
+    "data": {
+      "@type": "type.googleapis.com/ttn.lorawan.v3.ApplicationDownlink",
+      "session_key_id": "AZyI65MpWZtU9LsITKwu/A==",
+      "f_port": 1,
+      "f_cnt": 6,
+      "frm_payload": "/w==",
+      "correlation_ids": [
+        "as:downlink:01KJ4FYPCA56CD44SHNTA3A7QA",
+        "rpc:/ttn.lorawan.v3.AppAs/DownlinkQueueReplace:2c5eb74a-8bc3-4a40-b13d-c6f0881089c8"
+      ]
+    },
+    "correlation_ids": [
+      "as:downlink:01KJ4FYPCA56CD44SHNTA3A7QA",
+      "rpc:/ttn.lorawan.v3.AppAs/DownlinkQueueReplace:2c5eb74a-8bc3-4a40-b13d-c6f0881089c8"
+    ],
+    "origin": "ip-10-22-14-101.us-west-1.compute.internal",
+    "context": {
+      "tenant-id": "CgtmbXNpb3RjbG91ZA=="
+    },
+    "visibility": {
+      "rights": [
+        "RIGHT_APPLICATION_TRAFFIC_READ"
+      ]
+    },
+    "authentication": {
+      "type": "Bearer",
+      "token_type": "AccessToken",
+      "token_id": "ISDB3LUN4HC5XR6EFDE32OEF5XEWELBW24Q6ENY"
+    },
+    "remote_ip": "70.112.121.77",
+    "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36",
+    "unique_id": "01KJ4FYPCGWQYNAB4S75P1T938"
+  },
+  {
+    "name": "as.down.data.receive",
+    "time": "2026-02-23T05:36:01.932719046Z",
+    "identifiers": [
+      {
+        "device_ids": {
+          "device_id": "lora-wled-ca48",
+          "application_ids": {
+            "application_id": "henke"
+          },
+          "dev_eui": "0000CCC63C43CA48",
+          "join_eui": "0000000000000000"
+        }
+      }
+    ],
+    "data": {
+      "@type": "type.googleapis.com/ttn.lorawan.v3.ApplicationDownlink",
+      "f_port": 1,
+      "frm_payload": "qg==",
+      "correlation_ids": [
+        "as:downlink:01KJ4FYPCA56CD44SHNTA3A7QA",
+        "rpc:/ttn.lorawan.v3.AppAs/DownlinkQueueReplace:2c5eb74a-8bc3-4a40-b13d-c6f0881089c8"
+      ]
+    },
+    "correlation_ids": [
+      "as:downlink:01KJ4FYPCA56CD44SHNTA3A7QA",
+      "rpc:/ttn.lorawan.v3.AppAs/DownlinkQueueReplace:2c5eb74a-8bc3-4a40-b13d-c6f0881089c8"
+    ],
+    "origin": "ip-10-22-14-101.us-west-1.compute.internal",
+    "context": {
+      "tenant-id": "CgtmbXNpb3RjbG91ZA=="
+    },
+    "visibility": {
+      "rights": [
+        "RIGHT_APPLICATION_TRAFFIC_READ"
+      ]
+    },
+    "authentication": {
+      "type": "Bearer",
+      "token_type": "AccessToken",
+      "token_id": "ISDB3LUN4HC5XR6EFDE32OEF5XEWELBW24Q6ENY"
+    },
+    "remote_ip": "70.112.121.77",
+    "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36",
+    "unique_id": "01KJ4FYPCC279CQ5DBG64YW7SJ"
+  },
+  {
+    "name": "as.down.data.sent.forward",
+    "time": "2026-02-23T05:35:09.281965326Z",
+    "identifiers": [
+      {
+        "device_ids": {
+          "device_id": "lora-wled-ca48",
+          "application_ids": {
+            "application_id": "henke"
+          },
+          "dev_eui": "0000CCC63C43CA48",
+          "join_eui": "0000000000000000",
+          "dev_addr": "27FD483E"
+        }
+      }
+    ],
+    "data": {
+      "@type": "type.googleapis.com/ttn.lorawan.v3.ApplicationUp",
+      "end_device_ids": {
+        "device_id": "lora-wled-ca48",
+        "application_ids": {
+          "application_id": "henke"
+        },
+        "dev_eui": "0000CCC63C43CA48",
+        "join_eui": "0000000000000000",
+        "dev_addr": "27FD483E"
+      },
+      "correlation_ids": [
+        "as:downlink:01KJ4FSH4VPZKJW792FEP97A60",
+        "gs:tx_ack:01KJ4FX2YT9WKF34KXQYJEBP8S",
+        "gs:uplink:01KJ4FX2BX56GSFB25FHA54H62",
+        "ns:transmission:01KJ4FX2RMA209EV0E5GE8SZHY",
+        "rpc:/ttn.lorawan.v3.AppAs/DownlinkQueueReplace:76dd00a4-8040-4b50-9db1-bca1f6881348"
+      ],
+      "received_at": "2026-02-23T05:35:09.277131889Z",
+      "downlink_sent": {
+        "session_key_id": "AZyI65MpWZtU9LsITKwu/A==",
+        "f_port": 1,
+        "f_cnt": 5,
+        "frm_payload": "qg==",
+        "priority": "HIGHEST",
+        "correlation_ids": [
+          "as:downlink:01KJ4FSH4VPZKJW792FEP97A60",
+          "gs:tx_ack:01KJ4FX2YT9WKF34KXQYJEBP8S",
+          "gs:uplink:01KJ4FX2BX56GSFB25FHA54H62",
+          "ns:transmission:01KJ4FX2RMA209EV0E5GE8SZHY",
+          "rpc:/ttn.lorawan.v3.AppAs/DownlinkQueueReplace:76dd00a4-8040-4b50-9db1-bca1f6881348"
+        ]
+      }
+    },
+    "correlation_ids": [
+      "as:downlink:01KJ4FSH4VPZKJW792FEP97A60",
+      "gs:tx_ack:01KJ4FX2YT9WKF34KXQYJEBP8S",
+      "gs:uplink:01KJ4FX2BX56GSFB25FHA54H62",
+      "ns:transmission:01KJ4FX2RMA209EV0E5GE8SZHY",
+      "rpc:/ttn.lorawan.v3.AppAs/DownlinkQueueReplace:76dd00a4-8040-4b50-9db1-bca1f6881348"
+    ],
+    "origin": "ip-10-22-15-251.us-west-1.compute.internal",
+    "context": {
+      "tenant-id": "CgtmbXNpb3RjbG91ZA=="
+    },
+    "visibility": {
+      "rights": [
+        "RIGHT_APPLICATION_TRAFFIC_READ"
+      ]
+    },
+    "unique_id": "01KJ4FX2Z16DEC9YNPX40Q3PPK"
+  },
+  {
+    "name": "ns.down.transmission.success",
+    "time": "2026-02-23T05:35:09.276745089Z",
+    "identifiers": [
+      {
+        "device_ids": {
+          "device_id": "lora-wled-ca48",
+          "application_ids": {
+            "application_id": "henke"
+          },
+          "dev_eui": "0000CCC63C43CA48",
+          "join_eui": "0000000000000000",
+          "dev_addr": "27FD483E"
+        }
+      }
+    ],
+    "data": {
+      "@type": "type.googleapis.com/ttn.lorawan.v3.DownlinkMessage",
+      "payload": {
+        "m_hdr": {
+          "m_type": "UNCONFIRMED_DOWN"
+        },
+        "mic": "/0EV1g==",
+        "mac_payload": {
+          "f_hdr": {
+            "dev_addr": "27FD483E",
+            "f_ctrl": {
+              "adr": true
+            },
+            "f_cnt": 5,
+            "f_opts": "Bg=="
+          },
+          "f_port": 1,
+          "frm_payload": "Fw==",
+          "full_f_cnt": 5
+        }
+      },
+      "end_device_ids": {
+        "device_id": "lora-wled-ca48",
+        "application_ids": {
+          "application_id": "henke"
+        },
+        "dev_eui": "0000CCC63C43CA48",
+        "join_eui": "0000000000000000",
+        "dev_addr": "27FD483E"
+      },
+      "request": {
+        "downlink_paths": [
+          {
+            "uplink_token": "ChcKFQoJaGVua2Vjb3ZlEgioQEH//yBb1BCvn7LNDhoMCIzO78wGEPTcmb8CIJiHxdCMuLoB"
+          }
+        ],
+        "rx1_delay": 5,
+        "rx1_data_rate": {
+          "lora": {
+            "bandwidth": 500000,
+            "spreading_factor": 7,
+            "coding_rate": "4/5"
+          }
+        },
+        "rx1_frequency": "923900000",
+        "rx2_data_rate": {
+          "lora": {
+            "bandwidth": 500000,
+            "spreading_factor": 12,
+            "coding_rate": "4/5"
+          }
+        },
+        "rx2_frequency": "923300000",
+        "priority": "HIGHEST",
+        "frequency_plan_id": "US_902_928_FSB_2"
+      },
+      "correlation_ids": [
+        "as:downlink:01KJ4FSH4VPZKJW792FEP97A60",
+        "gs:tx_ack:01KJ4FX2YT9WKF34KXQYJEBP8S",
+        "gs:uplink:01KJ4FX2BX56GSFB25FHA54H62",
+        "ns:transmission:01KJ4FX2RMA209EV0E5GE8SZHY",
+        "rpc:/ttn.lorawan.v3.AppAs/DownlinkQueueReplace:76dd00a4-8040-4b50-9db1-bca1f6881348"
+      ],
+      "session_key_id": "AZyI65MpWZtU9LsITKwu/A=="
+    },
+    "correlation_ids": [
+      "as:downlink:01KJ4FSH4VPZKJW792FEP97A60",
+      "gs:tx_ack:01KJ4FX2YT9WKF34KXQYJEBP8S",
+      "gs:uplink:01KJ4FX2BX56GSFB25FHA54H62",
+      "ns:transmission:01KJ4FX2RMA209EV0E5GE8SZHY",
+      "rpc:/ttn.lorawan.v3.AppAs/DownlinkQueueReplace:76dd00a4-8040-4b50-9db1-bca1f6881348"
+    ],
+    "origin": "ip-10-22-15-7.us-west-1.compute.internal",
+    "context": {
+      "tenant-id": "CgtmbXNpb3RjbG91ZA=="
+    },
+    "visibility": {
+      "rights": [
+        "RIGHT_APPLICATION_TRAFFIC_READ"
+      ]
+    },
+    "unique_id": "01KJ4FX2YWWG2TM78PHVQ8KPTW"
+  },
+  {
+    "name": "ns.mac.dev_status.request",
+    "time": "2026-02-23T05:35:09.212274293Z",
+    "identifiers": [
+      {
+        "device_ids": {
+          "device_id": "lora-wled-ca48",
+          "application_ids": {
+            "application_id": "henke"
+          },
+          "dev_eui": "0000CCC63C43CA48",
+          "join_eui": "0000000000000000",
+          "dev_addr": "27FD483E"
+        }
+      }
+    ],
+    "correlation_ids": [
+      "as:downlink:01KJ4FSH4VPZKJW792FEP97A60",
+      "gs:uplink:01KJ4FX2BX56GSFB25FHA54H62",
+      "ns:transmission:01KJ4FX2RMA209EV0E5GE8SZHY",
+      "rpc:/ttn.lorawan.v3.AppAs/DownlinkQueueReplace:76dd00a4-8040-4b50-9db1-bca1f6881348"
+    ],
+    "origin": "ip-10-22-14-115.us-west-1.compute.internal",
+    "context": {
+      "tenant-id": "CgtmbXNpb3RjbG91ZA=="
+    },
+    "visibility": {
+      "rights": [
+        "RIGHT_APPLICATION_TRAFFIC_READ"
+      ]
+    },
+    "unique_id": "01KJ4FX2WWAVBEJGQQXT1FTG9D"
+  },
+  {
+    "name": "ns.down.data.schedule.success",
+    "time": "2026-02-23T05:35:09.212266804Z",
+    "identifiers": [
+      {
+        "device_ids": {
+          "device_id": "lora-wled-ca48",
+          "application_ids": {
+            "application_id": "henke"
+          },
+          "dev_eui": "0000CCC63C43CA48",
+          "join_eui": "0000000000000000",
+          "dev_addr": "27FD483E"
+        }
+      }
+    ],
+    "data": {
+      "@type": "type.googleapis.com/ttn.lorawan.v3.ScheduleDownlinkResponse",
+      "delay": "4.458466473s",
+      "downlink_path": {
+        "fixed": {
+          "gateway_ids": {
+            "gateway_id": "henkecove",
+            "eui": "A84041FFFF205BD4"
+          }
+        }
+      },
+      "rx1": true
+    },
+    "correlation_ids": [
+      "as:downlink:01KJ4FSH4VPZKJW792FEP97A60",
+      "gs:uplink:01KJ4FX2BX56GSFB25FHA54H62",
+      "ns:transmission:01KJ4FX2RMA209EV0E5GE8SZHY",
+      "rpc:/ttn.lorawan.v3.AppAs/DownlinkQueueReplace:76dd00a4-8040-4b50-9db1-bca1f6881348"
+    ],
+    "origin": "ip-10-22-14-115.us-west-1.compute.internal",
+    "context": {
+      "tenant-id": "CgtmbXNpb3RjbG91ZA=="
+    },
+    "visibility": {
+      "rights": [
+        "RIGHT_APPLICATION_TRAFFIC_READ"
+      ]
+    },
+    "unique_id": "01KJ4FX2WW1ZC3KV0HB5PXVD02"
+  },
+  {
+    "name": "ns.down.data.schedule.attempt",
+    "time": "2026-02-23T05:35:09.076598089Z",
+    "identifiers": [
+      {
+        "device_ids": {
+          "device_id": "lora-wled-ca48",
+          "application_ids": {
+            "application_id": "henke"
+          },
+          "dev_eui": "0000CCC63C43CA48",
+          "join_eui": "0000000000000000",
+          "dev_addr": "27FD483E"
+        }
+      }
+    ],
+    "data": {
+      "@type": "type.googleapis.com/ttn.lorawan.v3.DownlinkMessage",
+      "raw_payload": "YD5I/SeBBQAGARf/QRXW",
+      "payload": {
+        "m_hdr": {
+          "m_type": "UNCONFIRMED_DOWN"
+        },
+        "mic": "/0EV1g==",
+        "mac_payload": {
+          "f_hdr": {
+            "dev_addr": "27FD483E",
+            "f_ctrl": {
+              "adr": true
+            },
+            "f_cnt": 5,
+            "f_opts": "Bg=="
+          },
+          "f_port": 1,
+          "frm_payload": "Fw==",
+          "full_f_cnt": 5
+        }
+      },
+      "request": {
+        "downlink_paths": [
+          {
+            "uplink_token": "ChcKFQoJaGVua2Vjb3ZlEgioQEH//yBb1BCvn7LNDhoMCIzO78wGEPTcmb8CIJiHxdCMuLoB"
+          }
+        ],
+        "rx1_delay": 5,
+        "rx1_data_rate": {
+          "lora": {
+            "bandwidth": 500000,
+            "spreading_factor": 7,
+            "coding_rate": "4/5"
+          }
+        },
+        "rx1_frequency": "923900000",
+        "rx2_data_rate": {
+          "lora": {
+            "bandwidth": 500000,
+            "spreading_factor": 12,
+            "coding_rate": "4/5"
+          }
+        },
+        "rx2_frequency": "923300000",
+        "priority": "HIGHEST",
+        "frequency_plan_id": "US_902_928_FSB_2"
+      },
+      "correlation_ids": [
+        "as:downlink:01KJ4FSH4VPZKJW792FEP97A60",
+        "gs:uplink:01KJ4FX2BX56GSFB25FHA54H62",
+        "ns:transmission:01KJ4FX2RMA209EV0E5GE8SZHY",
+        "rpc:/ttn.lorawan.v3.AppAs/DownlinkQueueReplace:76dd00a4-8040-4b50-9db1-bca1f6881348"
+      ]
+    },
+    "correlation_ids": [
+      "as:downlink:01KJ4FSH4VPZKJW792FEP97A60",
+      "gs:uplink:01KJ4FX2BX56GSFB25FHA54H62",
+      "ns:transmission:01KJ4FX2RMA209EV0E5GE8SZHY",
+      "rpc:/ttn.lorawan.v3.AppAs/DownlinkQueueReplace:76dd00a4-8040-4b50-9db1-bca1f6881348"
+    ],
+    "origin": "ip-10-22-14-115.us-west-1.compute.internal",
+    "context": {
+      "tenant-id": "CgtmbXNpb3RjbG91ZA=="
+    },
+    "visibility": {
+      "rights": [
+        "RIGHT_APPLICATION_TRAFFIC_READ"
+      ]
+    },
+    "unique_id": "01KJ4FX2RMC1YA7C0NGCXTMXQJ"
+  },
+  {
+    "name": "end_device.update",
+    "time": "2026-02-23T05:35:08.952147276Z",
+    "identifiers": [
+      {
+        "device_ids": {
+          "device_id": "lora-wled-ca48",
+          "application_ids": {
+            "application_id": "henke"
+          },
+          "dev_eui": "0000CCC63C43CA48",
+          "join_eui": "0000000000000000",
+          "dev_addr": "27FD483E"
+        }
+      }
+    ],
+    "data": {
+      "@type": "type.googleapis.com/google.protobuf.Value",
+      "value": [
+        "activated_at"
+      ]
+    },
+    "correlation_ids": [
+      "rpc:/ttn.lorawan.v3.EndDeviceRegistry/Update:582119b4-cdd5-4ca2-ba54-9b77ab44a330"
+    ],
+    "origin": "ip-10-23-5-92.eu-west-1.compute.internal",
+    "context": {
+      "tenant-id": "CgtmbXNpb3RjbG91ZA=="
+    },
+    "visibility": {
+      "rights": [
+        "RIGHT_APPLICATION_DEVICES_READ"
+      ]
+    },
+    "authentication": {
+      "type": "ClusterKey"
+    },
+    "remote_ip": "54.176.4.5",
+    "user_agent": "tti-lw-stack go/1.24.11 ttn/3.35.2-rc2-SNAPSHOT-2e0639b7f1 (2e0639b7f1, 2026-01-21T09:20:11Z) grpc-go/1.71.0",
+    "unique_id": "01KJ4FX2MRQ8TV5242QVT2XBNT"
+  },
+  {
+    "name": "as.packages.storage.up.store",
+    "time": "2026-02-23T05:35:08.895707651Z",
+    "identifiers": [
+      {
+        "device_ids": {
+          "device_id": "lora-wled-ca48",
+          "application_ids": {
+            "application_id": "henke"
+          },
+          "dev_eui": "0000CCC63C43CA48",
+          "dev_addr": "27FD483E"
+        }
+      }
+    ],
+    "correlation_ids": [
+      "gs:uplink:01KJ4FX2BX56GSFB25FHA54H62"
+    ],
+    "origin": "ip-10-22-14-101.us-west-1.compute.internal",
+    "context": {
+      "tenant-id": "CgtmbXNpb3RjbG91ZA=="
+    },
+    "visibility": {
+      "rights": [
+        "RIGHT_APPLICATION_TRAFFIC_READ"
+      ]
+    },
+    "unique_id": "01KJ4FX2JZR5KHDPMDDX772Q6W"
+  },
+  {
+    "name": "ns.up.data.forward",
+    "time": "2026-02-23T05:35:08.884965001Z",
+    "identifiers": [
+      {
+        "device_ids": {
+          "device_id": "lora-wled-ca48",
+          "application_ids": {
+            "application_id": "henke"
+          },
+          "dev_eui": "0000CCC63C43CA48",
+          "join_eui": "0000000000000000",
+          "dev_addr": "27FD483E"
+        }
+      }
+    ],
+    "data": {
+      "@type": "type.googleapis.com/ttn.lorawan.v3.ApplicationUp",
+      "end_device_ids": {
+        "device_id": "lora-wled-ca48",
+        "application_ids": {
+          "application_id": "henke"
+        },
+        "dev_eui": "0000CCC63C43CA48",
+        "join_eui": "0000000000000000",
+        "dev_addr": "27FD483E"
+      },
+      "correlation_ids": [
+        "gs:uplink:01KJ4FX2BX56GSFB25FHA54H62"
+      ],
+      "uplink_message": {
+        "session_key_id": "AZyI65MpWZtU9LsITKwu/A==",
+        "f_port": 2,
+        "f_cnt": 8,
+        "frm_payload": "k0CoTOq+FfCs7zzR",
+        "rx_metadata": [
+          {
+            "gateway_ids": {
+              "gateway_id": "henkecove",
+              "eui": "A84041FFFF205BD4"
+            },
+            "time": "2026-02-23T05:35:08.631734Z",
+            "timestamp": 3920400303,
+            "rssi": -108,
+            "channel_rssi": -108,
+            "snr": -12,
+            "uplink_token": "ChcKFQoJaGVua2Vjb3ZlEgioQEH//yBb1BCvn7LNDhoMCIzO78wGEPTcmb8CIJiHxdCMuLoB",
+            "channel_index": 8,
+            "received_at": "2026-02-23T05:35:08.636143096Z"
+          }
+        ],
+        "settings": {
+          "data_rate": {
+            "lora": {
+              "bandwidth": 500000,
+              "spreading_factor": 8,
+              "coding_rate": "4/5"
+            }
+          },
+          "frequency": "904600000",
+          "timestamp": 3920400303,
+          "time": "2026-02-23T05:35:08.631734Z"
+        },
+        "received_at": "2026-02-23T05:35:08.670287981Z",
+        "consumed_airtime": "0.028288s",
+        "network_ids": {
+          "net_id": "000013",
+          "ns_id": "EC656E0000102C53",
+          "tenant_id": "fmsiotcloud",
+          "cluster_id": "nam1",
+          "cluster_address": "nam1.cloud.thethings.industries",
+          "tenant_address": "fmsiotcloud.nam1.cloud.thethings.industries"
+        }
+      }
+    },
+    "correlation_ids": [
+      "gs:uplink:01KJ4FX2BX56GSFB25FHA54H62"
+    ],
+    "origin": "ip-10-22-15-7.us-west-1.compute.internal",
+    "context": {
+      "tenant-id": "CgtmbXNpb3RjbG91ZA=="
+    },
+    "visibility": {
+      "rights": [
+        "RIGHT_APPLICATION_TRAFFIC_READ"
+      ]
+    },
+    "unique_id": "01KJ4FX2JMW7345S5ZK7C06DHR"
+  },
+  {
+    "name": "as.up.data.forward",
+    "time": "2026-02-23T05:35:08.884098873Z",
+    "identifiers": [
+      {
+        "device_ids": {
+          "device_id": "lora-wled-ca48",
+          "application_ids": {
+            "application_id": "henke"
+          },
+          "dev_eui": "0000CCC63C43CA48",
+          "join_eui": "0000000000000000",
+          "dev_addr": "27FD483E"
+        }
+      }
+    ],
+    "data": {
+      "@type": "type.googleapis.com/ttn.lorawan.v3.ApplicationUp",
+      "end_device_ids": {
+        "device_id": "lora-wled-ca48",
+        "application_ids": {
+          "application_id": "henke"
+        },
+        "dev_eui": "0000CCC63C43CA48",
+        "join_eui": "0000000000000000",
+        "dev_addr": "27FD483E"
+      },
+      "correlation_ids": [
+        "gs:uplink:01KJ4FX2BX56GSFB25FHA54H62"
+      ],
+      "received_at": "2026-02-23T05:35:08.876729442Z",
+      "uplink_message": {
+        "session_key_id": "AZyI65MpWZtU9LsITKwu/A==",
+        "f_port": 2,
+        "f_cnt": 8,
+        "frm_payload": "AQOAAAAAAAAAAAAA",
+        "rx_metadata": [
+          {
+            "gateway_ids": {
+              "gateway_id": "henkecove",
+              "eui": "A84041FFFF205BD4"
+            },
+            "time": "2026-02-23T05:35:08.631734Z",
+            "timestamp": 3920400303,
+            "rssi": -108,
+            "channel_rssi": -108,
+            "snr": -12,
+            "uplink_token": "ChcKFQoJaGVua2Vjb3ZlEgioQEH//yBb1BCvn7LNDhoMCIzO78wGEPTcmb8CIJiHxdCMuLoB",
+            "channel_index": 8,
+            "received_at": "2026-02-23T05:35:08.636143096Z"
+          }
+        ],
+        "settings": {
+          "data_rate": {
+            "lora": {
+              "bandwidth": 500000,
+              "spreading_factor": 8,
+              "coding_rate": "4/5"
+            }
+          },
+          "frequency": "904600000",
+          "timestamp": 3920400303,
+          "time": "2026-02-23T05:35:08.631734Z"
+        },
+        "received_at": "2026-02-23T05:35:08.670287981Z",
+        "consumed_airtime": "0.028288s",
+        "network_ids": {
+          "net_id": "000013",
+          "ns_id": "EC656E0000102C53",
+          "tenant_id": "fmsiotcloud",
+          "cluster_id": "nam1",
+          "cluster_address": "nam1.cloud.thethings.industries",
+          "tenant_address": "fmsiotcloud.nam1.cloud.thethings.industries"
+        }
+      }
+    },
+    "correlation_ids": [
+      "gs:uplink:01KJ4FX2BX56GSFB25FHA54H62"
+    ],
+    "origin": "ip-10-22-14-101.us-west-1.compute.internal",
+    "context": {
+      "tenant-id": "CgtmbXNpb3RjbG91ZA=="
+    },
+    "visibility": {
+      "rights": [
+        "RIGHT_APPLICATION_TRAFFIC_READ"
+      ]
+    },
+    "unique_id": "01KJ4FX2JMD94XHEB9TWSS4CFD"
+  },
+  {
+    "name": "as.up.data.receive",
+    "time": "2026-02-23T05:35:08.877855237Z",
+    "identifiers": [
+      {
+        "device_ids": {
+          "device_id": "lora-wled-ca48",
+          "application_ids": {
+            "application_id": "henke"
+          },
+          "dev_eui": "0000CCC63C43CA48",
+          "join_eui": "0000000000000000",
+          "dev_addr": "27FD483E"
+        }
+      }
+    ],
+    "correlation_ids": [
+      "gs:uplink:01KJ4FX2BX56GSFB25FHA54H62"
+    ],
+    "origin": "ip-10-22-14-101.us-west-1.compute.internal",
+    "context": {
+      "tenant-id": "CgtmbXNpb3RjbG91ZA=="
+    },
+    "visibility": {
+      "rights": [
+        "RIGHT_APPLICATION_TRAFFIC_READ"
+      ]
+    },
+    "unique_id": "01KJ4FX2JDMA334EC6TQKZH8ZP"
+  },
+  {
+    "name": "ns.up.data.process",
+    "time": "2026-02-23T05:35:08.874874054Z",
+    "identifiers": [
+      {
+        "device_ids": {
+          "device_id": "lora-wled-ca48",
+          "application_ids": {
+            "application_id": "henke"
+          },
+          "dev_eui": "0000CCC63C43CA48",
+          "join_eui": "0000000000000000",
+          "dev_addr": "27FD483E"
+        }
+      }
+    ],
+    "data": {
+      "@type": "type.googleapis.com/ttn.lorawan.v3.UplinkMessage",
+      "raw_payload": "QD5I/ScACAACk0CoTOq+FfCs7zzR8CHGug==",
+      "payload": {
+        "m_hdr": {
+          "m_type": "UNCONFIRMED_UP"
+        },
+        "mic": "8CHGug==",
+        "mac_payload": {
+          "f_hdr": {
+            "dev_addr": "27FD483E",
+            "f_ctrl": {},
+            "f_cnt": 8
+          },
+          "f_port": 2,
+          "frm_payload": "k0CoTOq+FfCs7zzR",
+          "full_f_cnt": 8
+        }
+      },
+      "settings": {
+        "data_rate": {
+          "lora": {
+            "bandwidth": 500000,
+            "spreading_factor": 8,
+            "coding_rate": "4/5"
+          }
+        },
+        "frequency": "904600000",
+        "timestamp": 3920400303,
+        "time": "2026-02-23T05:35:08.631734Z"
+      },
+      "rx_metadata": [
+        {
+          "gateway_ids": {
+            "gateway_id": "henkecove",
+            "eui": "A84041FFFF205BD4"
+          },
+          "time": "2026-02-23T05:35:08.631734Z",
+          "timestamp": 3920400303,
+          "rssi": -108,
+          "channel_rssi": -108,
+          "snr": -12,
+          "uplink_token": "ChcKFQoJaGVua2Vjb3ZlEgioQEH//yBb1BCvn7LNDhoMCIzO78wGEPTcmb8CIJiHxdCMuLoB",
+          "channel_index": 8,
+          "received_at": "2026-02-23T05:35:08.636143096Z"
+        }
+      ],
+      "received_at": "2026-02-23T05:35:08.670287981Z",
+      "correlation_ids": [
+        "gs:uplink:01KJ4FX2BX56GSFB25FHA54H62"
+      ],
+      "device_channel_index": 65,
+      "consumed_airtime": "0.028288s"
+    },
+    "correlation_ids": [
+      "gs:uplink:01KJ4FX2BX56GSFB25FHA54H62"
+    ],
+    "origin": "ip-10-22-15-7.us-west-1.compute.internal",
+    "context": {
+      "tenant-id": "CgtmbXNpb3RjbG91ZA=="
+    },
+    "visibility": {
+      "rights": [
+        "RIGHT_APPLICATION_TRAFFIC_READ"
+      ]
+    },
+    "unique_id": "01KJ4FX2JAGS7MMSW5PWFC2YZT"
+  },
+  {
+    "name": "ns.up.data.receive",
+    "time": "2026-02-23T05:35:08.675644611Z",
+    "identifiers": [
+      {
+        "device_ids": {
+          "device_id": "lora-wled-ca48",
+          "application_ids": {
+            "application_id": "henke"
+          },
+          "dev_eui": "0000CCC63C43CA48",
+          "join_eui": "0000000000000000",
+          "dev_addr": "27FD483E"
+        }
+      }
+    ],
+    "data": {
+      "@type": "type.googleapis.com/ttn.lorawan.v3.UplinkMessage",
+      "raw_payload": "QD5I/ScACAACk0CoTOq+FfCs7zzR8CHGug==",
+      "payload": {
+        "m_hdr": {
+          "m_type": "UNCONFIRMED_UP"
+        },
+        "mic": "8CHGug==",
+        "mac_payload": {
+          "f_hdr": {
+            "dev_addr": "27FD483E",
+            "f_ctrl": {},
+            "f_cnt": 8
+          },
+          "f_port": 2,
+          "frm_payload": "k0CoTOq+FfCs7zzR",
+          "full_f_cnt": 8
+        }
+      },
+      "settings": {
+        "data_rate": {
+          "lora": {
+            "bandwidth": 500000,
+            "spreading_factor": 8,
+            "coding_rate": "4/5"
+          }
+        },
+        "frequency": "904600000",
+        "timestamp": 3920400303,
+        "time": "2026-02-23T05:35:08.631734Z"
+      },
+      "rx_metadata": [
+        {
+          "gateway_ids": {
+            "gateway_id": "henkecove",
+            "eui": "A84041FFFF205BD4"
+          },
+          "time": "2026-02-23T05:35:08.631734Z",
+          "timestamp": 3920400303,
+          "rssi": -108,
+          "channel_rssi": -108,
+          "snr": -12,
+          "uplink_token": "ChcKFQoJaGVua2Vjb3ZlEgioQEH//yBb1BCvn7LNDhoMCIzO78wGEPTcmb8CIJiHxdCMuLoB",
+          "channel_index": 8,
+          "received_at": "2026-02-23T05:35:08.636143096Z"
+        }
+      ],
+      "received_at": "2026-02-23T05:35:08.670287981Z",
+      "correlation_ids": [
+        "gs:uplink:01KJ4FX2BX56GSFB25FHA54H62"
+      ],
+      "device_channel_index": 65,
+      "consumed_airtime": "0.028288s"
+    },
+    "correlation_ids": [
+      "gs:uplink:01KJ4FX2BX56GSFB25FHA54H62"
+    ],
+    "origin": "ip-10-22-15-7.us-west-1.compute.internal",
+    "context": {
+      "tenant-id": "CgtmbXNpb3RjbG91ZA=="
+    },
+    "visibility": {
+      "rights": [
+        "RIGHT_APPLICATION_TRAFFIC_READ"
+      ]
+    },
+    "unique_id": "01KJ4FX2C3Y2WGDS28ACK73EWB"
+  },
+  {
+    "name": "as.down.data.forward",
+    "time": "2026-02-23T05:33:12.739113024Z",
+    "identifiers": [
+      {
+        "device_ids": {
+          "device_id": "lora-wled-ca48",
+          "application_ids": {
+            "application_id": "henke"
+          },
+          "dev_eui": "0000CCC63C43CA48",
+          "join_eui": "0000000000000000"
+        }
+      }
+    ],
+    "data": {
+      "@type": "type.googleapis.com/ttn.lorawan.v3.ApplicationDownlink",
+      "session_key_id": "AZyI65MpWZtU9LsITKwu/A==",
+      "f_port": 1,
+      "f_cnt": 5,
+      "frm_payload": "Fw==",
+      "correlation_ids": [
+        "as:downlink:01KJ4FSH4VPZKJW792FEP97A60",
+        "rpc:/ttn.lorawan.v3.AppAs/DownlinkQueueReplace:76dd00a4-8040-4b50-9db1-bca1f6881348"
+      ]
+    },
+    "correlation_ids": [
+      "as:downlink:01KJ4FSH4VPZKJW792FEP97A60",
+      "rpc:/ttn.lorawan.v3.AppAs/DownlinkQueueReplace:76dd00a4-8040-4b50-9db1-bca1f6881348"
+    ],
+    "origin": "ip-10-22-15-251.us-west-1.compute.internal",
+    "context": {
+      "tenant-id": "CgtmbXNpb3RjbG91ZA=="
+    },
+    "visibility": {
+      "rights": [
+        "RIGHT_APPLICATION_TRAFFIC_READ"
+      ]
+    },
+    "authentication": {
+      "type": "Bearer",
+      "token_type": "AccessToken",
+      "token_id": "ISDB3LUN4HC5XR6EFDE32OEF5XEWELBW24Q6ENY"
+    },
+    "remote_ip": "70.112.121.77",
+    "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36",
+    "unique_id": "01KJ4FSH53YFP8BC01CE1BDMJF"
+  },
+  {
+    "name": "as.down.data.receive",
+    "time": "2026-02-23T05:33:12.734713305Z",
+    "identifiers": [
+      {
+        "device_ids": {
+          "device_id": "lora-wled-ca48",
+          "application_ids": {
+            "application_id": "henke"
+          },
+          "dev_eui": "0000CCC63C43CA48",
+          "join_eui": "0000000000000000"
+        }
+      }
+    ],
+    "data": {
+      "@type": "type.googleapis.com/ttn.lorawan.v3.ApplicationDownlink",
+      "f_port": 1,
+      "frm_payload": "qg==",
+      "correlation_ids": [
+        "as:downlink:01KJ4FSH4VPZKJW792FEP97A60",
+        "rpc:/ttn.lorawan.v3.AppAs/DownlinkQueueReplace:76dd00a4-8040-4b50-9db1-bca1f6881348"
+      ]
+    },
+    "correlation_ids": [
+      "as:downlink:01KJ4FSH4VPZKJW792FEP97A60",
+      "rpc:/ttn.lorawan.v3.AppAs/DownlinkQueueReplace:76dd00a4-8040-4b50-9db1-bca1f6881348"
+    ],
+    "origin": "ip-10-22-15-251.us-west-1.compute.internal",
+    "context": {
+      "tenant-id": "CgtmbXNpb3RjbG91ZA=="
+    },
+    "visibility": {
+      "rights": [
+        "RIGHT_APPLICATION_TRAFFIC_READ"
+      ]
+    },
+    "authentication": {
+      "type": "Bearer",
+      "token_type": "AccessToken",
+      "token_id": "ISDB3LUN4HC5XR6EFDE32OEF5XEWELBW24Q6ENY"
+    },
+    "remote_ip": "70.112.121.77",
+    "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36",
+    "unique_id": "01KJ4FSH4Y6VY1M2Q402TD1CWJ"
+  },
+  {
+    "name": "as.down.data.forward",
+    "time": "2026-02-23T05:30:29.394728194Z",
+    "identifiers": [
+      {
+        "device_ids": {
+          "device_id": "lora-wled-ca48",
+          "application_ids": {
+            "application_id": "henke"
+          },
+          "dev_eui": "0000CCC63C43CA48",
+          "join_eui": "0000000000000000"
+        }
+      }
+    ],
+    "data": {
+      "@type": "type.googleapis.com/ttn.lorawan.v3.ApplicationDownlink",
+      "session_key_id": "AZyI65MpWZtU9LsITKwu/A==",
+      "f_port": 1,
+      "f_cnt": 4,
+      "frm_payload": "UA==",
+      "correlation_ids": [
+        "as:downlink:01KJ4FMHMBBTE9XV6ESFEZCDMY",
+        "rpc:/ttn.lorawan.v3.AppAs/DownlinkQueueReplace:e28e701f-80d3-440d-8d38-2ef4cb5b800c"
+      ]
+    },
+    "correlation_ids": [
+      "as:downlink:01KJ4FMHMBBTE9XV6ESFEZCDMY",
+      "rpc:/ttn.lorawan.v3.AppAs/DownlinkQueueReplace:e28e701f-80d3-440d-8d38-2ef4cb5b800c"
+    ],
+    "origin": "ip-10-22-14-101.us-west-1.compute.internal",
+    "context": {
+      "tenant-id": "CgtmbXNpb3RjbG91ZA=="
+    },
+    "visibility": {
+      "rights": [
+        "RIGHT_APPLICATION_TRAFFIC_READ"
+      ]
+    },
+    "authentication": {
+      "type": "Bearer",
+      "token_type": "AccessToken",
+      "token_id": "ISDB3LUN4HC5XR6EFDE32OEF5XEWELBW24Q6ENY"
+    },
+    "remote_ip": "70.112.121.77",
+    "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36",
+    "unique_id": "01KJ4FMHMJ1V4X6ASGVEHRE60A"
+  },
+  {
+    "name": "as.down.data.receive",
+    "time": "2026-02-23T05:30:29.389869510Z",
+    "identifiers": [
+      {
+        "device_ids": {
+          "device_id": "lora-wled-ca48",
+          "application_ids": {
+            "application_id": "henke"
+          },
+          "dev_eui": "0000CCC63C43CA48",
+          "join_eui": "0000000000000000"
+        }
+      }
+    ],
+    "data": {
+      "@type": "type.googleapis.com/ttn.lorawan.v3.ApplicationDownlink",
+      "f_port": 1,
+      "frm_payload": "qg==",
+      "correlation_ids": [
+        "as:downlink:01KJ4FMHMBBTE9XV6ESFEZCDMY",
+        "rpc:/ttn.lorawan.v3.AppAs/DownlinkQueueReplace:e28e701f-80d3-440d-8d38-2ef4cb5b800c"
+      ]
+    },
+    "correlation_ids": [
+      "as:downlink:01KJ4FMHMBBTE9XV6ESFEZCDMY",
+      "rpc:/ttn.lorawan.v3.AppAs/DownlinkQueueReplace:e28e701f-80d3-440d-8d38-2ef4cb5b800c"
+    ],
+    "origin": "ip-10-22-14-101.us-west-1.compute.internal",
+    "context": {
+      "tenant-id": "CgtmbXNpb3RjbG91ZA=="
+    },
+    "visibility": {
+      "rights": [
+        "RIGHT_APPLICATION_TRAFFIC_READ"
+      ]
+    },
+    "authentication": {
+      "type": "Bearer",
+      "token_type": "AccessToken",
+      "token_id": "ISDB3LUN4HC5XR6EFDE32OEF5XEWELBW24Q6ENY"
+    },
+    "remote_ip": "70.112.121.77",
+    "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36",
+    "unique_id": "01KJ4FMHMD74237ZYBNXHC245T"
+  },
+  {
+    "name": "as.down.data.forward",
+    "time": "2026-02-23T05:30:05.166291851Z",
+    "identifiers": [
+      {
+        "device_ids": {
+          "device_id": "lora-wled-ca48",
+          "application_ids": {
+            "application_id": "henke"
+          },
+          "dev_eui": "0000CCC63C43CA48",
+          "join_eui": "0000000000000000"
+        }
+      }
+    ],
+    "data": {
+      "@type": "type.googleapis.com/ttn.lorawan.v3.ApplicationDownlink",
+      "session_key_id": "AZyI65MpWZtU9LsITKwu/A==",
+      "f_port": 1,
+      "f_cnt": 3,
+      "frm_payload": "lQ==",
+      "correlation_ids": [
+        "as:downlink:01KJ4FKSZ88EM3Q99HS55BR9H4",
+        "rpc:/ttn.lorawan.v3.AppAs/DownlinkQueueReplace:4fca7e76-d6ce-4d95-9c33-f80d73c2e3bb"
+      ]
+    },
+    "correlation_ids": [
+      "as:downlink:01KJ4FKSZ88EM3Q99HS55BR9H4",
+      "rpc:/ttn.lorawan.v3.AppAs/DownlinkQueueReplace:4fca7e76-d6ce-4d95-9c33-f80d73c2e3bb"
+    ],
+    "origin": "ip-10-22-14-101.us-west-1.compute.internal",
+    "context": {
+      "tenant-id": "CgtmbXNpb3RjbG91ZA=="
+    },
+    "visibility": {
+      "rights": [
+        "RIGHT_APPLICATION_TRAFFIC_READ"
+      ]
+    },
+    "authentication": {
+      "type": "Bearer",
+      "token_type": "AccessToken",
+      "token_id": "ISDB3LUN4HC5XR6EFDE32OEF5XEWELBW24Q6ENY"
+    },
+    "remote_ip": "70.112.121.77",
+    "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36",
+    "unique_id": "01KJ4FKSZESCNPHF8DJQCQ4XCM"
+  },
+  {
+    "name": "as.down.data.receive",
+    "time": "2026-02-23T05:30:05.161977067Z",
+    "identifiers": [
+      {
+        "device_ids": {
+          "device_id": "lora-wled-ca48",
+          "application_ids": {
+            "application_id": "henke"
+          },
+          "dev_eui": "0000CCC63C43CA48",
+          "join_eui": "0000000000000000"
+        }
+      }
+    ],
+    "data": {
+      "@type": "type.googleapis.com/ttn.lorawan.v3.ApplicationDownlink",
+      "f_port": 1,
+      "frm_payload": "qg==",
+      "correlation_ids": [
+        "as:downlink:01KJ4FKSZ88EM3Q99HS55BR9H4",
+        "rpc:/ttn.lorawan.v3.AppAs/DownlinkQueueReplace:4fca7e76-d6ce-4d95-9c33-f80d73c2e3bb"
+      ]
+    },
+    "correlation_ids": [
+      "as:downlink:01KJ4FKSZ88EM3Q99HS55BR9H4",
+      "rpc:/ttn.lorawan.v3.AppAs/DownlinkQueueReplace:4fca7e76-d6ce-4d95-9c33-f80d73c2e3bb"
+    ],
+    "origin": "ip-10-22-14-101.us-west-1.compute.internal",
+    "context": {
+      "tenant-id": "CgtmbXNpb3RjbG91ZA=="
+    },
+    "visibility": {
+      "rights": [
+        "RIGHT_APPLICATION_TRAFFIC_READ"
+      ]
+    },
+    "authentication": {
+      "type": "Bearer",
+      "token_type": "AccessToken",
+      "token_id": "ISDB3LUN4HC5XR6EFDE32OEF5XEWELBW24Q6ENY"
+    },
+    "remote_ip": "70.112.121.77",
+    "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36",
+    "unique_id": "01KJ4FKSZ927MWB7S3582MEA55"
+  },
+  {
+    "time": "2026-02-23T05:29:36.624Z",
+    "name": "synthetic.status.reconnected",
+    "isError": false,
+    "isSynthetic": true,
+    "unique_id": "synthetic.1771824576624"
+  },
+  {
+    "time": "2026-02-23T05:29:30.870Z",
+    "name": "synthetic.status.closed",
+    "isError": false,
+    "isSynthetic": true,
+    "unique_id": "synthetic.1771824570870"
+  },
+  {
+    "name": "as.down.data.forward",
+    "time": "2026-02-23T05:15:53.341328937Z",
+    "identifiers": [
+      {
+        "device_ids": {
+          "device_id": "lora-wled-ca48",
+          "application_ids": {
+            "application_id": "henke"
+          },
+          "dev_eui": "0000CCC63C43CA48",
+          "join_eui": "0000000000000000"
+        }
+      }
+    ],
+    "data": {
+      "@type": "type.googleapis.com/ttn.lorawan.v3.ApplicationDownlink",
+      "session_key_id": "AZyI65MpWZtU9LsITKwu/A==",
+      "f_port": 1,
+      "f_cnt": 2,
+      "frm_payload": "bw==",
+      "correlation_ids": [
+        "as:downlink:01KJ4EST3NSVVTZ7DF60QXQ0DG",
+        "rpc:/ttn.lorawan.v3.AppAs/DownlinkQueueReplace:89f68aa1-ecb9-4bc7-b306-c83b346303a8"
+      ]
+    },
+    "correlation_ids": [
+      "as:downlink:01KJ4EST3NSVVTZ7DF60QXQ0DG",
+      "rpc:/ttn.lorawan.v3.AppAs/DownlinkQueueReplace:89f68aa1-ecb9-4bc7-b306-c83b346303a8"
+    ],
+    "origin": "ip-10-22-14-101.us-west-1.compute.internal",
+    "context": {
+      "tenant-id": "CgtmbXNpb3RjbG91ZA=="
+    },
+    "visibility": {
+      "rights": [
+        "RIGHT_APPLICATION_TRAFFIC_READ"
+      ]
+    },
+    "authentication": {
+      "type": "Bearer",
+      "token_type": "AccessToken",
+      "token_id": "ISDB3LUN4HC5XR6EFDE32OEF5XEWELBW24Q6ENY"
+    },
+    "remote_ip": "70.112.121.77",
+    "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36",
+    "unique_id": "01KJ4EST3XK952C9HYMYY0KFWM"
+  },
+  {
+    "name": "as.down.data.receive",
+    "time": "2026-02-23T05:15:53.335758176Z",
+    "identifiers": [
+      {
+        "device_ids": {
+          "device_id": "lora-wled-ca48",
+          "application_ids": {
+            "application_id": "henke"
+          },
+          "dev_eui": "0000CCC63C43CA48",
+          "join_eui": "0000000000000000"
+        }
+      }
+    ],
+    "data": {
+      "@type": "type.googleapis.com/ttn.lorawan.v3.ApplicationDownlink",
+      "f_port": 1,
+      "frm_payload": "qg==",
+      "correlation_ids": [
+        "as:downlink:01KJ4EST3NSVVTZ7DF60QXQ0DG",
+        "rpc:/ttn.lorawan.v3.AppAs/DownlinkQueueReplace:89f68aa1-ecb9-4bc7-b306-c83b346303a8"
+      ]
+    },
+    "correlation_ids": [
+      "as:downlink:01KJ4EST3NSVVTZ7DF60QXQ0DG",
+      "rpc:/ttn.lorawan.v3.AppAs/DownlinkQueueReplace:89f68aa1-ecb9-4bc7-b306-c83b346303a8"
+    ],
+    "origin": "ip-10-22-14-101.us-west-1.compute.internal",
+    "context": {
+      "tenant-id": "CgtmbXNpb3RjbG91ZA=="
+    },
+    "visibility": {
+      "rights": [
+        "RIGHT_APPLICATION_TRAFFIC_READ"
+      ]
+    },
+    "authentication": {
+      "type": "Bearer",
+      "token_type": "AccessToken",
+      "token_id": "ISDB3LUN4HC5XR6EFDE32OEF5XEWELBW24Q6ENY"
+    },
+    "remote_ip": "70.112.121.77",
+    "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36",
+    "unique_id": "01KJ4EST3Q25GS9AACKF4KE3Q6"
+  },
+  {
+    "name": "as.down.data.forward",
+    "time": "2026-02-23T05:15:24.007072931Z",
+    "identifiers": [
+      {
+        "device_ids": {
+          "device_id": "lora-wled-ca48",
+          "application_ids": {
+            "application_id": "henke"
+          },
+          "dev_eui": "0000CCC63C43CA48",
+          "join_eui": "0000000000000000"
+        }
+      }
+    ],
+    "data": {
+      "@type": "type.googleapis.com/ttn.lorawan.v3.ApplicationDownlink",
+      "session_key_id": "AZyI65MpWZtU9LsITKwu/A==",
+      "f_port": 1,
+      "f_cnt": 1,
+      "frm_payload": "Qw==",
+      "correlation_ids": [
+        "as:downlink:01KJ4ERXF0C2JRHR7DK27171FC",
+        "rpc:/ttn.lorawan.v3.AppAs/DownlinkQueueReplace:d9d3cc78-b4e2-44e7-81e8-c40ec8567c91"
+      ]
+    },
+    "correlation_ids": [
+      "as:downlink:01KJ4ERXF0C2JRHR7DK27171FC",
+      "rpc:/ttn.lorawan.v3.AppAs/DownlinkQueueReplace:d9d3cc78-b4e2-44e7-81e8-c40ec8567c91"
+    ],
+    "origin": "ip-10-22-15-251.us-west-1.compute.internal",
+    "context": {
+      "tenant-id": "CgtmbXNpb3RjbG91ZA=="
+    },
+    "visibility": {
+      "rights": [
+        "RIGHT_APPLICATION_TRAFFIC_READ"
+      ]
+    },
+    "authentication": {
+      "type": "Bearer",
+      "token_type": "AccessToken",
+      "token_id": "ISDB3LUN4HC5XR6EFDE32OEF5XEWELBW24Q6ENY"
+    },
+    "remote_ip": "70.112.121.77",
+    "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36",
+    "unique_id": "01KJ4ERXF72BEWK2CS5WRCS767"
+  },
+  {
+    "name": "as.down.data.receive",
+    "time": "2026-02-23T05:15:24.002626399Z",
+    "identifiers": [
+      {
+        "device_ids": {
+          "device_id": "lora-wled-ca48",
+          "application_ids": {
+            "application_id": "henke"
+          },
+          "dev_eui": "0000CCC63C43CA48",
+          "join_eui": "0000000000000000"
+        }
+      }
+    ],
+    "data": {
+      "@type": "type.googleapis.com/ttn.lorawan.v3.ApplicationDownlink",
+      "f_port": 1,
+      "frm_payload": "qg==",
+      "correlation_ids": [
+        "as:downlink:01KJ4ERXF0C2JRHR7DK27171FC",
+        "rpc:/ttn.lorawan.v3.AppAs/DownlinkQueueReplace:d9d3cc78-b4e2-44e7-81e8-c40ec8567c91"
+      ]
+    },
+    "correlation_ids": [
+      "as:downlink:01KJ4ERXF0C2JRHR7DK27171FC",
+      "rpc:/ttn.lorawan.v3.AppAs/DownlinkQueueReplace:d9d3cc78-b4e2-44e7-81e8-c40ec8567c91"
+    ],
+    "origin": "ip-10-22-15-251.us-west-1.compute.internal",
+    "context": {
+      "tenant-id": "CgtmbXNpb3RjbG91ZA=="
+    },
+    "visibility": {
+      "rights": [
+        "RIGHT_APPLICATION_TRAFFIC_READ"
+      ]
+    },
+    "authentication": {
+      "type": "Bearer",
+      "token_type": "AccessToken",
+      "token_id": "ISDB3LUN4HC5XR6EFDE32OEF5XEWELBW24Q6ENY"
+    },
+    "remote_ip": "70.112.121.77",
+    "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36",
+    "unique_id": "01KJ4ERXF2KS91B7TMX9QH1SCB"
+  },
+  {
+    "time": "2026-02-23T05:14:29.659Z",
+    "name": "synthetic.status.reconnected",
+    "isError": false,
+    "isSynthetic": true,
+    "unique_id": "synthetic.1771823669659"
+  },
+  {
+    "name": "ns.down.transmission.success",
+    "time": "2026-02-23T05:14:27.693502085Z",
+    "identifiers": [
+      {
+        "device_ids": {
+          "device_id": "lora-wled-ca48",
+          "application_ids": {
+            "application_id": "henke"
+          },
+          "dev_eui": "0000CCC63C43CA48",
+          "join_eui": "0000000000000000"
+        }
+      }
+    ],
+    "data": {
+      "@type": "type.googleapis.com/ttn.lorawan.v3.DownlinkMessage",
+      "payload": {
+        "m_hdr": {
+          "m_type": "JOIN_ACCEPT"
+        },
+        "join_accept_payload": {
+          "net_id": "000013",
+          "dev_addr": "27FD483E",
+          "dl_settings": {
+            "rx2_dr": 8
+          },
+          "rx_delay": 5,
+          "cf_list": {
+            "type": "CHANNEL_MASKS",
+            "ch_masks": [
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              true,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false
+            ]
+          }
+        }
+      },
+      "end_device_ids": {
+        "device_id": "lora-wled-ca48",
+        "application_ids": {
+          "application_id": "henke"
+        },
+        "dev_eui": "0000CCC63C43CA48",
+        "join_eui": "0000000000000000"
+      },
+      "request": {
+        "downlink_paths": [
+          {
+            "uplink_token": "ChcKFQoJaGVua2Vjb3ZlEgioQEH//yBb1BCEy+D8CRoMCLHE78wGEKmtv4cDIKCXytL2k7oB"
+          }
+        ],
+        "rx1_delay": 5,
+        "rx1_data_rate": {
+          "lora": {
+            "bandwidth": 500000,
+            "spreading_factor": 10,
+            "coding_rate": "4/5"
+          }
+        },
+        "rx1_frequency": "924500000",
+        "rx2_data_rate": {
+          "lora": {
+            "bandwidth": 500000,
+            "spreading_factor": 12,
+            "coding_rate": "4/5"
+          }
+        },
+        "rx2_frequency": "923300000",
+        "priority": "HIGHEST",
+        "frequency_plan_id": "US_902_928_FSB_2"
+      },
+      "correlation_ids": [
+        "gs:tx_ack:01KJ4EQ6FBFAWACQBVNPXVXRA2",
+        "gs:uplink:01KJ4EQ4MX50N66EQG9X9QYSBN",
+        "ns:downlink:01KJ4EQ6D8W2DVPK4KT8EV2K02",
+        "ns:transmission:01KJ4EQ6D8G82Z1BV8KAB2HHRV"
+      ],
+      "session_key_id": "AZyI65MpWZtU9LsITKwu/A=="
+    },
+    "correlation_ids": [
+      "gs:tx_ack:01KJ4EQ6FBFAWACQBVNPXVXRA2",
+      "gs:uplink:01KJ4EQ4MX50N66EQG9X9QYSBN",
+      "ns:downlink:01KJ4EQ6D8W2DVPK4KT8EV2K02",
+      "ns:transmission:01KJ4EQ6D8G82Z1BV8KAB2HHRV"
+    ],
+    "origin": "ip-10-22-14-115.us-west-1.compute.internal",
+    "context": {
+      "tenant-id": "CgtmbXNpb3RjbG91ZA=="
+    },
+    "visibility": {
+      "rights": [
+        "RIGHT_APPLICATION_TRAFFIC_READ"
+      ]
+    },
+    "unique_id": "01KJ4EQ6FDN5TDE902KPZ2PJ47"
+  },
+  {
+    "name": "ns.up.join.accept.forward",
+    "time": "2026-02-23T05:14:27.636205187Z",
+    "identifiers": [
+      {
+        "device_ids": {
+          "device_id": "lora-wled-ca48",
+          "application_ids": {
+            "application_id": "henke"
+          },
+          "dev_eui": "0000CCC63C43CA48",
+          "join_eui": "0000000000000000",
+          "dev_addr": "27FD483E"
+        }
+      }
+    ],
+    "data": {
+      "@type": "type.googleapis.com/ttn.lorawan.v3.ApplicationUp",
+      "end_device_ids": {
+        "device_id": "lora-wled-ca48",
+        "application_ids": {
+          "application_id": "henke"
+        },
+        "dev_eui": "0000CCC63C43CA48",
+        "join_eui": "0000000000000000",
+        "dev_addr": "27FD483E"
+      },
+      "correlation_ids": [
+        "gs:uplink:01KJ4EQ4MX50N66EQG9X9QYSBN"
+      ],
+      "join_accept": {
+        "session_key_id": "AZyI65MpWZtU9LsITKwu/A==",
+        "received_at": "2026-02-23T05:14:25.821815892Z"
+      }
+    },
+    "correlation_ids": [
+      "gs:uplink:01KJ4EQ4MX50N66EQG9X9QYSBN"
+    ],
+    "origin": "ip-10-22-15-7.us-west-1.compute.internal",
+    "context": {
+      "tenant-id": "CgtmbXNpb3RjbG91ZA=="
+    },
+    "visibility": {
+      "rights": [
+        "RIGHT_APPLICATION_TRAFFIC_READ"
+      ]
+    },
+    "unique_id": "01KJ4EQ6DM8H0MB26FGG58378N"
+  },
+  {
+    "name": "as.up.join.forward",
+    "time": "2026-02-23T05:14:27.635979291Z",
+    "identifiers": [
+      {
+        "device_ids": {
+          "device_id": "lora-wled-ca48",
+          "application_ids": {
+            "application_id": "henke"
+          },
+          "dev_eui": "0000CCC63C43CA48",
+          "join_eui": "0000000000000000",
+          "dev_addr": "27FD483E"
+        }
+      }
+    ],
+    "data": {
+      "@type": "type.googleapis.com/ttn.lorawan.v3.ApplicationUp",
+      "end_device_ids": {
+        "device_id": "lora-wled-ca48",
+        "application_ids": {
+          "application_id": "henke"
+        },
+        "dev_eui": "0000CCC63C43CA48",
+        "join_eui": "0000000000000000",
+        "dev_addr": "27FD483E"
+      },
+      "correlation_ids": [
+        "gs:uplink:01KJ4EQ4MX50N66EQG9X9QYSBN"
+      ],
+      "received_at": "2026-02-23T05:14:27.628270309Z",
+      "join_accept": {
+        "session_key_id": "AZyI65MpWZtU9LsITKwu/A==",
+        "received_at": "2026-02-23T05:14:25.821815892Z"
+      }
+    },
+    "correlation_ids": [
+      "gs:uplink:01KJ4EQ4MX50N66EQG9X9QYSBN"
+    ],
+    "origin": "ip-10-22-14-101.us-west-1.compute.internal",
+    "context": {
+      "tenant-id": "CgtmbXNpb3RjbG91ZA=="
+    },
+    "visibility": {
+      "rights": [
+        "RIGHT_APPLICATION_TRAFFIC_READ"
+      ]
+    },
+    "unique_id": "01KJ4EQ6DKWKGR59CV2Z8MPHQF"
+  },
+  {
+    "name": "as.up.join.receive",
+    "time": "2026-02-23T05:14:27.629386102Z",
+    "identifiers": [
+      {
+        "device_ids": {
+          "device_id": "lora-wled-ca48",
+          "application_ids": {
+            "application_id": "henke"
+          },
+          "dev_eui": "0000CCC63C43CA48",
+          "join_eui": "0000000000000000",
+          "dev_addr": "27FD483E"
+        }
+      }
+    ],
+    "correlation_ids": [
+      "gs:uplink:01KJ4EQ4MX50N66EQG9X9QYSBN"
+    ],
+    "origin": "ip-10-22-14-101.us-west-1.compute.internal",
+    "context": {
+      "tenant-id": "CgtmbXNpb3RjbG91ZA=="
+    },
+    "visibility": {
+      "rights": [
+        "RIGHT_APPLICATION_TRAFFIC_READ"
+      ]
+    },
+    "unique_id": "01KJ4EQ6DDJ71QEEETG40XGV53"
+  },
+  {
+    "name": "ns.down.join.schedule.success",
+    "time": "2026-02-23T05:14:27.626555084Z",
+    "identifiers": [
+      {
+        "device_ids": {
+          "device_id": "lora-wled-ca48",
+          "application_ids": {
+            "application_id": "henke"
+          },
+          "dev_eui": "0000CCC63C43CA48",
+          "join_eui": "0000000000000000"
+        }
+      }
+    ],
+    "data": {
+      "@type": "type.googleapis.com/ttn.lorawan.v3.ScheduleDownlinkResponse",
+      "delay": "3.195947466s",
+      "downlink_path": {
+        "fixed": {
+          "gateway_ids": {
+            "gateway_id": "henkecove",
+            "eui": "A84041FFFF205BD4"
+          }
+        }
+      },
+      "rx1": true
+    },
+    "correlation_ids": [
+      "gs:uplink:01KJ4EQ4MX50N66EQG9X9QYSBN",
+      "ns:downlink:01KJ4EQ6D8W2DVPK4KT8EV2K02",
+      "ns:transmission:01KJ4EQ6D8G82Z1BV8KAB2HHRV"
+    ],
+    "origin": "ip-10-22-15-7.us-west-1.compute.internal",
+    "context": {
+      "tenant-id": "CgtmbXNpb3RjbG91ZA=="
+    },
+    "visibility": {
+      "rights": [
+        "RIGHT_APPLICATION_TRAFFIC_READ"
+      ]
+    },
+    "unique_id": "01KJ4EQ6DA0JVD3DSFX8SSAEQ3"
+  },
+  {
+    "name": "ns.down.join.schedule.attempt",
+    "time": "2026-02-23T05:14:27.624230865Z",
+    "identifiers": [
+      {
+        "device_ids": {
+          "device_id": "lora-wled-ca48",
+          "application_ids": {
+            "application_id": "henke"
+          },
+          "dev_eui": "0000CCC63C43CA48",
+          "join_eui": "0000000000000000"
+        }
+      }
+    ],
+    "data": {
+      "@type": "type.googleapis.com/ttn.lorawan.v3.DownlinkMessage",
+      "raw_payload": "IIi0A5CbDyjfh1iJduuYWl4PcUeBDgnDCZQ3/PsNgwAk",
+      "payload": {
+        "m_hdr": {
+          "m_type": "JOIN_ACCEPT"
+        },
+        "join_accept_payload": {
+          "net_id": "000013",
+          "dev_addr": "27FD483E",
+          "dl_settings": {
+            "rx2_dr": 8
+          },
+          "rx_delay": 5,
+          "cf_list": {
+            "type": "CHANNEL_MASKS",
+            "ch_masks": [
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              true,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false
+            ]
+          }
+        }
+      },
+      "request": {
+        "downlink_paths": [
+          {
+            "uplink_token": "ChcKFQoJaGVua2Vjb3ZlEgioQEH//yBb1BCEy+D8CRoMCLHE78wGEKmtv4cDIKCXytL2k7oB"
+          }
+        ],
+        "rx1_delay": 5,
+        "rx1_data_rate": {
+          "lora": {
+            "bandwidth": 500000,
+            "spreading_factor": 10,
+            "coding_rate": "4/5"
+          }
+        },
+        "rx1_frequency": "924500000",
+        "rx2_data_rate": {
+          "lora": {
+            "bandwidth": 500000,
+            "spreading_factor": 12,
+            "coding_rate": "4/5"
+          }
+        },
+        "rx2_frequency": "923300000",
+        "priority": "HIGHEST",
+        "frequency_plan_id": "US_902_928_FSB_2"
+      },
+      "correlation_ids": [
+        "gs:uplink:01KJ4EQ4MX50N66EQG9X9QYSBN",
+        "ns:downlink:01KJ4EQ6D8W2DVPK4KT8EV2K02",
+        "ns:transmission:01KJ4EQ6D8G82Z1BV8KAB2HHRV"
+      ]
+    },
+    "correlation_ids": [
+      "gs:uplink:01KJ4EQ4MX50N66EQG9X9QYSBN",
+      "ns:downlink:01KJ4EQ6D8W2DVPK4KT8EV2K02",
+      "ns:transmission:01KJ4EQ6D8G82Z1BV8KAB2HHRV"
+    ],
+    "origin": "ip-10-22-15-7.us-west-1.compute.internal",
+    "context": {
+      "tenant-id": "CgtmbXNpb3RjbG91ZA=="
+    },
+    "visibility": {
+      "rights": [
+        "RIGHT_APPLICATION_TRAFFIC_READ"
+      ]
+    },
+    "unique_id": "01KJ4EQ6D8G84NGV57RXX03RB9"
+  },
+  {
+    "name": "ns.up.join.process",
+    "time": "2026-02-23T05:14:26.025652642Z",
+    "identifiers": [
+      {
+        "device_ids": {
+          "device_id": "lora-wled-ca48",
+          "application_ids": {
+            "application_id": "henke"
+          },
+          "dev_eui": "0000CCC63C43CA48",
+          "join_eui": "0000000000000000"
+        }
+      }
+    ],
+    "data": {
+      "@type": "type.googleapis.com/ttn.lorawan.v3.UplinkMessage",
+      "raw_payload": "AAAAAAAAAAAASMpDPMbMAABfpazIq1k=",
+      "payload": {
+        "m_hdr": {},
+        "mic": "rMirWQ==",
+        "join_request_payload": {
+          "join_eui": "0000000000000000",
+          "dev_eui": "0000CCC63C43CA48",
+          "dev_nonce": "A55F"
+        }
+      },
+      "settings": {
+        "data_rate": {
+          "lora": {
+            "bandwidth": 125000,
+            "spreading_factor": 10,
+            "coding_rate": "4/5"
+          }
+        },
+        "frequency": "904300000",
+        "timestamp": 2677548420,
+        "time": "2026-02-23T05:14:25.787856Z"
+      },
+      "rx_metadata": [
+        {
+          "gateway_ids": {
+            "gateway_id": "henkecove",
+            "eui": "A84041FFFF205BD4"
+          },
+          "time": "2026-02-23T05:14:25.787856Z",
+          "timestamp": 2677548420,
+          "rssi": -113,
+          "channel_rssi": -113,
+          "snr": -8,
+          "uplink_token": "ChcKFQoJaGVua2Vjb3ZlEgioQEH//yBb1BCEy+D8CRoMCLHE78wGEKmtv4cDIKCXytL2k7oB",
+          "channel_index": 2,
+          "received_at": "2026-02-23T05:14:25.788941317Z"
+        }
+      ],
+      "received_at": "2026-02-23T05:14:25.821815892Z",
+      "correlation_ids": [
+        "gs:uplink:01KJ4EQ4MX50N66EQG9X9QYSBN"
+      ],
+      "device_channel_index": 10,
+      "consumed_airtime": "0.370688s"
+    },
+    "correlation_ids": [
+      "gs:uplink:01KJ4EQ4MX50N66EQG9X9QYSBN"
+    ],
+    "origin": "ip-10-22-14-115.us-west-1.compute.internal",
+    "context": {
+      "tenant-id": "CgtmbXNpb3RjbG91ZA=="
+    },
+    "visibility": {
+      "rights": [
+        "RIGHT_APPLICATION_TRAFFIC_READ"
+      ]
+    },
+    "unique_id": "01KJ4EQ4V9A54Q2KY881NAPXYB"
+  },
+  {
+    "name": "ns.up.join.cluster.success",
+    "time": "2026-02-23T05:14:25.973486421Z",
+    "identifiers": [
+      {
+        "device_ids": {
+          "device_id": "lora-wled-ca48",
+          "application_ids": {
+            "application_id": "henke"
+          },
+          "dev_eui": "0000CCC63C43CA48",
+          "join_eui": "0000000000000000"
+        }
+      }
+    ],
+    "data": {
+      "@type": "type.googleapis.com/ttn.lorawan.v3.JoinResponse",
+      "raw_payload": "IIi0A5CbDyjfh1iJduuYWl4PcUeBDgnDCZQ3/PsNgwAk",
+      "session_keys": {
+        "session_key_id": "AZyI65MpWZtU9LsITKwu/A=="
+      }
+    },
+    "correlation_ids": [
+      "gs:uplink:01KJ4EQ4MX50N66EQG9X9QYSBN"
+    ],
+    "origin": "ip-10-22-14-115.us-west-1.compute.internal",
+    "context": {
+      "tenant-id": "CgtmbXNpb3RjbG91ZA=="
+    },
+    "visibility": {
+      "rights": [
+        "RIGHT_APPLICATION_TRAFFIC_READ"
+      ]
+    },
+    "unique_id": "01KJ4EQ4SN15SPHR5MCP5JDBYP"
+  },
+  {
+    "name": "js.join.accept",
+    "time": "2026-02-23T05:14:25.972916566Z",
+    "identifiers": [
+      {
+        "device_ids": {
+          "device_id": "lora-wled-ca48",
+          "application_ids": {
+            "application_id": "henke"
+          },
+          "dev_eui": "0000CCC63C43CA48",
+          "join_eui": "0000000000000000",
+          "dev_addr": "27FD483E"
+        }
+      }
+    ],
+    "origin": "ip-10-22-6-30.us-west-1.compute.internal",
+    "context": {
+      "tenant-id": "CgtmbXNpb3RjbG91ZA=="
+    },
+    "visibility": {
+      "rights": [
+        "RIGHT_APPLICATION_TRAFFIC_READ"
+      ]
+    },
+    "unique_id": "01KJ4EQ4SM6A7RBMKHGNGK8WK4"
+  },
+  {
+    "name": "ns.up.join.cluster.attempt",
+    "time": "2026-02-23T05:14:25.826592836Z",
+    "identifiers": [
+      {
+        "device_ids": {
+          "device_id": "lora-wled-ca48",
+          "application_ids": {
+            "application_id": "henke"
+          },
+          "dev_eui": "0000CCC63C43CA48",
+          "join_eui": "0000000000000000"
+        }
+      }
+    ],
+    "data": {
+      "@type": "type.googleapis.com/ttn.lorawan.v3.JoinRequest",
+      "raw_payload": "AAAAAAAAAAAASMpDPMbMAABfpazIq1k=",
+      "payload": {
+        "m_hdr": {},
+        "mic": "rMirWQ==",
+        "join_request_payload": {
+          "join_eui": "0000000000000000",
+          "dev_eui": "0000CCC63C43CA48",
+          "dev_nonce": "A55F"
+        }
+      },
+      "dev_addr": "27FD483E",
+      "selected_mac_version": "MAC_V1_0_3",
+      "net_id": "000013",
+      "downlink_settings": {
+        "rx2_dr": 8
+      },
+      "rx_delay": 5,
+      "cf_list": {
+        "type": "CHANNEL_MASKS",
+        "ch_masks": [
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          true,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false
+        ]
+      },
+      "correlation_ids": [
+        "gs:uplink:01KJ4EQ4MX50N66EQG9X9QYSBN"
+      ],
+      "consumed_airtime": "0.370688s"
+    },
+    "correlation_ids": [
+      "gs:uplink:01KJ4EQ4MX50N66EQG9X9QYSBN"
+    ],
+    "origin": "ip-10-22-14-115.us-west-1.compute.internal",
+    "context": {
+      "tenant-id": "CgtmbXNpb3RjbG91ZA=="
+    },
+    "visibility": {
+      "rights": [
+        "RIGHT_APPLICATION_TRAFFIC_READ"
+      ]
+    },
+    "unique_id": "01KJ4EQ4N2JF5MM9VM6BED0GKH"
+  },
+  {
+    "name": "ns.up.join.receive",
+    "time": "2026-02-23T05:14:25.826521710Z",
+    "identifiers": [
+      {
+        "device_ids": {
+          "device_id": "lora-wled-ca48",
+          "application_ids": {
+            "application_id": "henke"
+          },
+          "dev_eui": "0000CCC63C43CA48",
+          "join_eui": "0000000000000000"
+        }
+      }
+    ],
+    "data": {
+      "@type": "type.googleapis.com/ttn.lorawan.v3.UplinkMessage",
+      "raw_payload": "AAAAAAAAAAAASMpDPMbMAABfpazIq1k=",
+      "payload": {
+        "m_hdr": {},
+        "mic": "rMirWQ==",
+        "join_request_payload": {
+          "join_eui": "0000000000000000",
+          "dev_eui": "0000CCC63C43CA48",
+          "dev_nonce": "A55F"
+        }
+      },
+      "settings": {
+        "data_rate": {
+          "lora": {
+            "bandwidth": 125000,
+            "spreading_factor": 10,
+            "coding_rate": "4/5"
+          }
+        },
+        "frequency": "904300000",
+        "timestamp": 2677548420,
+        "time": "2026-02-23T05:14:25.787856Z"
+      },
+      "rx_metadata": [
+        {
+          "gateway_ids": {
+            "gateway_id": "henkecove",
+            "eui": "A84041FFFF205BD4"
+          },
+          "time": "2026-02-23T05:14:25.787856Z",
+          "timestamp": 2677548420,
+          "rssi": -113,
+          "channel_rssi": -113,
+          "snr": -8,
+          "uplink_token": "ChcKFQoJaGVua2Vjb3ZlEgioQEH//yBb1BCEy+D8CRoMCLHE78wGEKmtv4cDIKCXytL2k7oB",
+          "channel_index": 2,
+          "received_at": "2026-02-23T05:14:25.788941317Z"
+        }
+      ],
+      "received_at": "2026-02-23T05:14:25.821815892Z",
+      "correlation_ids": [
+        "gs:uplink:01KJ4EQ4MX50N66EQG9X9QYSBN"
+      ],
+      "device_channel_index": 10,
+      "consumed_airtime": "0.370688s"
+    },
+    "correlation_ids": [
+      "gs:uplink:01KJ4EQ4MX50N66EQG9X9QYSBN"
+    ],
+    "origin": "ip-10-22-14-115.us-west-1.compute.internal",
+    "context": {
+      "tenant-id": "CgtmbXNpb3RjbG91ZA=="
+    },
+    "visibility": {
+      "rights": [
+        "RIGHT_APPLICATION_TRAFFIC_READ"
+      ]
+    },
+    "unique_id": "01KJ4EQ4N2PRMVT214AVXSY2ZH"
+  },
+  {
+    "time": "2026-02-23T05:14:23.911Z",
+    "name": "synthetic.status.closed",
+    "isError": false,
+    "isSynthetic": true,
+    "unique_id": "synthetic.1771823663911"
+  },
+  {
+    "name": "as.down.data.forward",
+    "time": "2026-02-23T05:07:57.601790476Z",
+    "identifiers": [
+      {
+        "device_ids": {
+          "device_id": "lora-wled-ca48",
+          "application_ids": {
+            "application_id": "henke"
+          },
+          "dev_eui": "0000CCC63C43CA48",
+          "join_eui": "0000000000000000"
+        }
+      }
+    ],
+    "data": {
+      "@type": "type.googleapis.com/ttn.lorawan.v3.ApplicationDownlink",
+      "session_key_id": "AZyI3PlLGlvT3pDJuh0KTw==",
+      "f_port": 1,
+      "f_cnt": 4,
+      "frm_payload": "OA==",
+      "correlation_ids": [
+        "as:downlink:01KJ4EB9GT2SC2111QT4ENQ7S0",
+        "rpc:/ttn.lorawan.v3.AppAs/DownlinkQueueReplace:c12fb49d-ae68-4001-ab0d-fe9151f533e6"
+      ]
+    },
+    "correlation_ids": [
+      "as:downlink:01KJ4EB9GT2SC2111QT4ENQ7S0",
+      "rpc:/ttn.lorawan.v3.AppAs/DownlinkQueueReplace:c12fb49d-ae68-4001-ab0d-fe9151f533e6"
+    ],
+    "origin": "ip-10-22-15-251.us-west-1.compute.internal",
+    "context": {
+      "tenant-id": "CgtmbXNpb3RjbG91ZA=="
+    },
+    "visibility": {
+      "rights": [
+        "RIGHT_APPLICATION_TRAFFIC_READ"
+      ]
+    },
+    "authentication": {
+      "type": "Bearer",
+      "token_type": "AccessToken",
+      "token_id": "ISDB3LUN4HC5XR6EFDE32OEF5XEWELBW24Q6ENY"
+    },
+    "remote_ip": "70.112.121.77",
+    "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36",
+    "unique_id": "01KJ4EB9H1H4HBHJTF7B6AA8XV"
+  },
+  {
+    "name": "as.down.data.receive",
+    "time": "2026-02-23T05:07:57.597403234Z",
+    "identifiers": [
+      {
+        "device_ids": {
+          "device_id": "lora-wled-ca48",
+          "application_ids": {
+            "application_id": "henke"
+          },
+          "dev_eui": "0000CCC63C43CA48",
+          "join_eui": "0000000000000000"
+        }
+      }
+    ],
+    "data": {
+      "@type": "type.googleapis.com/ttn.lorawan.v3.ApplicationDownlink",
+      "f_port": 1,
+      "frm_payload": "qg==",
+      "correlation_ids": [
+        "as:downlink:01KJ4EB9GT2SC2111QT4ENQ7S0",
+        "rpc:/ttn.lorawan.v3.AppAs/DownlinkQueueReplace:c12fb49d-ae68-4001-ab0d-fe9151f533e6"
+      ]
+    },
+    "correlation_ids": [
+      "as:downlink:01KJ4EB9GT2SC2111QT4ENQ7S0",
+      "rpc:/ttn.lorawan.v3.AppAs/DownlinkQueueReplace:c12fb49d-ae68-4001-ab0d-fe9151f533e6"
+    ],
+    "origin": "ip-10-22-15-251.us-west-1.compute.internal",
+    "context": {
+      "tenant-id": "CgtmbXNpb3RjbG91ZA=="
+    },
+    "visibility": {
+      "rights": [
+        "RIGHT_APPLICATION_TRAFFIC_READ"
+      ]
+    },
+    "authentication": {
+      "type": "Bearer",
+      "token_type": "AccessToken",
+      "token_id": "ISDB3LUN4HC5XR6EFDE32OEF5XEWELBW24Q6ENY"
+    },
+    "remote_ip": "70.112.121.77",
+    "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36",
+    "unique_id": "01KJ4EB9GXHRFBT6HFH9AR4R3S"
+  },
+  {
+    "name": "as.down.data.forward",
+    "time": "2026-02-23T05:04:21.609133678Z",
+    "identifiers": [
+      {
+        "device_ids": {
+          "device_id": "lora-wled-ca48",
+          "application_ids": {
+            "application_id": "henke"
+          },
+          "dev_eui": "0000CCC63C43CA48",
+          "join_eui": "0000000000000000"
+        }
+      }
+    ],
+    "data": {
+      "@type": "type.googleapis.com/ttn.lorawan.v3.ApplicationDownlink",
+      "session_key_id": "AZyI3PlLGlvT3pDJuh0KTw==",
+      "f_port": 1,
+      "f_cnt": 3,
+      "frm_payload": "ng==",
+      "correlation_ids": [
+        "as:downlink:01KJ4E4PJZ97P3Q2H48PXQHMYY",
+        "rpc:/ttn.lorawan.v3.AppAs/DownlinkQueueReplace:86b0f8b4-5ccc-40d6-8ebc-4064ae57de90"
+      ]
+    },
+    "correlation_ids": [
+      "as:downlink:01KJ4E4PJZ97P3Q2H48PXQHMYY",
+      "rpc:/ttn.lorawan.v3.AppAs/DownlinkQueueReplace:86b0f8b4-5ccc-40d6-8ebc-4064ae57de90"
+    ],
+    "origin": "ip-10-22-15-251.us-west-1.compute.internal",
+    "context": {
+      "tenant-id": "CgtmbXNpb3RjbG91ZA=="
+    },
+    "visibility": {
+      "rights": [
+        "RIGHT_APPLICATION_TRAFFIC_READ"
+      ]
+    },
+    "authentication": {
+      "type": "Bearer",
+      "token_type": "AccessToken",
+      "token_id": "ISDB3LUN4HC5XR6EFDE32OEF5XEWELBW24Q6ENY"
+    },
+    "remote_ip": "70.112.121.77",
+    "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36",
+    "unique_id": "01KJ4E4PK9FHF9XJ490DPXX3B1"
+  },
+  {
+    "name": "as.down.data.receive",
+    "time": "2026-02-23T05:04:21.601527605Z",
+    "identifiers": [
+      {
+        "device_ids": {
+          "device_id": "lora-wled-ca48",
+          "application_ids": {
+            "application_id": "henke"
+          },
+          "dev_eui": "0000CCC63C43CA48",
+          "join_eui": "0000000000000000"
+        }
+      }
+    ],
+    "data": {
+      "@type": "type.googleapis.com/ttn.lorawan.v3.ApplicationDownlink",
+      "f_port": 1,
+      "frm_payload": "qg==",
+      "correlation_ids": [
+        "as:downlink:01KJ4E4PJZ97P3Q2H48PXQHMYY",
+        "rpc:/ttn.lorawan.v3.AppAs/DownlinkQueueReplace:86b0f8b4-5ccc-40d6-8ebc-4064ae57de90"
+      ]
+    },
+    "correlation_ids": [
+      "as:downlink:01KJ4E4PJZ97P3Q2H48PXQHMYY",
+      "rpc:/ttn.lorawan.v3.AppAs/DownlinkQueueReplace:86b0f8b4-5ccc-40d6-8ebc-4064ae57de90"
+    ],
+    "origin": "ip-10-22-15-251.us-west-1.compute.internal",
+    "context": {
+      "tenant-id": "CgtmbXNpb3RjbG91ZA=="
+    },
+    "visibility": {
+      "rights": [
+        "RIGHT_APPLICATION_TRAFFIC_READ"
+      ]
+    },
+    "authentication": {
+      "type": "Bearer",
+      "token_type": "AccessToken",
+      "token_id": "ISDB3LUN4HC5XR6EFDE32OEF5XEWELBW24Q6ENY"
+    },
+    "remote_ip": "70.112.121.77",
+    "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36",
+    "unique_id": "01KJ4E4PK1VBBGHGWYHHP4ZCAJ"
+  },
+  {
+    "name": "as.down.data.forward",
+    "time": "2026-02-23T05:01:15.006817474Z",
+    "identifiers": [
+      {
+        "device_ids": {
+          "device_id": "lora-wled-ca48",
+          "application_ids": {
+            "application_id": "henke"
+          },
+          "dev_eui": "0000CCC63C43CA48",
+          "join_eui": "0000000000000000"
+        }
+      }
+    ],
+    "data": {
+      "@type": "type.googleapis.com/ttn.lorawan.v3.ApplicationDownlink",
+      "session_key_id": "AZyI3PlLGlvT3pDJuh0KTw==",
+      "f_port": 1,
+      "f_cnt": 2,
+      "frm_payload": "9w==",
+      "correlation_ids": [
+        "as:downlink:01KJ4DZ0BNC4Q6JJEETFWM5K3E",
+        "rpc:/ttn.lorawan.v3.AppAs/DownlinkQueueReplace:f7e2dc40-e459-4116-b477-59c91e589a79"
+      ]
+    },
+    "correlation_ids": [
+      "as:downlink:01KJ4DZ0BNC4Q6JJEETFWM5K3E",
+      "rpc:/ttn.lorawan.v3.AppAs/DownlinkQueueReplace:f7e2dc40-e459-4116-b477-59c91e589a79"
+    ],
+    "origin": "ip-10-22-14-101.us-west-1.compute.internal",
+    "context": {
+      "tenant-id": "CgtmbXNpb3RjbG91ZA=="
+    },
+    "visibility": {
+      "rights": [
+        "RIGHT_APPLICATION_TRAFFIC_READ"
+      ]
+    },
+    "authentication": {
+      "type": "Bearer",
+      "token_type": "AccessToken",
+      "token_id": "ISDB3LUN4HC5XR6EFDE32OEF5XEWELBW24Q6ENY"
+    },
+    "remote_ip": "70.112.121.77",
+    "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36",
+    "unique_id": "01KJ4DZ0BYF0Z67DZMH1FN153W"
+  },
+  {
+    "name": "as.down.data.receive",
+    "time": "2026-02-23T05:01:14.999451046Z",
+    "identifiers": [
+      {
+        "device_ids": {
+          "device_id": "lora-wled-ca48",
+          "application_ids": {
+            "application_id": "henke"
+          },
+          "dev_eui": "0000CCC63C43CA48",
+          "join_eui": "0000000000000000"
+        }
+      }
+    ],
+    "data": {
+      "@type": "type.googleapis.com/ttn.lorawan.v3.ApplicationDownlink",
+      "f_port": 1,
+      "frm_payload": "qg==",
+      "correlation_ids": [
+        "as:downlink:01KJ4DZ0BNC4Q6JJEETFWM5K3E",
+        "rpc:/ttn.lorawan.v3.AppAs/DownlinkQueueReplace:f7e2dc40-e459-4116-b477-59c91e589a79"
+      ]
+    },
+    "correlation_ids": [
+      "as:downlink:01KJ4DZ0BNC4Q6JJEETFWM5K3E",
+      "rpc:/ttn.lorawan.v3.AppAs/DownlinkQueueReplace:f7e2dc40-e459-4116-b477-59c91e589a79"
+    ],
+    "origin": "ip-10-22-14-101.us-west-1.compute.internal",
+    "context": {
+      "tenant-id": "CgtmbXNpb3RjbG91ZA=="
+    },
+    "visibility": {
+      "rights": [
+        "RIGHT_APPLICATION_TRAFFIC_READ"
+      ]
+    },
+    "authentication": {
+      "type": "Bearer",
+      "token_type": "AccessToken",
+      "token_id": "ISDB3LUN4HC5XR6EFDE32OEF5XEWELBW24Q6ENY"
+    },
+    "remote_ip": "70.112.121.77",
+    "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36",
+    "unique_id": "01KJ4DZ0BQVQV6EKC3RZB16AQ3"
+  },
+  {
+    "name": "as.end_device.update",
+    "time": "2026-02-23T05:01:06.512185324Z",
+    "identifiers": [
+      {
+        "device_ids": {
+          "device_id": "lora-wled-ca48",
+          "application_ids": {
+            "application_id": "henke"
+          }
+        }
+      }
+    ],
+    "data": {
+      "@type": "type.googleapis.com/google.protobuf.Value",
+      "value": [
+        "formatters.down_formatter",
+        "formatters.down_formatter_parameter",
+        "formatters.up_formatter",
+        "formatters.up_formatter_parameter"
+      ]
+    },
+    "correlation_ids": [
+      "rpc:/ttn.lorawan.v3.AsEndDeviceRegistry/Set:2379cdf8-76ba-4006-a3b2-aa05bfb46342"
+    ],
+    "origin": "ip-10-22-14-101.us-west-1.compute.internal",
+    "context": {
+      "tenant-id": "CgtmbXNpb3RjbG91ZA=="
+    },
+    "visibility": {
+      "rights": [
+        "RIGHT_APPLICATION_DEVICES_READ"
+      ]
+    },
+    "authentication": {
+      "type": "Bearer",
+      "token_type": "AccessToken",
+      "token_id": "ISDB3LUN4HC5XR6EFDE32OEF5XEWELBW24Q6ENY"
+    },
+    "remote_ip": "70.112.121.77",
+    "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36",
+    "unique_id": "01KJ4DYR2G61TFFFQCV042Q9N7"
+  },
+  {
+    "name": "as.end_device.update",
+    "time": "2026-02-23T05:01:03.914970519Z",
+    "identifiers": [
+      {
+        "device_ids": {
+          "device_id": "lora-wled-ca48",
+          "application_ids": {
+            "application_id": "henke"
+          }
+        }
+      }
+    ],
+    "data": {
+      "@type": "type.googleapis.com/google.protobuf.Value",
+      "value": [
+        "formatters.down_formatter",
+        "formatters.down_formatter_parameter",
+        "formatters.up_formatter",
+        "formatters.up_formatter_parameter"
+      ]
+    },
+    "correlation_ids": [
+      "rpc:/ttn.lorawan.v3.AsEndDeviceRegistry/Set:269c6644-273c-4aa2-bb57-c7e492b4b7d8"
+    ],
+    "origin": "ip-10-22-14-101.us-west-1.compute.internal",
+    "context": {
+      "tenant-id": "CgtmbXNpb3RjbG91ZA=="
+    },
+    "visibility": {
+      "rights": [
+        "RIGHT_APPLICATION_DEVICES_READ"
+      ]
+    },
+    "authentication": {
+      "type": "Bearer",
+      "token_type": "AccessToken",
+      "token_id": "ISDB3LUN4HC5XR6EFDE32OEF5XEWELBW24Q6ENY"
+    },
+    "remote_ip": "70.112.121.77",
+    "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36",
+    "unique_id": "01KJ4DYNHAFTVC5SQ5M90PF5S2"
+  },
+  {
+    "name": "as.down.data.forward",
+    "time": "2026-02-23T04:59:07.017760576Z",
+    "identifiers": [
+      {
+        "device_ids": {
+          "device_id": "lora-wled-ca48",
+          "application_ids": {
+            "application_id": "henke"
+          },
+          "dev_eui": "0000CCC63C43CA48",
+          "join_eui": "0000000000000000"
+        }
+      }
+    ],
+    "data": {
+      "@type": "type.googleapis.com/ttn.lorawan.v3.ApplicationDownlink",
+      "session_key_id": "AZyI3PlLGlvT3pDJuh0KTw==",
+      "f_port": 1,
+      "f_cnt": 1,
+      "frm_payload": "Xg==",
+      "correlation_ids": [
+        "as:downlink:01KJ4DV3C3YP37GFGK6YW3CKAQ",
+        "rpc:/ttn.lorawan.v3.AppAs/DownlinkQueueReplace:de513a1b-4bce-4be2-a6e1-ec96f1b12a72"
+      ]
+    },
+    "correlation_ids": [
+      "as:downlink:01KJ4DV3C3YP37GFGK6YW3CKAQ",
+      "rpc:/ttn.lorawan.v3.AppAs/DownlinkQueueReplace:de513a1b-4bce-4be2-a6e1-ec96f1b12a72"
+    ],
+    "origin": "ip-10-22-15-251.us-west-1.compute.internal",
+    "context": {
+      "tenant-id": "CgtmbXNpb3RjbG91ZA=="
+    },
+    "visibility": {
+      "rights": [
+        "RIGHT_APPLICATION_TRAFFIC_READ"
+      ]
+    },
+    "authentication": {
+      "type": "Bearer",
+      "token_type": "AccessToken",
+      "token_id": "ISDB3LUN4HC5XR6EFDE32OEF5XEWELBW24Q6ENY"
+    },
+    "remote_ip": "70.112.121.77",
+    "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36",
+    "unique_id": "01KJ4DV3C96CY127G3A4V22XXP"
+  },
+  {
+    "name": "as.down.data.receive",
+    "time": "2026-02-23T04:59:07.013288361Z",
+    "identifiers": [
+      {
+        "device_ids": {
+          "device_id": "lora-wled-ca48",
+          "application_ids": {
+            "application_id": "henke"
+          },
+          "dev_eui": "0000CCC63C43CA48",
+          "join_eui": "0000000000000000"
+        }
+      }
+    ],
+    "data": {
+      "@type": "type.googleapis.com/ttn.lorawan.v3.ApplicationDownlink",
+      "f_port": 1,
+      "frm_payload": "qg==",
+      "correlation_ids": [
+        "as:downlink:01KJ4DV3C3YP37GFGK6YW3CKAQ",
+        "rpc:/ttn.lorawan.v3.AppAs/DownlinkQueueReplace:de513a1b-4bce-4be2-a6e1-ec96f1b12a72"
+      ]
+    },
+    "correlation_ids": [
+      "as:downlink:01KJ4DV3C3YP37GFGK6YW3CKAQ",
+      "rpc:/ttn.lorawan.v3.AppAs/DownlinkQueueReplace:de513a1b-4bce-4be2-a6e1-ec96f1b12a72"
+    ],
+    "origin": "ip-10-22-15-251.us-west-1.compute.internal",
+    "context": {
+      "tenant-id": "CgtmbXNpb3RjbG91ZA=="
+    },
+    "visibility": {
+      "rights": [
+        "RIGHT_APPLICATION_TRAFFIC_READ"
+      ]
+    },
+    "authentication": {
+      "type": "Bearer",
+      "token_type": "AccessToken",
+      "token_id": "ISDB3LUN4HC5XR6EFDE32OEF5XEWELBW24Q6ENY"
+    },
+    "remote_ip": "70.112.121.77",
+    "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36",
+    "unique_id": "01KJ4DV3C5G22G7KHRB6CNRQEK"
+  },
+  {
+    "name": "as.down.data.decode.fail",
+    "time": "2026-02-23T04:59:07.013278819Z",
+    "identifiers": [
+      {
+        "device_ids": {
+          "device_id": "lora-wled-ca48",
+          "application_ids": {
+            "application_id": "henke"
+          },
+          "dev_eui": "0000CCC63C43CA48",
+          "join_eui": "0000000000000000"
+        }
+      }
+    ],
+    "data": {
+      "@type": "type.googleapis.com/ttn.lorawan.v3.ErrorDetails",
+      "namespace": "pkg/messageprocessors/devicerepository",
+      "name": "no_version_identifiers",
+      "message_format": "no version identifiers for device",
+      "correlation_id": "57354004d28f45adb128d056f14da221",
+      "code": 3
+    },
+    "correlation_ids": [
+      "as:downlink:01KJ4DV3C3YP37GFGK6YW3CKAQ",
+      "rpc:/ttn.lorawan.v3.AppAs/DownlinkQueueReplace:de513a1b-4bce-4be2-a6e1-ec96f1b12a72"
+    ],
+    "origin": "ip-10-22-15-251.us-west-1.compute.internal",
+    "context": {
+      "tenant-id": "CgtmbXNpb3RjbG91ZA=="
+    },
+    "visibility": {
+      "rights": [
+        "RIGHT_APPLICATION_TRAFFIC_READ"
+      ]
+    },
+    "unique_id": "01KJ4DV3C5ENM3T3DQGN3J918W"
+  },
+  {
+    "time": "2026-02-23T04:58:52.669Z",
+    "name": "synthetic.status.reconnected",
+    "isError": false,
+    "isSynthetic": true,
+    "unique_id": "synthetic.1771822732669"
+  },
+  {
+    "name": "ns.down.transmission.success",
+    "time": "2026-02-23T04:58:30.930549507Z",
+    "identifiers": [
+      {
+        "device_ids": {
+          "device_id": "lora-wled-ca48",
+          "application_ids": {
+            "application_id": "henke"
+          },
+          "dev_eui": "0000CCC63C43CA48",
+          "join_eui": "0000000000000000"
+        }
+      }
+    ],
+    "data": {
+      "@type": "type.googleapis.com/ttn.lorawan.v3.DownlinkMessage",
+      "payload": {
+        "m_hdr": {
+          "m_type": "JOIN_ACCEPT"
+        },
+        "join_accept_payload": {
+          "net_id": "000013",
+          "dev_addr": "27FD4830",
+          "dl_settings": {
+            "rx2_dr": 8
+          },
+          "rx_delay": 5,
+          "cf_list": {
+            "type": "CHANNEL_MASKS",
+            "ch_masks": [
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              true,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false
+            ]
+          }
+        }
+      },
+      "end_device_ids": {
+        "device_id": "lora-wled-ca48",
+        "application_ids": {
+          "application_id": "henke"
+        },
+        "dev_eui": "0000CCC63C43CA48",
+        "join_eui": "0000000000000000"
+      },
+      "request": {
+        "downlink_paths": [
+          {
+            "uplink_token": "ChcKFQoJaGVua2Vjb3ZlEgioQEH//yBb1BCM0cO0BhoLCPW878wGENL2kRwg4MWxsIr4uQE="
+          }
+        ],
+        "rx1_delay": 5,
+        "rx1_data_rate": {
+          "lora": {
+            "bandwidth": 500000,
+            "spreading_factor": 10,
+            "coding_rate": "4/5"
+          }
+        },
+        "rx1_frequency": "925700000",
+        "rx2_data_rate": {
+          "lora": {
+            "bandwidth": 500000,
+            "spreading_factor": 12,
+            "coding_rate": "4/5"
+          }
+        },
+        "rx2_frequency": "923300000",
+        "priority": "HIGHEST",
+        "frequency_plan_id": "US_902_928_FSB_2"
+      },
+      "correlation_ids": [
+        "gs:tx_ack:01KJ4DT04GHV10AB3CKJQHEVK2",
+        "gs:uplink:01KJ4DSYA3DSFCJT2081N2JSNA",
+        "ns:downlink:01KJ4DT02EGVYC6XGA208S0Q2M",
+        "ns:transmission:01KJ4DT02EQH547BF0QEVKR1SK"
+      ],
+      "session_key_id": "AZyI3PlLGlvT3pDJuh0KTw=="
+    },
+    "correlation_ids": [
+      "gs:tx_ack:01KJ4DT04GHV10AB3CKJQHEVK2",
+      "gs:uplink:01KJ4DSYA3DSFCJT2081N2JSNA",
+      "ns:downlink:01KJ4DT02EGVYC6XGA208S0Q2M",
+      "ns:transmission:01KJ4DT02EQH547BF0QEVKR1SK"
+    ],
+    "origin": "ip-10-22-14-115.us-west-1.compute.internal",
+    "context": {
+      "tenant-id": "CgtmbXNpb3RjbG91ZA=="
+    },
+    "visibility": {
+      "rights": [
+        "RIGHT_APPLICATION_TRAFFIC_READ"
+      ]
+    },
+    "unique_id": "01KJ4DT04JH38M5BWM1HSESW5Q"
+  },
+  {
+    "name": "ns.up.join.accept.forward",
+    "time": "2026-02-23T04:58:30.872317543Z",
+    "identifiers": [
+      {
+        "device_ids": {
+          "device_id": "lora-wled-ca48",
+          "application_ids": {
+            "application_id": "henke"
+          },
+          "dev_eui": "0000CCC63C43CA48",
+          "join_eui": "0000000000000000",
+          "dev_addr": "27FD4830"
+        }
+      }
+    ],
+    "data": {
+      "@type": "type.googleapis.com/ttn.lorawan.v3.ApplicationUp",
+      "end_device_ids": {
+        "device_id": "lora-wled-ca48",
+        "application_ids": {
+          "application_id": "henke"
+        },
+        "dev_eui": "0000CCC63C43CA48",
+        "join_eui": "0000000000000000",
+        "dev_addr": "27FD4830"
+      },
+      "correlation_ids": [
+        "gs:uplink:01KJ4DSYA3DSFCJT2081N2JSNA"
+      ],
+      "join_accept": {
+        "session_key_id": "AZyI3PlLGlvT3pDJuh0KTw==",
+        "received_at": "2026-02-23T04:58:29.059847939Z"
+      }
+    },
+    "correlation_ids": [
+      "gs:uplink:01KJ4DSYA3DSFCJT2081N2JSNA"
+    ],
+    "origin": "ip-10-22-14-115.us-west-1.compute.internal",
+    "context": {
+      "tenant-id": "CgtmbXNpb3RjbG91ZA=="
+    },
+    "visibility": {
+      "rights": [
+        "RIGHT_APPLICATION_TRAFFIC_READ"
+      ]
+    },
+    "unique_id": "01KJ4DT02RY96NA3K4KF82E6G9"
+  },
+  {
+    "name": "as.up.join.forward",
+    "time": "2026-02-23T04:58:30.872102454Z",
+    "identifiers": [
+      {
+        "device_ids": {
+          "device_id": "lora-wled-ca48",
+          "application_ids": {
+            "application_id": "henke"
+          },
+          "dev_eui": "0000CCC63C43CA48",
+          "join_eui": "0000000000000000",
+          "dev_addr": "27FD4830"
+        }
+      }
+    ],
+    "data": {
+      "@type": "type.googleapis.com/ttn.lorawan.v3.ApplicationUp",
+      "end_device_ids": {
+        "device_id": "lora-wled-ca48",
+        "application_ids": {
+          "application_id": "henke"
+        },
+        "dev_eui": "0000CCC63C43CA48",
+        "join_eui": "0000000000000000",
+        "dev_addr": "27FD4830"
+      },
+      "correlation_ids": [
+        "gs:uplink:01KJ4DSYA3DSFCJT2081N2JSNA"
+      ],
+      "received_at": "2026-02-23T04:58:30.866799638Z",
+      "join_accept": {
+        "session_key_id": "AZyI3PlLGlvT3pDJuh0KTw==",
+        "received_at": "2026-02-23T04:58:29.059847939Z"
+      }
+    },
+    "correlation_ids": [
+      "gs:uplink:01KJ4DSYA3DSFCJT2081N2JSNA"
+    ],
+    "origin": "ip-10-22-14-101.us-west-1.compute.internal",
+    "context": {
+      "tenant-id": "CgtmbXNpb3RjbG91ZA=="
+    },
+    "visibility": {
+      "rights": [
+        "RIGHT_APPLICATION_TRAFFIC_READ"
+      ]
+    },
+    "unique_id": "01KJ4DT02RXWG9AGJMK47KVK3K"
+  },
+  {
+    "name": "as.up.join.receive",
+    "time": "2026-02-23T04:58:30.867848544Z",
+    "identifiers": [
+      {
+        "device_ids": {
+          "device_id": "lora-wled-ca48",
+          "application_ids": {
+            "application_id": "henke"
+          },
+          "dev_eui": "0000CCC63C43CA48",
+          "join_eui": "0000000000000000",
+          "dev_addr": "27FD4830"
+        }
+      }
+    ],
+    "correlation_ids": [
+      "gs:uplink:01KJ4DSYA3DSFCJT2081N2JSNA"
+    ],
+    "origin": "ip-10-22-14-101.us-west-1.compute.internal",
+    "context": {
+      "tenant-id": "CgtmbXNpb3RjbG91ZA=="
+    },
+    "visibility": {
+      "rights": [
+        "RIGHT_APPLICATION_TRAFFIC_READ"
+      ]
+    },
+    "unique_id": "01KJ4DT02K0QDMWHWS87RSR45M"
+  },
+  {
+    "name": "ns.down.join.schedule.success",
+    "time": "2026-02-23T04:58:30.865073444Z",
+    "identifiers": [
+      {
+        "device_ids": {
+          "device_id": "lora-wled-ca48",
+          "application_ids": {
+            "application_id": "henke"
+          },
+          "dev_eui": "0000CCC63C43CA48",
+          "join_eui": "0000000000000000"
+        }
+      }
+    ],
+    "data": {
+      "@type": "type.googleapis.com/ttn.lorawan.v3.ScheduleDownlinkResponse",
+      "delay": "3.195334982s",
+      "downlink_path": {
+        "fixed": {
+          "gateway_ids": {
+            "gateway_id": "henkecove",
+            "eui": "A84041FFFF205BD4"
+          }
+        }
+      },
+      "rx1": true
+    },
+    "correlation_ids": [
+      "gs:uplink:01KJ4DSYA3DSFCJT2081N2JSNA",
+      "ns:downlink:01KJ4DT02EGVYC6XGA208S0Q2M",
+      "ns:transmission:01KJ4DT02EQH547BF0QEVKR1SK"
+    ],
+    "origin": "ip-10-22-14-115.us-west-1.compute.internal",
+    "context": {
+      "tenant-id": "CgtmbXNpb3RjbG91ZA=="
+    },
+    "visibility": {
+      "rights": [
+        "RIGHT_APPLICATION_TRAFFIC_READ"
+      ]
+    },
+    "unique_id": "01KJ4DT02HH6B4CSKC1BZWTAB3"
+  },
+  {
+    "name": "ns.down.join.schedule.attempt",
+    "time": "2026-02-23T04:58:30.862993447Z",
+    "identifiers": [
+      {
+        "device_ids": {
+          "device_id": "lora-wled-ca48",
+          "application_ids": {
+            "application_id": "henke"
+          },
+          "dev_eui": "0000CCC63C43CA48",
+          "join_eui": "0000000000000000"
+        }
+      }
+    ],
+    "data": {
+      "@type": "type.googleapis.com/ttn.lorawan.v3.DownlinkMessage",
+      "raw_payload": "IGtFXDELEP7ZuCVsjpUP1kfQSJG9OLAN+L8UfXwSKp+i",
+      "payload": {
+        "m_hdr": {
+          "m_type": "JOIN_ACCEPT"
+        },
+        "join_accept_payload": {
+          "net_id": "000013",
+          "dev_addr": "27FD4830",
+          "dl_settings": {
+            "rx2_dr": 8
+          },
+          "rx_delay": 5,
+          "cf_list": {
+            "type": "CHANNEL_MASKS",
+            "ch_masks": [
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              true,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false
+            ]
+          }
+        }
+      },
+      "request": {
+        "downlink_paths": [
+          {
+            "uplink_token": "ChcKFQoJaGVua2Vjb3ZlEgioQEH//yBb1BCM0cO0BhoLCPW878wGENL2kRwg4MWxsIr4uQE="
+          }
+        ],
+        "rx1_delay": 5,
+        "rx1_data_rate": {
+          "lora": {
+            "bandwidth": 500000,
+            "spreading_factor": 10,
+            "coding_rate": "4/5"
+          }
+        },
+        "rx1_frequency": "925700000",
+        "rx2_data_rate": {
+          "lora": {
+            "bandwidth": 500000,
+            "spreading_factor": 12,
+            "coding_rate": "4/5"
+          }
+        },
+        "rx2_frequency": "923300000",
+        "priority": "HIGHEST",
+        "frequency_plan_id": "US_902_928_FSB_2"
+      },
+      "correlation_ids": [
+        "gs:uplink:01KJ4DSYA3DSFCJT2081N2JSNA",
+        "ns:downlink:01KJ4DT02EGVYC6XGA208S0Q2M",
+        "ns:transmission:01KJ4DT02EQH547BF0QEVKR1SK"
+      ]
+    },
+    "correlation_ids": [
+      "gs:uplink:01KJ4DSYA3DSFCJT2081N2JSNA",
+      "ns:downlink:01KJ4DT02EGVYC6XGA208S0Q2M",
+      "ns:transmission:01KJ4DT02EQH547BF0QEVKR1SK"
+    ],
+    "origin": "ip-10-22-14-115.us-west-1.compute.internal",
+    "context": {
+      "tenant-id": "CgtmbXNpb3RjbG91ZA=="
+    },
+    "visibility": {
+      "rights": [
+        "RIGHT_APPLICATION_TRAFFIC_READ"
+      ]
+    },
+    "unique_id": "01KJ4DT02EJHGYDAYVTEFPAECY"
+  },
+  {
+    "name": "ns.up.join.process",
+    "time": "2026-02-23T04:58:29.264971261Z",
+    "identifiers": [
+      {
+        "device_ids": {
+          "device_id": "lora-wled-ca48",
+          "application_ids": {
+            "application_id": "henke"
+          },
+          "dev_eui": "0000CCC63C43CA48",
+          "join_eui": "0000000000000000"
+        }
+      }
+    ],
+    "data": {
+      "@type": "type.googleapis.com/ttn.lorawan.v3.UplinkMessage",
+      "raw_payload": "AAAAAAAAAAAASMpDPMbMAACrrZru30s=",
+      "payload": {
+        "m_hdr": {},
+        "mic": "mu7fSw==",
+        "join_request_payload": {
+          "join_eui": "0000000000000000",
+          "dev_eui": "0000CCC63C43CA48",
+          "dev_nonce": "ADAB"
+        }
+      },
+      "settings": {
+        "data_rate": {
+          "lora": {
+            "bandwidth": 125000,
+            "spreading_factor": 10,
+            "coding_rate": "4/5"
+          }
+        },
+        "frequency": "904700000",
+        "timestamp": 1720772748,
+        "time": "2026-02-23T04:58:29.020032Z"
+      },
+      "rx_metadata": [
+        {
+          "gateway_ids": {
+            "gateway_id": "henkecove",
+            "eui": "A84041FFFF205BD4"
+          },
+          "time": "2026-02-23T04:58:29.020032Z",
+          "timestamp": 1720772748,
+          "rssi": -110,
+          "channel_rssi": -110,
+          "snr": -8.2,
+          "uplink_token": "ChcKFQoJaGVua2Vjb3ZlEgioQEH//yBb1BCM0cO0BhoLCPW878wGENL2kRwg4MWxsIr4uQE=",
+          "channel_index": 4,
+          "received_at": "2026-02-23T04:58:29.027079998Z"
+        }
+      ],
+      "received_at": "2026-02-23T04:58:29.059847939Z",
+      "correlation_ids": [
+        "gs:uplink:01KJ4DSYA3DSFCJT2081N2JSNA"
+      ],
+      "device_channel_index": 12,
+      "consumed_airtime": "0.370688s"
+    },
+    "correlation_ids": [
+      "gs:uplink:01KJ4DSYA3DSFCJT2081N2JSNA"
+    ],
+    "origin": "ip-10-22-15-7.us-west-1.compute.internal",
+    "context": {
+      "tenant-id": "CgtmbXNpb3RjbG91ZA=="
+    },
+    "visibility": {
+      "rights": [
+        "RIGHT_APPLICATION_TRAFFIC_READ"
+      ]
+    },
+    "unique_id": "01KJ4DSYGG2YNCA3CWD8GJ0T9F"
+  },
+  {
+    "name": "ns.up.join.cluster.success",
+    "time": "2026-02-23T04:58:29.071673930Z",
+    "identifiers": [
+      {
+        "device_ids": {
+          "device_id": "lora-wled-ca48",
+          "application_ids": {
+            "application_id": "henke"
+          },
+          "dev_eui": "0000CCC63C43CA48",
+          "join_eui": "0000000000000000"
+        }
+      }
+    ],
+    "data": {
+      "@type": "type.googleapis.com/ttn.lorawan.v3.JoinResponse",
+      "raw_payload": "IGtFXDELEP7ZuCVsjpUP1kfQSJG9OLAN+L8UfXwSKp+i",
+      "session_keys": {
+        "session_key_id": "AZyI3PlLGlvT3pDJuh0KTw=="
+      }
+    },
+    "correlation_ids": [
+      "gs:uplink:01KJ4DSYA3DSFCJT2081N2JSNA"
+    ],
+    "origin": "ip-10-22-15-7.us-west-1.compute.internal",
+    "context": {
+      "tenant-id": "CgtmbXNpb3RjbG91ZA=="
+    },
+    "visibility": {
+      "rights": [
+        "RIGHT_APPLICATION_TRAFFIC_READ"
+      ]
+    },
+    "unique_id": "01KJ4DSYAFBC977096Q7DWJV20"
+  },
+  {
+    "name": "js.join.accept",
+    "time": "2026-02-23T04:58:29.071448511Z",
+    "identifiers": [
+      {
+        "device_ids": {
+          "device_id": "lora-wled-ca48",
+          "application_ids": {
+            "application_id": "henke"
+          },
+          "dev_eui": "0000CCC63C43CA48",
+          "join_eui": "0000000000000000",
+          "dev_addr": "27FD4830"
+        }
+      }
+    ],
+    "origin": "ip-10-22-13-106.us-west-1.compute.internal",
+    "context": {
+      "tenant-id": "CgtmbXNpb3RjbG91ZA=="
+    },
+    "visibility": {
+      "rights": [
+        "RIGHT_APPLICATION_TRAFFIC_READ"
+      ]
+    },
+    "unique_id": "01KJ4DSYAFBK3WSV85S0R3CJ5G"
+  },
+  {
+    "name": "ns.up.join.cluster.attempt",
+    "time": "2026-02-23T04:58:29.065171832Z",
+    "identifiers": [
+      {
+        "device_ids": {
+          "device_id": "lora-wled-ca48",
+          "application_ids": {
+            "application_id": "henke"
+          },
+          "dev_eui": "0000CCC63C43CA48",
+          "join_eui": "0000000000000000"
+        }
+      }
+    ],
+    "data": {
+      "@type": "type.googleapis.com/ttn.lorawan.v3.JoinRequest",
+      "raw_payload": "AAAAAAAAAAAASMpDPMbMAACrrZru30s=",
+      "payload": {
+        "m_hdr": {},
+        "mic": "mu7fSw==",
+        "join_request_payload": {
+          "join_eui": "0000000000000000",
+          "dev_eui": "0000CCC63C43CA48",
+          "dev_nonce": "ADAB"
+        }
+      },
+      "dev_addr": "27FD4830",
+      "selected_mac_version": "MAC_V1_0_3",
+      "net_id": "000013",
+      "downlink_settings": {
+        "rx2_dr": 8
+      },
+      "rx_delay": 5,
+      "cf_list": {
+        "type": "CHANNEL_MASKS",
+        "ch_masks": [
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          true,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false
+        ]
+      },
+      "correlation_ids": [
+        "gs:uplink:01KJ4DSYA3DSFCJT2081N2JSNA"
+      ],
+      "consumed_airtime": "0.370688s"
+    },
+    "correlation_ids": [
+      "gs:uplink:01KJ4DSYA3DSFCJT2081N2JSNA"
+    ],
+    "origin": "ip-10-22-15-7.us-west-1.compute.internal",
+    "context": {
+      "tenant-id": "CgtmbXNpb3RjbG91ZA=="
+    },
+    "visibility": {
+      "rights": [
+        "RIGHT_APPLICATION_TRAFFIC_READ"
+      ]
+    },
+    "unique_id": "01KJ4DSYA9TJCWQRRE9MXXESE5"
+  },
+  {
+    "name": "ns.up.join.receive",
+    "time": "2026-02-23T04:58:29.065089392Z",
+    "identifiers": [
+      {
+        "device_ids": {
+          "device_id": "lora-wled-ca48",
+          "application_ids": {
+            "application_id": "henke"
+          },
+          "dev_eui": "0000CCC63C43CA48",
+          "join_eui": "0000000000000000"
+        }
+      }
+    ],
+    "data": {
+      "@type": "type.googleapis.com/ttn.lorawan.v3.UplinkMessage",
+      "raw_payload": "AAAAAAAAAAAASMpDPMbMAACrrZru30s=",
+      "payload": {
+        "m_hdr": {},
+        "mic": "mu7fSw==",
+        "join_request_payload": {
+          "join_eui": "0000000000000000",
+          "dev_eui": "0000CCC63C43CA48",
+          "dev_nonce": "ADAB"
+        }
+      },
+      "settings": {
+        "data_rate": {
+          "lora": {
+            "bandwidth": 125000,
+            "spreading_factor": 10,
+            "coding_rate": "4/5"
+          }
+        },
+        "frequency": "904700000",
+        "timestamp": 1720772748,
+        "time": "2026-02-23T04:58:29.020032Z"
+      },
+      "rx_metadata": [
+        {
+          "gateway_ids": {
+            "gateway_id": "henkecove",
+            "eui": "A84041FFFF205BD4"
+          },
+          "time": "2026-02-23T04:58:29.020032Z",
+          "timestamp": 1720772748,
+          "rssi": -110,
+          "channel_rssi": -110,
+          "snr": -8.2,
+          "uplink_token": "ChcKFQoJaGVua2Vjb3ZlEgioQEH//yBb1BCM0cO0BhoLCPW878wGENL2kRwg4MWxsIr4uQE=",
+          "channel_index": 4,
+          "received_at": "2026-02-23T04:58:29.027079998Z"
+        }
+      ],
+      "received_at": "2026-02-23T04:58:29.059847939Z",
+      "correlation_ids": [
+        "gs:uplink:01KJ4DSYA3DSFCJT2081N2JSNA"
+      ],
+      "device_channel_index": 12,
+      "consumed_airtime": "0.370688s"
+    },
+    "correlation_ids": [
+      "gs:uplink:01KJ4DSYA3DSFCJT2081N2JSNA"
+    ],
+    "origin": "ip-10-22-15-7.us-west-1.compute.internal",
+    "context": {
+      "tenant-id": "CgtmbXNpb3RjbG91ZA=="
+    },
+    "visibility": {
+      "rights": [
+        "RIGHT_APPLICATION_TRAFFIC_READ"
+      ]
+    },
+    "unique_id": "01KJ4DSYA9ZGEFRGX8341CW1DC"
+  },
+  {
+    "name": "js.end_device.update",
+    "time": "2026-02-23T04:58:07.948291471Z",
+    "identifiers": [
+      {
+        "device_ids": {
+          "device_id": "lora-wled-ca48",
+          "application_ids": {
+            "application_id": "henke"
+          },
+          "dev_eui": "0000CCC63C43CA48",
+          "join_eui": "0000000000000000"
+        }
+      }
+    ],
+    "data": {
+      "@type": "type.googleapis.com/google.protobuf.Value",
+      "value": [
+        "resets_join_nonces"
+      ]
+    },
+    "correlation_ids": [
+      "rpc:/ttn.lorawan.v3.JsEndDeviceRegistry/Set:f51df836-942b-4d5e-87a8-db6f1ead1845"
+    ],
+    "origin": "ip-10-22-13-106.us-west-1.compute.internal",
+    "context": {
+      "tenant-id": "CgtmbXNpb3RjbG91ZA=="
+    },
+    "visibility": {
+      "rights": [
+        "RIGHT_APPLICATION_DEVICES_READ"
+      ]
+    },
+    "authentication": {
+      "type": "Bearer",
+      "token_type": "AccessToken",
+      "token_id": "ISDB3LUN4HC5XR6EFDE32OEF5XEWELBW24Q6ENY"
+    },
+    "remote_ip": "70.112.121.77",
+    "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36",
+    "unique_id": "01KJ4DS9PC3VK2H5VKWN9Y3674"
+  },
+  {
+    "name": "js.end_device.update",
+    "time": "2026-02-23T04:58:04.482629684Z",
+    "identifiers": [
+      {
+        "device_ids": {
+          "device_id": "lora-wled-ca48",
+          "application_ids": {
+            "application_id": "henke"
+          },
+          "dev_eui": "0000CCC63C43CA48",
+          "join_eui": "0000000000000000"
+        }
+      }
+    ],
+    "data": {
+      "@type": "type.googleapis.com/google.protobuf.Value",
+      "value": [
+        "used_dev_nonces",
+        "last_dev_nonce"
+      ]
+    },
+    "correlation_ids": [
+      "rpc:/ttn.lorawan.v3.JsEndDeviceRegistry/Set:1cabbc35-9917-4988-a9ca-dafd63e9ed4b"
+    ],
+    "origin": "ip-10-22-13-106.us-west-1.compute.internal",
+    "context": {
+      "tenant-id": "CgtmbXNpb3RjbG91ZA=="
+    },
+    "visibility": {
+      "rights": [
+        "RIGHT_APPLICATION_DEVICES_READ"
+      ]
+    },
+    "authentication": {
+      "type": "Bearer",
+      "token_type": "AccessToken",
+      "token_id": "ISDB3LUN4HC5XR6EFDE32OEF5XEWELBW24Q6ENY"
+    },
+    "remote_ip": "70.112.121.77",
+    "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36",
+    "unique_id": "01KJ4DS6A278G65AMSEGM0DK2H"
+  },
+  {
+    "time": "2026-02-23T04:57:40.800Z",
+    "name": "synthetic.status.filter_disabled",
+    "isError": false,
+    "isSynthetic": true,
+    "unique_id": "synthetic.1771822660800"
+  },
+  {
+    "name": "ns.down.transmission.success",
+    "time": "2026-02-23T04:55:57.980778762Z",
+    "identifiers": [
+      {
+        "device_ids": {
+          "device_id": "lora-wled-ca48",
+          "application_ids": {
+            "application_id": "henke"
+          },
+          "dev_eui": "0000CCC63C43CA48",
+          "join_eui": "0000000000000000"
+        }
+      }
+    ],
+    "data": {
+      "@type": "type.googleapis.com/ttn.lorawan.v3.DownlinkMessage",
+      "payload": {
+        "m_hdr": {
+          "m_type": "JOIN_ACCEPT"
+        },
+        "join_accept_payload": {
+          "net_id": "000013",
+          "dev_addr": "27FD4838",
+          "dl_settings": {
+            "rx2_dr": 8
+          },
+          "rx_delay": 5,
+          "cf_list": {
+            "type": "CHANNEL_MASKS",
+            "ch_masks": [
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              true,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false
+            ]
+          }
+        }
+      },
+      "end_device_ids": {
+        "device_id": "lora-wled-ca48",
+        "application_ids": {
+          "application_id": "henke"
+        },
+        "dev_eui": "0000CCC63C43CA48",
+        "join_eui": "0000000000000000"
+      },
+      "request": {
+        "downlink_paths": [
+          {
+            "uplink_token": "ChcKFQoJaGVua2Vjb3ZlEgioQEH//yBb1BDsuMzrBRoLCNy778wGENynkjQg4IuczdDzuQE="
+          }
+        ],
+        "rx1_delay": 5,
+        "rx1_data_rate": {
+          "lora": {
+            "bandwidth": 500000,
+            "spreading_factor": 10,
+            "coding_rate": "4/5"
+          }
+        },
+        "rx1_frequency": "924500000",
+        "rx2_data_rate": {
+          "lora": {
+            "bandwidth": 500000,
+            "spreading_factor": 12,
+            "coding_rate": "4/5"
+          }
+        },
+        "rx2_frequency": "923300000",
+        "priority": "HIGHEST",
+        "frequency_plan_id": "US_902_928_FSB_2"
+      },
+      "correlation_ids": [
+        "gs:tx_ack:01KJ4DNARV24JY23JS4YVWY2DY",
+        "gs:uplink:01KJ4DN8YDAJVYS8J71NW5PHTZ",
+        "ns:downlink:01KJ4DNAPSND516VSKFP7EYKW9",
+        "ns:transmission:01KJ4DNAPSPRGSK298QASM76PZ"
+      ],
+      "session_key_id": "AZyI2qPaAgLyli1U3IPBNA=="
+    },
+    "correlation_ids": [
+      "gs:tx_ack:01KJ4DNARV24JY23JS4YVWY2DY",
+      "gs:uplink:01KJ4DN8YDAJVYS8J71NW5PHTZ",
+      "ns:downlink:01KJ4DNAPSND516VSKFP7EYKW9",
+      "ns:transmission:01KJ4DNAPSPRGSK298QASM76PZ"
+    ],
+    "origin": "ip-10-22-14-115.us-west-1.compute.internal",
+    "context": {
+      "tenant-id": "CgtmbXNpb3RjbG91ZA=="
+    },
+    "visibility": {
+      "rights": [
+        "RIGHT_APPLICATION_TRAFFIC_READ"
+      ]
+    },
+    "unique_id": "01KJ4DNARW11W9N5XKV0CTFT4V"
+  },
+  {
+    "name": "ns.up.join.accept.forward",
+    "time": "2026-02-23T04:55:57.925334638Z",
+    "identifiers": [
+      {
+        "device_ids": {
+          "device_id": "lora-wled-ca48",
+          "application_ids": {
+            "application_id": "henke"
+          },
+          "dev_eui": "0000CCC63C43CA48",
+          "join_eui": "0000000000000000",
+          "dev_addr": "27FD4838"
+        }
+      }
+    ],
+    "data": {
+      "@type": "type.googleapis.com/ttn.lorawan.v3.ApplicationUp",
+      "end_device_ids": {
+        "device_id": "lora-wled-ca48",
+        "application_ids": {
+          "application_id": "henke"
+        },
+        "dev_eui": "0000CCC63C43CA48",
+        "join_eui": "0000000000000000",
+        "dev_addr": "27FD4838"
+      },
+      "correlation_ids": [
+        "gs:uplink:01KJ4DN8YDAJVYS8J71NW5PHTZ"
+      ],
+      "join_accept": {
+        "session_key_id": "AZyI2qPaAgLyli1U3IPBNA==",
+        "received_at": "2026-02-23T04:55:56.110228327Z"
+      }
+    },
+    "correlation_ids": [
+      "gs:uplink:01KJ4DN8YDAJVYS8J71NW5PHTZ"
+    ],
+    "origin": "ip-10-22-14-115.us-west-1.compute.internal",
+    "context": {
+      "tenant-id": "CgtmbXNpb3RjbG91ZA=="
+    },
+    "visibility": {
+      "rights": [
+        "RIGHT_APPLICATION_TRAFFIC_READ"
+      ]
+    },
+    "unique_id": "01KJ4DNAQ5516G943A6DKSEG12"
+  },
+  {
+    "name": "as.up.join.forward",
+    "time": "2026-02-23T04:55:57.925146360Z",
+    "identifiers": [
+      {
+        "device_ids": {
+          "device_id": "lora-wled-ca48",
+          "application_ids": {
+            "application_id": "henke"
+          },
+          "dev_eui": "0000CCC63C43CA48",
+          "join_eui": "0000000000000000",
+          "dev_addr": "27FD4838"
+        }
+      }
+    ],
+    "data": {
+      "@type": "type.googleapis.com/ttn.lorawan.v3.ApplicationUp",
+      "end_device_ids": {
+        "device_id": "lora-wled-ca48",
+        "application_ids": {
+          "application_id": "henke"
+        },
+        "dev_eui": "0000CCC63C43CA48",
+        "join_eui": "0000000000000000",
+        "dev_addr": "27FD4838"
+      },
+      "correlation_ids": [
+        "gs:uplink:01KJ4DN8YDAJVYS8J71NW5PHTZ"
+      ],
+      "received_at": "2026-02-23T04:55:57.918142317Z",
+      "join_accept": {
+        "session_key_id": "AZyI2qPaAgLyli1U3IPBNA==",
+        "received_at": "2026-02-23T04:55:56.110228327Z"
+      }
+    },
+    "correlation_ids": [
+      "gs:uplink:01KJ4DN8YDAJVYS8J71NW5PHTZ"
+    ],
+    "origin": "ip-10-22-14-101.us-west-1.compute.internal",
+    "context": {
+      "tenant-id": "CgtmbXNpb3RjbG91ZA=="
+    },
+    "visibility": {
+      "rights": [
+        "RIGHT_APPLICATION_TRAFFIC_READ"
+      ]
+    },
+    "unique_id": "01KJ4DNAQ5C1HPVHZ8PVBPVXSN"
+  },
+  {
+    "name": "as.up.join.receive",
+    "time": "2026-02-23T04:55:57.919378216Z",
+    "identifiers": [
+      {
+        "device_ids": {
+          "device_id": "lora-wled-ca48",
+          "application_ids": {
+            "application_id": "henke"
+          },
+          "dev_eui": "0000CCC63C43CA48",
+          "join_eui": "0000000000000000",
+          "dev_addr": "27FD4838"
+        }
+      }
+    ],
+    "correlation_ids": [
+      "gs:uplink:01KJ4DN8YDAJVYS8J71NW5PHTZ"
+    ],
+    "origin": "ip-10-22-14-101.us-west-1.compute.internal",
+    "context": {
+      "tenant-id": "CgtmbXNpb3RjbG91ZA=="
+    },
+    "visibility": {
+      "rights": [
+        "RIGHT_APPLICATION_TRAFFIC_READ"
+      ]
+    },
+    "unique_id": "01KJ4DNAPZY6DCY1VXDYR4MP2V"
+  },
+  {
+    "name": "ns.down.join.schedule.success",
+    "time": "2026-02-23T04:55:57.916045548Z",
+    "identifiers": [
+      {
+        "device_ids": {
+          "device_id": "lora-wled-ca48",
+          "application_ids": {
+            "application_id": "henke"
+          },
+          "dev_eui": "0000CCC63C43CA48",
+          "join_eui": "0000000000000000"
+        }
+      }
+    ],
+    "data": {
+      "@type": "type.googleapis.com/ttn.lorawan.v3.ScheduleDownlinkResponse",
+      "delay": "3.194652160s",
+      "downlink_path": {
+        "fixed": {
+          "gateway_ids": {
+            "gateway_id": "henkecove",
+            "eui": "A84041FFFF205BD4"
+          }
+        }
+      },
+      "rx1": true
+    },
+    "correlation_ids": [
+      "gs:uplink:01KJ4DN8YDAJVYS8J71NW5PHTZ",
+      "ns:downlink:01KJ4DNAPSND516VSKFP7EYKW9",
+      "ns:transmission:01KJ4DNAPSPRGSK298QASM76PZ"
+    ],
+    "origin": "ip-10-22-14-115.us-west-1.compute.internal",
+    "context": {
+      "tenant-id": "CgtmbXNpb3RjbG91ZA=="
+    },
+    "visibility": {
+      "rights": [
+        "RIGHT_APPLICATION_TRAFFIC_READ"
+      ]
+    },
+    "unique_id": "01KJ4DNAPWSDMVE8NM8R1EYYCS"
+  },
+  {
+    "name": "ns.down.join.schedule.attempt",
+    "time": "2026-02-23T04:55:57.913986494Z",
+    "identifiers": [
+      {
+        "device_ids": {
+          "device_id": "lora-wled-ca48",
+          "application_ids": {
+            "application_id": "henke"
+          },
+          "dev_eui": "0000CCC63C43CA48",
+          "join_eui": "0000000000000000"
+        }
+      }
+    ],
+    "data": {
+      "@type": "type.googleapis.com/ttn.lorawan.v3.DownlinkMessage",
+      "raw_payload": "IFzknkxbme7ei1ke9nKfgV6izMR+2JBt0/BcPkNeRk2A",
+      "payload": {
+        "m_hdr": {
+          "m_type": "JOIN_ACCEPT"
+        },
+        "join_accept_payload": {
+          "net_id": "000013",
+          "dev_addr": "27FD4838",
+          "dl_settings": {
+            "rx2_dr": 8
+          },
+          "rx_delay": 5,
+          "cf_list": {
+            "type": "CHANNEL_MASKS",
+            "ch_masks": [
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              true,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false
+            ]
+          }
+        }
+      },
+      "request": {
+        "downlink_paths": [
+          {
+            "uplink_token": "ChcKFQoJaGVua2Vjb3ZlEgioQEH//yBb1BDsuMzrBRoLCNy778wGENynkjQg4IuczdDzuQE="
+          }
+        ],
+        "rx1_delay": 5,
+        "rx1_data_rate": {
+          "lora": {
+            "bandwidth": 500000,
+            "spreading_factor": 10,
+            "coding_rate": "4/5"
+          }
+        },
+        "rx1_frequency": "924500000",
+        "rx2_data_rate": {
+          "lora": {
+            "bandwidth": 500000,
+            "spreading_factor": 12,
+            "coding_rate": "4/5"
+          }
+        },
+        "rx2_frequency": "923300000",
+        "priority": "HIGHEST",
+        "frequency_plan_id": "US_902_928_FSB_2"
+      },
+      "correlation_ids": [
+        "gs:uplink:01KJ4DN8YDAJVYS8J71NW5PHTZ",
+        "ns:downlink:01KJ4DNAPSND516VSKFP7EYKW9",
+        "ns:transmission:01KJ4DNAPSPRGSK298QASM76PZ"
+      ]
+    },
+    "correlation_ids": [
+      "gs:uplink:01KJ4DN8YDAJVYS8J71NW5PHTZ",
+      "ns:downlink:01KJ4DNAPSND516VSKFP7EYKW9",
+      "ns:transmission:01KJ4DNAPSPRGSK298QASM76PZ"
+    ],
+    "origin": "ip-10-22-14-115.us-west-1.compute.internal",
+    "context": {
+      "tenant-id": "CgtmbXNpb3RjbG91ZA=="
+    },
+    "visibility": {
+      "rights": [
+        "RIGHT_APPLICATION_TRAFFIC_READ"
+      ]
+    },
+    "unique_id": "01KJ4DNAPS8RFJB4ZPDGB50H9Y"
+  },
+  {
+    "name": "ns.up.join.process",
+    "time": "2026-02-23T04:55:56.313978012Z",
+    "identifiers": [
+      {
+        "device_ids": {
+          "device_id": "lora-wled-ca48",
+          "application_ids": {
+            "application_id": "henke"
+          },
+          "dev_eui": "0000CCC63C43CA48",
+          "join_eui": "0000000000000000"
+        }
+      }
+    ],
+    "data": {
+      "@type": "type.googleapis.com/ttn.lorawan.v3.UplinkMessage",
+      "raw_payload": "AAAAAAAAAAAASMpDPMbMAACo2/v+9Co=",
+      "payload": {
+        "m_hdr": {},
+        "mic": "+/70Kg==",
+        "join_request_payload": {
+          "join_eui": "0000000000000000",
+          "dev_eui": "0000CCC63C43CA48",
+          "dev_nonce": "DBA8"
+        }
+      },
+      "settings": {
+        "data_rate": {
+          "lora": {
+            "bandwidth": 125000,
+            "spreading_factor": 10,
+            "coding_rate": "4/5"
+          }
+        },
+        "frequency": "904300000",
+        "timestamp": 1567825004,
+        "time": "2026-02-23T04:55:56.072497Z"
+      },
+      "rx_metadata": [
+        {
+          "gateway_ids": {
+            "gateway_id": "henkecove",
+            "eui": "A84041FFFF205BD4"
+          },
+          "time": "2026-02-23T04:55:56.072497Z",
+          "timestamp": 1567825004,
+          "rssi": -113,
+          "channel_rssi": -113,
+          "snr": -11,
+          "uplink_token": "ChcKFQoJaGVua2Vjb3ZlEgioQEH//yBb1BDsuMzrBRoLCNy778wGENynkjQg4IuczdDzuQE=",
+          "channel_index": 2,
+          "received_at": "2026-02-23T04:55:56.077417928Z"
+        }
+      ],
+      "received_at": "2026-02-23T04:55:56.110228327Z",
+      "correlation_ids": [
+        "gs:uplink:01KJ4DN8YDAJVYS8J71NW5PHTZ"
+      ],
+      "device_channel_index": 10,
+      "consumed_airtime": "0.370688s"
+    },
+    "correlation_ids": [
+      "gs:uplink:01KJ4DN8YDAJVYS8J71NW5PHTZ"
+    ],
+    "origin": "ip-10-22-15-7.us-west-1.compute.internal",
+    "context": {
+      "tenant-id": "CgtmbXNpb3RjbG91ZA=="
+    },
+    "visibility": {
+      "rights": [
+        "RIGHT_APPLICATION_TRAFFIC_READ"
+      ]
+    },
+    "unique_id": "01KJ4DN94S3F5X9JJ6ENQ7XQAA"
+  },
+  {
+    "time": "2026-02-23T04:55:18.105Z",
+    "name": "synthetic.error.network_error",
+    "isError": true,
+    "isSynthetic": true,
+    "unique_id": "synthetic.1771822518105",
+    "data": {
+      "error": {
+        "name": "ConnectionClosedError",
+        "code": 1006,
+        "message": "WebSocket connection closed"
+      }
+    }
+  },
+  {
+    "name": "end_device.update",
+    "time": "2026-02-23T04:55:16.270007881Z",
+    "identifiers": [
+      {
+        "device_ids": {
+          "device_id": "lora-wled-ca48",
+          "application_ids": {
+            "application_id": "henke"
+          }
+        }
+      }
+    ],
+    "data": {
+      "@type": "type.googleapis.com/google.protobuf.Value",
+      "value": [
+        "label_ids"
+      ]
+    },
+    "correlation_ids": [
+      "rpc:/ttn.lorawan.v3.EndDeviceRegistry/Update:9bed098e-64bc-4e46-a6dc-dd6dbdaa551b"
+    ],
+    "origin": "ip-10-23-5-92.eu-west-1.compute.internal",
+    "context": {
+      "tenant-id": "CgtmbXNpb3RjbG91ZA=="
+    },
+    "visibility": {
+      "rights": [
+        "RIGHT_APPLICATION_DEVICES_READ"
+      ]
+    },
+    "authentication": {
+      "type": "Bearer",
+      "token_type": "AccessToken",
+      "token_id": "ISDB3LUN4HC5XR6EFDE32OEF5XEWELBW24Q6ENY"
+    },
+    "remote_ip": "70.112.121.77",
+    "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36",
+    "unique_id": "01KJ4DM21EWP595KY8E0ZFJTEN"
+  },
+  {
+    "name": "end_device.create",
+    "time": "2026-02-23T04:55:15.721903137Z",
+    "identifiers": [
+      {
+        "device_ids": {
+          "device_id": "lora-wled-ca48",
+          "application_ids": {
+            "application_id": "henke"
+          },
+          "dev_eui": "0000CCC63C43CA48",
+          "join_eui": "0000000000000000"
+        }
+      }
+    ],
+    "correlation_ids": [
+      "rpc:/ttn.lorawan.v3.EndDeviceRegistry/Create:f9a3bcbe-ce3f-457b-b236-fc50acd216e3"
+    ],
+    "origin": "ip-10-23-14-67.eu-west-1.compute.internal",
+    "context": {
+      "tenant-id": "CgtmbXNpb3RjbG91ZA=="
+    },
+    "visibility": {
+      "rights": [
+        "RIGHT_APPLICATION_DEVICES_READ"
+      ]
+    },
+    "authentication": {
+      "type": "Bearer",
+      "token_type": "AccessToken",
+      "token_id": "ISDB3LUN4HC5XR6EFDE32OEF5XEWELBW24Q6ENY"
+    },
+    "remote_ip": "70.112.121.77",
+    "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36",
+    "unique_id": "01KJ4DM1G977786KFE7NWKXTWQ"
+  }
+]
