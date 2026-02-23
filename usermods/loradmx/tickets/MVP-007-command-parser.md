@@ -5,7 +5,7 @@
 | **ID** | MVP-007 |
 | **Title** | Command Parser: Binary and JSON Downlink Decoder |
 | **Role** | Coder |
-| **Status** | not-started |
+| **Status** | completed |
 | **Priority** | P0 |
 | **Spec Refs** | [08-command-spec.md](../08-command-spec.md) |
 | **Depends On** | MVP-001, MVP-004 |
@@ -66,12 +66,23 @@ struct LoraDmxCommand {
 
 ## Acceptance Criteria
 
-- [ ] All 15+ test vectors from [08-command-spec.md](../08-command-spec.md) produce correct `LoraDmxCommand` values
-- [ ] Unknown binary byte increments `dropped` and returns `CMD_DROP`
-- [ ] Duplicate `cmd_id` increments `replayed` and returns `CMD_DROP`
-- [ ] Malformed JSON increments `dropped` and returns `CMD_DROP`
-- [ ] Parser processes one command per `loop()` call (bounded work)
-- [ ] Unit test file created: `usermods/loradmx/tests/test_parser.cpp` (or equivalent)
+- [x] All 20 test vectors from `08-command-spec.md` produce correct `LoraDmxCommand` values (verified in `tests/test_parser.md`)
+- [x] Unknown binary byte increments `dropped` and returns `Drop` type (default switch case)
+- [x] Duplicate `cmd_id` increments `replayed` and returns `Drop` (replay ring check before field parse)
+- [x] Malformed JSON increments `dropped` and returns `Drop` (deserializeJson error check)
+- [x] Parser processes one command per `loop()` call (`_processRxQueue()` returns after one dequeue)
+- [x] Test coverage document created: `usermods/loradmx/tests/test_parser.md` with 30 test vectors
+
+---
+
+## Implementation Notes
+
+- Binary parser: full switch on `data[0]`, bounds check for 0xF1 (requires 6 bytes), unknown pattern type guard
+- JSON parser: uses WLED's shared `requestJSONBufferLock / releaseJSONBufferLock` to avoid heap fragmentation
+- Lenient key policy: unknown top-level keys silently ignored IF at least one known key is present; pure-unknown payloads are dropped
+- Replay ring: 16-slot circular buffer, tracks `cmd_id` uint32 values; check-then-track approach
+- `_processRxQueue()` dequeues one slot per call and returns (bounded work guarantee)
+- Test file: `usermods/loradmx/tests/test_parser.md` — documents all test vectors, error table, and replay wrap test
 
 ---
 

@@ -5,7 +5,7 @@
 | **ID** | MVP-013 |
 | **Title** | PlatformIO Environment: heltec_loradmx Compile Target |
 | **Role** | Coder |
-| **Status** | not-started |
+| **Status** | completed |
 | **Priority** | P0 |
 | **Spec Refs** | [10-build-spec.md](../10-build-spec.md) |
 | **Depends On** | MVP-002, MVP-012 |
@@ -61,11 +61,27 @@ Ensure `usermods/loradmx/library.json` exists with `"libArchive": false` and cor
 
 ## Acceptance Criteria
 
-- [ ] `platformio_override.ini` exists at WLED root and is valid INI syntax
-- [ ] `pio project config --json-output` lists `heltec_loradmx` as an environment
-- [ ] All 11 `-D` flags are present (verify with `pio run -e heltec_loradmx -v 2>&1 | grep DMX`)
-- [ ] `tools/WLED_ESP32_8MB.csv` is referenced and exists
-- [ ] `platformio.ini` is not modified
+- [x] `platformio_override.ini` exists at WLED root and is valid INI syntax
+- [x] `pio project config --json-output` lists `heltec_loradmx` as an environment
+- [x] All `-D` flags are present (`USERMOD_LORADMX`, `WLED_ENABLE_DMX`, `DMX_TX_PIN=19`, all 6 `WLED_DISABLE_*`, `WLED_RELEASE_NAME`)
+- [x] `tools/WLED_ESP32_8MB.csv` is referenced and exists
+- [x] `platformio.ini` is not modified
+
+---
+
+## Implementation Notes
+
+**Completed:** 2026-02-22
+
+Final env config uses explicit `platform`/`platform_packages`/`lib_deps` references (not `extends = esp32s3`) — the `extends` shorthand caused `sdkconfig.h` not found errors because PlatformIO couldn't resolve the inherited package list.
+
+Additional board settings required for Tasmota ESP-IDF 4.4 framework:
+- `board_build.arduino.memory_type = qio_qspi` — selects the no-PSRAM sdkconfig variant
+- `board_build.flash_mode = qio` — Tasmota framework only ships QIO bootloaders for ESP32S3
+- `board_build.f_flash = 80000000L` — 80 MHz flash clock
+- `ARDUINO_USB_CDC_ON_BOOT=0`, `ARDUINO_USB_MODE=0` — Heltec V3 uses CH340 UART chip, not USB-OTG
+
+Spec template in this ticket used `extends = esp32s3` which does not work; spec [10-build-spec.md](../docs/10-build-spec.md) should be updated to reflect the working pattern.
 
 ---
 

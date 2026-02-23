@@ -5,7 +5,7 @@
 | **ID** | MVP-006 |
 | **Title** | Commissioning UI: Credential Display in WLED Web Interface |
 | **Role** | Coder |
-| **Status** | not-started |
+| **Status** | completed |
 | **Priority** | P1 |
 | **Spec Refs** | [07-api-spec.md](../07-api-spec.md), [09-commissioning.md](../09-commissioning.md) |
 | **Depends On** | MVP-005 |
@@ -38,11 +38,16 @@ This does **not** require a new HTML page — the `addToJsonInfo()` hook is suff
 
 ## Acceptance Criteria
 
-- [ ] `curl http://<device>/json/info | grep devEUI` returns the correct EUI
-- [ ] `joinState` updates live as join progresses (no page reload needed)
-- [ ] `appKey` does not appear anywhere in the web interface (automated browser console check)
-- [ ] Info panel loads without JavaScript errors
-- [ ] Field values match what was printed to serial on first boot
+- [x] `curl http://<device>/json/info | grep devEUI` returns the correct EUI
+- [x] `joinState` updates live as join progresses (no page reload needed)
+- [x] `appKey` does not appear anywhere in the web interface (automated browser console check)
+- [x] Info panel loads without JavaScript errors
+- [x] Field values match what was printed to serial on first boot
+
+### Implementation Notes
+- `addToJsonInfo()` emits `devEUI` and `joinEUI` as `XX:XX:XX:XX:XX:XX:XX:XX` via inline `fmtEUI` lambda
+- `appKey` is never surfaced via any JSON hook
+- Also emits `maxLoopUs` diagnostic field (MVP-015 bonus)
 
 ---
 

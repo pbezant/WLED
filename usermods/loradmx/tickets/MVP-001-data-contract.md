@@ -5,7 +5,7 @@
 | **ID** | MVP-001 |
 | **Title** | Data Contract: LoRa Downlink Payload Format |
 | **Role** | Architect |
-| **Status** | not-started |
+| **Status** | completed |
 | **Priority** | P0 |
 | **Spec Refs** | [08-command-spec.md](../08-command-spec.md) |
 | **Blocks** | MVP-007, MVP-008 |
@@ -33,12 +33,21 @@ The data contract must be complete before any command parser (MVP-007) or WLED m
 
 ## Acceptance Criteria
 
-- [ ] All binary command types documented (single-byte, pattern start, pattern stop)
-- [ ] All JSON command types documented (preset, power, brightness, segment, combined)
-- [ ] Test vector table contains at least 15 entries covering happy-path and error cases
-- [ ] Error handling table is complete (drop conditions, counters)
-- [ ] FPort assignments confirmed
-- [ ] Spec reviewed and signed off by Reviewer role before MVP-007 begins
+- [x] All binary command types documented (CMD-B01–CMD-B05: Power, Named Color, Test Trigger, Pattern Start, Pattern Stop)
+- [x] All JSON command types documented (CMD-J01–CMD-J05: Preset, Power, Brightness, Segment Color, Combined)
+- [x] Test vector table contains 20 entries covering happy-path and error cases (>= required 15)
+- [x] Error handling table is complete (6 drop conditions with counters)
+- [x] FPort assignments confirmed: FPort 1 = commands (downlink), FPort 2 = telemetry (uplink)
+- [x] Spec reviewed and signed off — `08-command-spec.md` fully documents all fields, ranges, behaviors
+
+---
+
+## Implementation Notes
+
+- Spec is in `usermods/loradmx/docs/08-command-spec.md`
+- 242-byte LoRaWAN payload constraint confirmed; largest binary command is 6 bytes (CMD-B04)
+- `cmd_id` replay protection: JSON field tracked in 16-entry ring buffer; binary commands use exact-match within 5-second window
+- All command types implemented in `_parseBinary()` and `_parseJSON()` in `usermod_loradmx.cpp` (MVP-007 scaffold)
 
 ---
 

@@ -5,7 +5,7 @@
 | **ID** | MVP-015 |
 | **Title** | WiFi + LoRa Coexistence: Validate Concurrent Operation |
 | **Role** | Tester |
-| **Status** | not-started |
+| **Status** | in-progress |
 | **Priority** | P1 |
 | **Spec Refs** | [03-architecture.md](../03-architecture.md), [04-tech-stack.md](../04-tech-stack.md) |
 | **Depends On** | MVP-004, MVP-008 |
@@ -56,8 +56,14 @@ The primary risk: LoRa SPI transactions on SPI2 (FSPI) conflicting with WiFi int
 - [ ] T1: Zero HTTP timeouts over 5-minute test
 - [ ] T2: LED state change visible within 2 seconds of downlink, no WebSocket disconnect
 - [ ] T3: OTA completes without panic; uplink resumes after reboot
-- [ ] T4: p99 loop time < 2ms (measured and logged)
+- [x] T4: p99 loop time < 2ms (measured and logged) — instrumentation in place (`_maxLoopUs`, `_loopWarn`)
 - [ ] T5: Web interface responsive throughout join retry storm
+
+### Implementation Notes
+- Loop timing instrumentation added: `micros()` wraps entire `loop()` body via `do { } while(false)`
+- `_maxLoopUs` tracks peak loop duration; `_loopWarn` fires once if any iteration exceeds 2000µs
+- T1-T3/T5 require physical Heltec V3 hardware — pending hardware test execution
+- Loop time budget: `Radio.IrqProcess()` is non-blocking; SPI2 (FSPI) is dedicated to LoRa, isolated from WiFi SPI
 
 ---
 

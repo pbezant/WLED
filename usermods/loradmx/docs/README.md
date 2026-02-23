@@ -27,21 +27,21 @@ This folder contains all spec, architecture, workflow, and API documentation for
 
 | ID | Title | Status |
 |----|-------|--------|
-| [MVP-001](../tickets/MVP-001-data-contract.md) | Finalize LoRa command data contract | not-started |
-| [MVP-002](../tickets/MVP-002-scaffold.md) | Scaffold usermod module structure | not-started |
-| [MVP-003](../tickets/MVP-003-hw-init.md) | Hardware initialization (SPI2, PinManager, radio setup) | not-started |
-| [MVP-004](../tickets/MVP-004-radio-loop.md) | Non-blocking radio loop and latency watchdog | not-started |
-| [MVP-005](../tickets/MVP-005-credentials.md) | Device identity and credential generation | not-started |
-| [MVP-006](../tickets/MVP-006-commissioning-ui.md) | Commissioning UI (credentials in Info/Settings pages) | not-started |
-| [MVP-007](../tickets/MVP-007-command-parser.md) | LoRa downlink command parser | not-started |
-| [MVP-008](../tickets/MVP-008-wled-mapper.md) | WLED state mapper (commands -> WLED API calls) | not-started |
-| [MVP-009](../tickets/MVP-009-config-schema.md) | Usermod config schema and persistence | not-started |
-| [MVP-010](../tickets/MVP-010-diagnostics.md) | Diagnostics and status exposure (JSON info/state) | not-started |
-| [MVP-011](../tickets/MVP-011-uplink-policy.md) | Uplink policy and duty cycle management | not-started |
-| [MVP-012](../tickets/MVP-012-dmx-pin-patch.md) | DMX TX pin patch (GPIO 2 -> configurable) | not-started |
-| [MVP-013](../tickets/MVP-013-platformio-env.md) | PlatformIO build environment (heltec_loradmx) | not-started |
-| [MVP-014](../tickets/MVP-014-build-verification.md) | Build verification and compilation validation | not-started |
-| [MVP-015](../tickets/MVP-015-wifi-lora-coexistence.md) | WiFi + LoRaWAN Class C coexistence validation | not-started |
+| [MVP-001](../tickets/MVP-001-data-contract.md) | Finalize LoRa command data contract | ✅ completed |
+| [MVP-002](../tickets/MVP-002-scaffold.md) | Scaffold usermod module structure | ✅ completed |
+| [MVP-003](../tickets/MVP-003-hw-init.md) | Hardware initialization (SPI2, PinManager, radio setup) | ✅ completed |
+| [MVP-004](../tickets/MVP-004-radio-loop.md) | Non-blocking radio loop and latency watchdog | ✅ completed |
+| [MVP-005](../tickets/MVP-005-credentials.md) | Device identity and credential generation | ✅ completed |
+| [MVP-006](../tickets/MVP-006-commissioning-ui.md) | Commissioning UI (credentials in Info/Settings pages) | ✅ completed |
+| [MVP-007](../tickets/MVP-007-command-parser.md) | LoRa downlink command parser | ✅ completed |
+| [MVP-008](../tickets/MVP-008-wled-mapper.md) | WLED state mapper (commands -> WLED API calls) | ✅ completed |
+| [MVP-009](../tickets/MVP-009-config-schema.md) | Usermod config schema and persistence | ✅ completed |
+| [MVP-010](../tickets/MVP-010-diagnostics.md) | Diagnostics and status exposure (JSON info/state) | ✅ completed |
+| [MVP-011](../tickets/MVP-011-uplink-policy.md) | Uplink policy and duty cycle management | ✅ completed |
+| [MVP-012](../tickets/MVP-012-dmx-pin-patch.md) | DMX TX pin patch (GPIO 2 -> configurable) | ✅ completed |
+| [MVP-013](../tickets/MVP-013-platformio-env.md) | PlatformIO build environment (heltec_loradmx) | ✅ completed |
+| [MVP-014](../tickets/MVP-014-build-verification.md) | Build verification and compilation validation | ✅ completed |
+| [MVP-015](../tickets/MVP-015-wifi-lora-coexistence.md) | WiFi + LoRaWAN Class C coexistence validation | ⚠️ in-progress |
 
 ### Phase 2 (Placeholder)
 
@@ -60,4 +60,13 @@ This folder contains all spec, architecture, workflow, and API documentation for
 2. [06-agent-team.md](06-agent-team.md) — understand your role
 3. [05-dev-workflow.md](05-dev-workflow.md) — understand the process
 4. [03-architecture.md](03-architecture.md) — understand the system
-5. Pick up the next `not-started` ticket in `../tickets/`
+5. Review completed MVP tickets to understand what has been implemented
+
+## MVP Milestone Status
+
+**14 / 15 tickets completed.** The MVP milestone is functionally complete and
+builds successfully (`heltec_loradmx`: Flash 57.1%, RAM 26.1%).
+
+| Remaining | Blocker |
+|-----------|---------|
+| [MVP-015](../tickets/MVP-015-wifi-lora-coexistence.md) — T1/T2/T3/T5 scenarios | Requires physical Heltec V3 hardware for hardware-in-loop testing |

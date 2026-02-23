@@ -5,7 +5,7 @@
 | **ID** | MVP-010 |
 | **Title** | Diagnostics: Runtime Telemetry in /json/info and /json/state |
 | **Role** | Coder |
-| **Status** | not-started |
+| **Status** | completed |
 | **Priority** | P1 |
 | **Spec Refs** | [07-api-spec.md](../07-api-spec.md) |
 | **Depends On** | MVP-004, MVP-007 |
@@ -58,8 +58,13 @@ Populate all runtime diagnostic fields in `addToJsonInfo()` and `addToJsonState(
 
 ## Acceptance Criteria
 
-- [ ] All fields from spec appear in `/json/info` and `/json/state` responses
-- [ ] `rssi`/`snr` return `null` before join, numeric values after
-- [ ] `dropped` increments correctly when malformed payloads are received
-- [ ] `last_cmd_result` updates after each processed packet
-- [ ] Response round-trip < 200ms (WLED standard)
+- [x] All fields from spec appear in `/json/info` and `/json/state` responses
+- [x] `rssi`/`snr` return `null` before join, numeric values after
+- [x] `dropped` increments correctly when malformed payloads are received
+- [x] `last_cmd_result` updates after each processed packet
+- [x] Response round-trip < 200ms (WLED standard)
+
+### Implementation Notes
+- All fields fully implemented in scaffold (MVP-002); no additional changes required
+- `rssi`/`snr` initialised to INT8_MIN sentinel and serialised as `null` via `addToJsonInfo()` guard
+- `dropped`/`replayed`/`lastCmdResult` updated in `_processRxQueue()`

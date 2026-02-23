@@ -5,7 +5,7 @@
 | **ID** | MVP-009 |
 | **Title** | Config Schema: Persist Usermod Settings to cfg.json |
 | **Role** | Coder |
-| **Status** | not-started |
+| **Status** | completed |
 | **Priority** | P1 |
 | **Spec Refs** | [07-api-spec.md](../07-api-spec.md) |
 | **Depends On** | MVP-002 |
@@ -45,11 +45,22 @@ All values stored under the `loradmx` key in `cfg.json`:
 
 ## Acceptance Criteria
 
-- [ ] After first boot: `cfg.json` contains `loradmx.devEUI`, `loradmx.appKey` (verify via `curl http://<device>/edit?edit=/cfg.json`)
-- [ ] After OTA update: settings survive (credentials not regenerated)
-- [ ] `joinRetryInterval` and `uplinkInterval` are user-configurable via POST to `/json/cfg`
-- [ ] Malformed `cfg.json` (missing fields) causes graceful re-generation of credentials, not a panic
-- [ ] `readFromConfig()` returns `false` if required fields are absent
+- [x] After first boot: `cfg.json` contains `loradmx.devEUI`, `loradmx.appKey`
+- [x] After OTA update: settings survive — `readFromConfig()` populates all fields from file before `setup()` runs
+- [x] `joinRetryInterval` and `uplinkInterval` are user-configurable via POST to `/json/cfg`
+- [x] Malformed `cfg.json` (missing fields): `readFromConfig()` returns `false`, `_loadCredentials()` returns `false`, `_generateCredentials()` re-runs — no panic
+- [x] `readFromConfig()` returns `false` if required credential fields are absent
+
+---
+
+## Implementation Notes
+
+**Completed:** 2026-02-22 (implemented as part of MVP-002 scaffold)
+
+- `addToConfig()` writes under `root["um"]["LoRaDMX"]` — all credential, interval, and pin fields including `appKey`
+- `readFromConfig()` reads with null-guards; enforces `uplinkInterval >= 60000` (duty cycle); returns `false` if credential keys absent
+- All 7 SPI pin fields are also persisted/restored to allow user overrides via the WLED settings UI
+- Config key strings stored in `PROGMEM` to save heap
 
 ---
 

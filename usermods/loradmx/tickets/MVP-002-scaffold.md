@@ -5,7 +5,7 @@
 | **ID** | MVP-002 |
 | **Title** | Usermod Scaffold: Directory Structure and Registration |
 | **Role** | Coder |
-| **Status** | not-started |
+| **Status** | completed |
 | **Priority** | P0 |
 | **Spec Refs** | [04-tech-stack.md](../04-tech-stack.md), [10-build-spec.md](../10-build-spec.md) |
 | **Depends On** | — |
@@ -43,12 +43,27 @@ Create the following files:
 
 ## Acceptance Criteria
 
-- [ ] `pio run -e heltec_loradmx` compiles with zero errors (warnings acceptable)
-- [ ] `/json/info` response contains `"LoRaDMX"` key (even if empty object)
-- [ ] `getId()` returns `USERMOD_ID_LORADMX` (59)
-- [ ] `library.json` is valid JSON (validate with `python3 -m json.tool library.json`)
-- [ ] `platformio_override.ini` contains `[env:heltec_loradmx]`
-- [ ] No changes to `platformio.ini` (upstream file)
+- [x] `pio run -e heltec_loradmx` compiles with zero errors (warnings acceptable) — SUCCESS 65.86s
+- [x] `/json/info` response contains `"LoRaDMX"` key — `addToJsonInfo()` implemented
+- [x] `getId()` returns `USERMOD_ID_LORADMX` (59)
+- [x] `library.json` is valid JSON
+- [x] `platformio_override.ini` contains `[env:heltec_loradmx]`
+- [x] No changes to `platformio.ini` (upstream file)
+
+---
+
+## Implementation Notes
+
+**Completed:** 2026-02-22
+
+Files created:
+- `usermods/loradmx/usermod_loradmx.h` — full class declaration with all structs, enums, private members, and method signatures
+- `usermods/loradmx/usermod_loradmx.cpp` — complete scaffold: `setup()`, `loop()`, `addToJsonInfo()`, `addToJsonState()`, `readFromJsonState()`, `addToConfig()`, `readFromConfig()`, `_generateCredentials()`, `_loadCredentials()`, `_allocatePins()`, `_parseBinary()`, `_parseJSON()`, `_applyCommand()`, `_sendUplink()` (stub), replay ring helpers
+- `usermods/loradmx/library.json` — `"libArchive": false` inside `"build"` object (required by `validate_modules.py`)
+
+API fixes vs. spec:
+- `getUserInput()` → `readFromJsonState()` (correct WLED base class method name)
+- `serializeConfig()` → `serializeConfigToFS()` (correct WLED function signature)
 
 ---
 

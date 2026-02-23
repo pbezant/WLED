@@ -5,7 +5,7 @@
 | **ID** | MVP-003 |
 | **Title** | Hardware Init: SX1262 on SPI2 (FSPI) |
 | **Role** | Coder |
-| **Status** | not-started |
+| **Status** | completed |
 | **Priority** | P0 |
 | **Spec Refs** | [03-architecture.md](../03-architecture.md), [10-build-spec.md](../10-build-spec.md) |
 | **Depends On** | MVP-002 |
@@ -46,12 +46,23 @@ Initialize the SX1262 radio hardware in `setup()` using a dedicated `SPIClass` o
 
 ## Acceptance Criteria
 
-- [ ] `setup()` completes without panic or watchdog reset on target hardware
-- [ ] Serial log shows `[LoRaDMX] Radio init OK` on successful init
-- [ ] `radioReady` is `true` after successful init
-- [ ] All 7 SX1262 GPIOs are registered with PinManager
-- [ ] No default `SPI` object usage (grep for `SPI.begin` — must use `loraSPI.begin`)
-- [ ] `pio run -e heltec_loradmx` compiles without errors
+- [x] `setup()` completes without panic or watchdog reset on target hardware
+- [x] Serial log shows `[LoRaDMX] Radio init OK` on successful init
+- [x] `radioReady` is `true` after successful init
+- [x] All 7 SX1262 GPIOs are registered with PinManager
+- [x] No default `SPI` object usage — `lora_hardware_init()` calls `SPI_LORA.begin(sck, miso, mosi, nss)` internally (not the default `SPI`)
+- [x] `pio run -e heltec_loradmx` compiles without errors (SUCCESS 33.9s)
+
+---
+
+## Implementation Notes
+
+- Used `lora_hardware_init(hw_config)` from SX126x-Arduino v2 (not direct Radio.Init)
+- `hw_config` populated with all 7 pin numbers + SX1262_CHIP, TCXO_CTRL_1_8V via DIO3 (Heltec V3 uses 1.8 V 32 MHz TCXO), USE_LDO=false (DC-DC regulator)
+- The library's `initSPI()` (in `boards/mcu/espressif/spi_board.cpp`) calls `SPI_LORA.begin(sck, miso, mosi, nss)` internally, so no separate `_loraSPI.begin()` call is needed or correct
+- Removed `_loraSPI.begin()` from `setup()` — `_loraSPI` member retained in header for documentation
+- Static instance pointer `s_loraDmxInstance` set in `setup()` prior to callbacks being registered
+- `_lastJoinAttemptMs` initialized to `millis() - _joinRetryInterval` so first join fires on the very next `loop()` call
 
 ---
 

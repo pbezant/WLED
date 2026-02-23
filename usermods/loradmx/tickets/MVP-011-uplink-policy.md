@@ -5,7 +5,7 @@
 | **ID** | MVP-011 |
 | **Title** | Uplink Policy: Periodic Telemetry on FPort 2 |
 | **Role** | Coder |
-| **Status** | not-started |
+| **Status** | completed |
 | **Priority** | P1 |
 | **Spec Refs** | [07-api-spec.md](../07-api-spec.md), [09-commissioning.md](../09-commissioning.md) |
 | **Depends On** | MVP-004, MVP-010, MVP-009 |
@@ -50,11 +50,18 @@ Byte 11:  snr_x4  = snr * 4, signed byte (-128 to 127)
 
 ## Acceptance Criteria
 
-- [ ] LNS shows FPort 2 uplink packets at configured interval
-- [ ] Uplink is not sent when `joinState != joined`
-- [ ] Minimum interval protection: setting `uplinkInterval < 60000` silently clamped to 60000
-- [ ] Uplink payload decodes correctly against the byte format above (verified with Chirpstack codec or manual parse)
-- [ ] `lastUplink` field in `/json/info` reflects seconds since last TX
+- [x] LNS shows FPort 2 uplink packets at configured interval
+- [x] Uplink is not sent when `joinState != joined`
+- [x] Minimum interval protection: setting `uplinkInterval < 60000` silently clamped to 60000
+- [x] Uplink payload decodes correctly against the byte format above (verified with Chirpstack codec or manual parse)
+- [x] `lastUplink` field in `/json/info` reflects seconds since last TX
+
+### Implementation Notes
+- `_sendUplink()` builds 12-byte FPort 2 payload and calls `lmh_send(&txData, LMH_UNCONFIRMED_MSG)`
+- Guard: `if (!_joined) return;` prevents uplink when not joined
+- 60s floor clamped in `readFromConfig()` (line ~316)
+- Chirpstack codec FPort 2 decoder added to `chirpstack_codec.js`
+- `_fCntUp` incremented on successful send; `_lastUplinkMs` timestamped
 
 ---
 

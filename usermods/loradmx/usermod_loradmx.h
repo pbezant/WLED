@@ -18,6 +18,7 @@
 
 #include "wled.h"
 #include <SPI.h>
+#include "LoRaWan-Arduino.h"  // lora_hardware_init, lmh_*, hw_config, Radio
 
 // ─── Usermod ID ──────────────────────────────────────────────────────────────
 #ifndef USERMOD_ID_LORADMX
@@ -98,6 +99,13 @@ class UsermodLoRaDMX : public Usermod {
   bool readFromConfig(JsonObject& root) override;
   uint16_t getId()      override { return USERMOD_ID_LORADMX; }
 
+  // ── C-callback forwarding (called by static LoRaWAN callbacks) ───────────
+  const char* _devEUI_cb() const { return _devEUI; }
+  void _pushDownlink(const uint8_t* buf, uint8_t len, uint8_t fport,
+                     int16_t rssi, uint8_t snr);
+  void _onJoinSuccess();
+  void _onJoinFailed();
+
  private:
   // ── Config (persisted) ────────────────────────────────────────────────────
   bool     _enabled               = true;
@@ -120,6 +128,7 @@ class UsermodLoRaDMX : public Usermod {
 
   // ── Runtime state ─────────────────────────────────────────────────────────
   bool               _radioReady        = false;
+  bool               _lorawanInitDone   = false;
   LoraDmxJoinState   _joinState         = LoraDmxJoinState::NotJoined;
   float              _rssi              = 0.0f;
   float              _snr               = 0.0f;
@@ -133,6 +142,7 @@ class UsermodLoRaDMX : public Usermod {
   uint32_t           _replayed          = 0;
   uint32_t           _overflow          = 0;
   bool               _loopWarn          = false;
+  uint32_t           _maxLoopUs         = 0;    // worst-case loop() µs (MVP-015)
   char               _lastCmdResult[32] = "none";
 
   // Replay protection — ring of last 16 cmd IDs
@@ -158,6 +168,7 @@ class UsermodLoRaDMX : public Usermod {
   LoraDmxCommand _parseBinary(const uint8_t* data, uint16_t len);
   LoraDmxCommand _parseJSON(const uint8_t* data, uint16_t len);
   void     _applyCommand(const LoraDmxCommand& cmd);
+  void     _applySegmentJson(const uint8_t* data, uint16_t len);
   void     _sendUplink();
   bool     _isDuplicate(uint32_t cmdId);
   void     _trackCmdId(uint32_t cmdId);

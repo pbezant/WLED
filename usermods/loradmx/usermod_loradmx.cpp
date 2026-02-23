@@ -3,14 +3,15 @@
  *
  * This file covers:
  *   MVP-002  scaffold & registration
- *   MVP-003  SPI2/SX1262 hardware init (stubs — radio library integration in MVP-004)
+ *   MVP-003  SX1262 hardware init via lora_hardware_init() (SX126x-Arduino)
+ *   MVP-004  LoRaWAN Class C join loop + Radio.IrqProcess() non-blocking poll
  *   MVP-005  on-device credential generation and persistence
+ *   MVP-006  commissioning UI (devEUI formatted XX:XX:XX:XX:XX:XX:XX:XX in /json/info)
  *   MVP-008  WLED state mapper
  *   MVP-009  config schema (addToConfig / readFromConfig)
  *   MVP-010  diagnostics (addToJsonInfo / addToJsonState)
- *
- * Radio loop (MVP-004), command parser (MVP-007), and uplink (MVP-011)
- * are stubbed here and will be completed in their respective tickets.
+ *   MVP-011  uplink policy: 12-byte FPort 2 telemetry, min 60 s interval
+ *   MVP-015  loop timing instrumentation (maxLoopUs / loopWarn)
  */
 
 #include "wled.h"
@@ -38,11 +39,79 @@ static const uint8_t PATTERN_FX_MAP[] = {
 };
 static const uint8_t PATTERN_FX_MAP_SIZE = sizeof(PATTERN_FX_MAP);
 
+// ─── Single-instance pointer for LoRaWAN C-style callbacks ──────────────────
+static UsermodLoRaDMX* s_loraDmxInstance = nullptr;
+
+// ─── Hex string → byte array helper ─────────────────────────────────────────
+// hex: must be exactly outLen*2 chars; returns false on length mismatch.
+static bool hexStrToBytes(const char* hex, uint8_t* out, size_t outLen) {
+  if (!hex || strlen(hex) != outLen * 2) return false;
+  for (size_t i = 0; i < outLen; i++) {
+    auto fromHex = [](char c) -> uint8_t {
+      if (c >= '0' && c <= '9') return (uint8_t)(c - '0');
+      if (c >= 'a' && c <= 'f') return (uint8_t)(c - 'a' + 10);
+      if (c >= 'A' && c <= 'F') return (uint8_t)(c - 'A' + 10);
+      return 0;
+    };
+    out[i] = (uint8_t)((fromHex(hex[i * 2]) << 4) | fromHex(hex[i * 2 + 1]));
+  }
+  return true;
+}
+
+// ─── LoRaWAN MAC callbacks (C-style, forwarded through s_loraDmxInstance) ───
+
+static uint8_t s_getBatLevel() { return 254; }
+
+static void s_getUniqueId(uint8_t* id) {
+  if (!s_loraDmxInstance) return;
+  hexStrToBytes(s_loraDmxInstance->_devEUI_cb(), id, 8);
+}
+
+static uint32_t s_getRandomSeed() { return (uint32_t)esp_random(); }
+
+static void s_onRxData(lmh_app_data_t* appdata) {
+  if (!s_loraDmxInstance || !appdata || appdata->buffsize == 0) return;
+  s_loraDmxInstance->_pushDownlink(appdata->buffer, appdata->buffsize, appdata->port,
+                                   (int16_t)appdata->rssi, (uint8_t)appdata->snr);
+}
+
+static void s_onJoined() {
+  if (!s_loraDmxInstance) return;
+  s_loraDmxInstance->_onJoinSuccess();
+}
+
+static void s_onJoinFailed() {
+  if (!s_loraDmxInstance) return;
+  s_loraDmxInstance->_onJoinFailed();
+}
+
+static void s_onConfirmClass(DeviceClass_t Class) {
+  DEBUG_PRINTF("[LoRaDMX] Class confirmed: %c\n", (char)('A' + Class));
+}
+
+static void s_onUnconfFinished() { /* no-op */ }
+static void s_onConfResult(bool /*result*/) { /* no-op */ }
+
+static lmh_callback_t s_loraCallbacks = {
+  .BoardGetBatteryLevel = s_getBatLevel,
+  .BoardGetUniqueId     = s_getUniqueId,
+  .BoardGetRandomSeed   = s_getRandomSeed,
+  .lmh_RxData           = s_onRxData,
+  .lmh_has_joined       = s_onJoined,
+  .lmh_ConfirmClass     = s_onConfirmClass,
+  .lmh_has_joined_failed= s_onJoinFailed,
+  .lmh_unconf_finished  = s_onUnconfFinished,
+  .lmh_conf_result      = s_onConfResult,
+};
+
 // ─────────────────────────────────────────────────────────────────────────────
 // setup()
 // ─────────────────────────────────────────────────────────────────────────────
 void UsermodLoRaDMX::setup() {
   if (!_enabled) return;
+
+  // Register instance pointer for C-style LoRaWAN callbacks
+  s_loraDmxInstance = this;
 
   // Load or generate credentials first (MVP-005)
   if (!_loadCredentials()) {
@@ -55,12 +124,16 @@ void UsermodLoRaDMX::setup() {
     return;
   }
 
-  // Initialise SPI2 bus dedicated to SX1262
-  _loraSPI.begin(_pinSck, _pinMiso, _pinMosi, _pinNss);
-  DEBUG_PRINTLN(F("[LoRaDMX] SPI2 (FSPI) initialised"));
-
-  // Radio hardware init — implementation ticket MVP-003
+  // Radio hardware init (MVP-003). lora_hardware_init() internally calls
+  // SPI_LORA.begin(sck, miso, mosi, nss) using the pins in hw_config, so we
+  // do NOT call _loraSPI.begin() here — the library owns the SPI bus init.
   _initRadio();
+
+  if (_radioReady) {
+    // Trigger first join attempt on the very next loop() call (unsigned underflow
+    // ensures now - _lastJoinAttemptMs >= _joinRetryInterval immediately).
+    _lastJoinAttemptMs = millis() - _joinRetryInterval;
+  }
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -72,34 +145,48 @@ void UsermodLoRaDMX::setup() {
 void UsermodLoRaDMX::loop() {
   if (!_enabled || !_radioReady) return;
 
+  // MVP-015: loop time budget instrumentation
+  uint32_t loopStartUs = micros();
+
   uint32_t now = millis();
 
-  // ── Join retry (MVP-004) ──────────────────────────────────────────────────
-  if (_joinState == LoraDmxJoinState::NotJoined ||
-      _joinState == LoraDmxJoinState::JoinFailed) {
-    if (now - _lastJoinAttemptMs >= _joinRetryInterval) {
-      _lastJoinAttemptMs = now;
-      _attemptJoin();       // non-blocking stub — replaced by radio lib callback in MVP-004
-      return;
+  // Single-iteration do-while so any sub-section can `break` to reach timing
+  do {
+    // ── Join retry (MVP-004) ────────────────────────────────────────────────
+    if (_joinState == LoraDmxJoinState::NotJoined ||
+        _joinState == LoraDmxJoinState::JoinFailed) {
+      if (now - _lastJoinAttemptMs >= _joinRetryInterval) {
+        _lastJoinAttemptMs = now;
+        _attemptJoin();
+        break;
+      }
     }
-  }
 
-  // ── Radio event polling (MVP-004) ────────────────────────────────────────
-  // TODO(MVP-004): call LoraManager2 non-blocking process() here
-  // e.g.:  loraManager.process();
+    // ── Radio event polling (MVP-004) ──────────────────────────────────────
+    // Non-blocking: process one pending radio IRQ (DIO1) per loop() call.
+    Radio.IrqProcess();
 
-  // ── Process one queued downlink (MVP-007) ────────────────────────────────
-  if (_rxCount > 0) {
-    _processRxQueue();
-    return;
-  }
-
-  // ── Uplink timer (MVP-011) ───────────────────────────────────────────────
-  if (_joinState == LoraDmxJoinState::Joined) {
-    if (now - _lastUplinkMs >= _uplinkInterval) {
-      _sendUplink();      // stub — implemented in MVP-011
-      _lastUplinkMs = now;
+    // ── Process one queued downlink (MVP-007) ──────────────────────────────
+    if (_rxCount > 0) {
+      _processRxQueue();
+      break;
     }
+
+    // ── Uplink timer (MVP-011) ─────────────────────────────────────────────
+    if (_joinState == LoraDmxJoinState::Joined) {
+      if (now - _lastUplinkMs >= _uplinkInterval) {
+        _sendUplink();
+        _lastUplinkMs = now;
+      }
+    }
+  } while (false);
+
+  // Update worst-case timing; set _loopWarn if > 2ms threshold
+  uint32_t elapsed = micros() - loopStartUs;
+  if (elapsed > _maxLoopUs) _maxLoopUs = elapsed;
+  if (elapsed > 2000 && !_loopWarn) {
+    _loopWarn = true;
+    DEBUG_PRINTF("[LoRaDMX] loop() overrun: %lu us\n", elapsed);
   }
 }
 
@@ -112,8 +199,25 @@ void UsermodLoRaDMX::addToJsonInfo(JsonObject& root) {
 
   JsonObject obj = user.createNestedObject(FPSTR(_name));
 
-  obj[F("devEUI")]               = _devEUI;
-  obj[F("joinEUI")]              = _joinEUI;
+  // Format devEUI / joinEUI as XX:XX:XX:XX:XX:XX:XX:XX (MVP-006)
+  char devEuiFormatted[24] = {};
+  char joinEuiFormatted[24] = {};
+  auto fmtEUI = [](const char* src, char* out, size_t outLen) {
+    if (strlen(src) == 16) {
+      for (int i = 0; i < 8; i++) {
+        out[i*3]   = src[i*2];
+        out[i*3+1] = src[i*2+1];
+        if (i < 7) out[i*3+2] = ':';
+      }
+    } else {
+      strlcpy(out, src, outLen);
+    }
+  };
+  fmtEUI(_devEUI,  devEuiFormatted,  sizeof(devEuiFormatted));
+  fmtEUI(_joinEUI, joinEuiFormatted, sizeof(joinEuiFormatted));
+
+  obj[F("devEUI")]               = devEuiFormatted;
+  obj[F("joinEUI")]              = joinEuiFormatted;
   obj[F("joinState")]            = joinStateStr(_joinState);
   obj[F("credentialsProvisioned")] = _credentialsProvisioned;
   obj[F("version")]              = LORADMX_VERSION;
@@ -123,6 +227,7 @@ void UsermodLoRaDMX::addToJsonInfo(JsonObject& root) {
   obj[F("dropped")]              = _dropped;
   obj[F("replayed")]             = _replayed;
   obj[F("loopWarn")]             = _loopWarn;
+  obj[F("maxLoopUs")]            = _maxLoopUs;  // MVP-015 timing diagnostic
 
   // rssi / snr — null when not joined
   if (_joinState == LoraDmxJoinState::Joined) {
@@ -339,23 +444,139 @@ void UsermodLoRaDMX::_deallocatePins() {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// _initRadio()  (MVP-003 stub — radio library wired in MVP-004)
+// _initRadio()  (MVP-003)
+//
+// Initializes the SX1262 hardware via SX126x-Arduino's lora_hardware_init().
+// The library internally calls SPI_LORA.begin(sck, miso, mosi, nss) using
+// the pin numbers in hw_config — we do NOT manage SPI directly.
+//
+// Heltec WiFi LoRa 32 V3 specifics:
+//   - 32 MHz TCXO on DIO3, 1.8 V supply rail  -> USE_DIO3_TCXO = true, 1_8V
+//   - DC-DC power regulator (not LDO)          -> USE_LDO = false
+//   - No antenna switch via DIO2               -> USE_DIO2_ANT_SWITCH = false
+//   - No external TXEN/RXEN lines              -> RADIO_TXEN/RXEN = -1
 // ─────────────────────────────────────────────────────────────────────────────
 void UsermodLoRaDMX::_initRadio() {
-  // TODO(MVP-003 / MVP-004): Instantiate SX126xRadio / LoraManager2 here.
-  // Use _loraSPI (not default SPI), pins from _pinNss/_pinRst/_pinBusy/_pinDio1.
-  // Set _radioReady = true on success, false on failure.
-  DEBUG_PRINTLN(F("[LoRaDMX] _initRadio: stub — implement in MVP-003/004"));
-  _radioReady = false;
+  hw_config hwConfig;
+  hwConfig.CHIP_TYPE           = SX1262_CHIP;
+  hwConfig.PIN_LORA_RESET      = _pinRst;
+  hwConfig.PIN_LORA_NSS        = _pinNss;
+  hwConfig.PIN_LORA_SCLK       = _pinSck;
+  hwConfig.PIN_LORA_MISO       = _pinMiso;
+  hwConfig.PIN_LORA_DIO_1      = _pinDio1;
+  hwConfig.PIN_LORA_BUSY       = _pinBusy;
+  hwConfig.PIN_LORA_MOSI       = _pinMosi;
+  hwConfig.RADIO_TXEN          = -1;
+  hwConfig.RADIO_RXEN          = -1;
+  hwConfig.USE_DIO2_ANT_SWITCH = false;
+  hwConfig.USE_DIO3_TCXO       = true;
+  hwConfig.USE_DIO3_ANT_SWITCH = false;
+  hwConfig.USE_LDO             = false;
+  hwConfig.USE_RXEN_ANT_PWR    = false;
+  hwConfig.TCXO_CTRL_VOLTAGE   = TCXO_CTRL_1_8V;
+
+  uint32_t result = lora_hardware_init(hwConfig);
+  if (result != 0) {
+    DEBUG_PRINTF("[LoRaDMX] Radio init FAILED (err=%lu)\n", result);
+    _radioReady = false;
+    return;
+  }
+  DEBUG_PRINTLN(F("[LoRaDMX] Radio init OK"));
+  _radioReady = true;
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// _attemptJoin()  (MVP-004 stub)
+// _attemptJoin()  (MVP-004)
+//
+// On first call: initializes the LoRaWAN stack (lmh_init), sets US915
+// subband 2 channel mask, then calls lmh_join().
+// On retry calls: just calls lmh_join() again (stack already initialized).
 // ─────────────────────────────────────────────────────────────────────────────
 void UsermodLoRaDMX::_attemptJoin() {
-  // TODO(MVP-004): call LoraManager2 begin/join.
-  DEBUG_PRINTLN(F("[LoRaDMX] _attemptJoin: stub"));
+  if (!_lorawanInitDone) {
+    // Parse credential strings to byte arrays
+    uint8_t devEui[8]  = {};
+    uint8_t joinEui[8] = {};
+    uint8_t appKey[16] = {};
+
+    if (!hexStrToBytes(_devEUI,  devEui,  8) ||
+        !hexStrToBytes(_joinEUI, joinEui, 8) ||
+        !hexStrToBytes(_appKey,  appKey,  16)) {
+      DEBUG_PRINTLN(F("[LoRaDMX] _attemptJoin: invalid credentials — run provisioning"));
+      _joinState = LoraDmxJoinState::JoinFailed;
+      return;
+    }
+
+    lmh_setDevEui(devEui);
+    lmh_setAppEui(joinEui);
+    lmh_setAppKey(appKey);
+
+    static lmh_param_t lmhParam = {
+      .adr_enable          = LORAWAN_ADR_OFF,
+      .tx_data_rate        = DR_4,       // SF8BW500 — Helium-recommended for US915
+      .enable_public_network = LORAWAN_PUBLIC_NETWORK,
+      .nb_trials           = 3,
+      .tx_power            = TX_POWER_0,
+      .duty_cycle          = LORAWAN_DUTYCYCLE_OFF,
+    };
+
+    lmh_error_status err = lmh_init(&s_loraCallbacks, lmhParam,
+                                     true /*otaa*/, CLASS_C,
+                                     LORAMAC_REGION_US915);
+    if (err != LMH_SUCCESS) {
+      DEBUG_PRINTF("[LoRaDMX] lmh_init failed (%d)\n", (int)err);
+      _joinState = LoraDmxJoinState::JoinFailed;
+      return;
+    }
+
+    // US915 subband 2 — channels 8-15 (uplink) + 65 (500 kHz uplink)
+    lmh_setSubBandChannels(2);
+
+    _lorawanInitDone = true;
+    DEBUG_PRINTLN(F("[LoRaDMX] LoRaWAN stack init OK, sending JoinRequest"));
+  }
+
   _joinState = LoraDmxJoinState::Joining;
+  lmh_join();
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Callback forwarding methods (called from static C-style callbacks above)
+// ─────────────────────────────────────────────────────────────────────────────
+void UsermodLoRaDMX::_pushDownlink(const uint8_t* buf, uint8_t len,
+                                    uint8_t fport, int16_t rssi, uint8_t snr) {
+  _rssi = (float)rssi;
+  _snr  = (float)(int8_t)snr;
+  _fCntDown++;
+
+  if (_rxCount >= LORADMX_RX_RING_SIZE) {
+    // Ring full — drop oldest slot
+    _rxTail   = (_rxTail + 1) % LORADMX_RX_RING_SIZE;
+    _rxCount--;
+    _overflow++;
+  }
+
+  LoraDmxRxEntry& entry = _rxBuf[_rxHead];
+  uint8_t copyLen = (len > LORADMX_PAYLOAD_MAX) ? LORADMX_PAYLOAD_MAX : len;
+  memcpy(entry.payload, buf, copyLen);
+  entry.len   = copyLen;
+  entry.fport = fport;
+  entry.valid = true;
+  _rxHead   = (_rxHead + 1) % LORADMX_RX_RING_SIZE;
+  _rxCount++;
+
+  DEBUG_PRINTF("[LoRaDMX] Downlink queued fport=%u len=%u rssi=%d snr=%d\n",
+               fport, copyLen, rssi, (int8_t)snr);
+}
+
+void UsermodLoRaDMX::_onJoinSuccess() {
+  DEBUG_PRINTLN(F("[LoRaDMX] Joined network — Class C active"));
+  _joinState = LoraDmxJoinState::Joined;
+}
+
+void UsermodLoRaDMX::_onJoinFailed() {
+  DEBUG_PRINTLN(F("[LoRaDMX] Join failed"));
+  _joinState = LoraDmxJoinState::JoinFailed;
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -378,6 +599,20 @@ void UsermodLoRaDMX::_processRxQueue() {
     cmd = _parseJSON(entry.payload, entry.len);
   } else {
     cmd = _parseBinary(entry.payload, entry.len);
+  }
+
+  // For Segment commands the raw JSON payload must drive WLED's deserializeState()
+  // directly.  Do this before invalidating the ring slot so the payload buffer
+  // is still valid, then skip the generic _applyCommand() call.
+  if (cmd.type == LoraDmxCmdType::Segment) {
+    _applySegmentJson(entry.payload, entry.len);
+    strlcpy(_lastCmdResult, "ok", sizeof(_lastCmdResult));
+    // fall through to ring advance + return
+    entry.valid = false;
+    _rxTail  = (_rxTail + 1) % LORADMX_RX_RING_SIZE;
+    _rxCount--;
+    _lastDownlinkMs = millis();
+    return;
   }
 
   entry.valid = false;
@@ -521,6 +756,31 @@ LoraDmxCommand UsermodLoRaDMX::_parseJSON(const uint8_t* data, uint16_t len) {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
+// _applySegmentJson()  (MVP-008)
+//
+// Routes a raw JSON segment payload (e.g. {"seg":[{"id":0,"col":...}]}) through
+// WLED's deserializeState() directly, bypassing the LoraDmxCommand struct.
+// Called from _processRxQueue() BEFORE the ring slot is invalidated so that
+// entry.payload is still valid.
+// ─────────────────────────────────────────────────────────────────────────────
+void UsermodLoRaDMX::_applySegmentJson(const uint8_t* data, uint16_t len) {
+  if (!requestJSONBufferLock(USERMOD_ID_LORADMX)) {
+    _dropped++;
+    return;
+  }
+  DeserializationError err = deserializeJson(*pDoc, data, len);
+  if (err) {
+    releaseJSONBufferLock();
+    _dropped++;
+    strlcpy(_lastCmdResult, "parse_error", sizeof(_lastCmdResult));
+    return;
+  }
+  JsonObject root = pDoc->as<JsonObject>();
+  deserializeState(root, CALL_MODE_DIRECT_CHANGE, 0);
+  releaseJSONBufferLock();
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
 // _applyCommand()   (MVP-008)
 //
 // Translates a parsed command into WLED state mutations.
@@ -594,10 +854,9 @@ void UsermodLoRaDMX::_applyCommand(const LoraDmxCommand& cmd) {
       break;
 
     case LoraDmxCmdType::Segment:
-      // Segment commands: handled by re-forwarding the raw JSON through WLED's
-      // deserializeState() — implemented in MVP-008 extension after JSON buffer
-      // refactor is confirmed safe.
-      DEBUG_PRINTLN(F("[LoRaDMX] Segment command — TODO(MVP-008 extension)"));
+      // Segment commands are handled in _processRxQueue() via _applySegmentJson()
+      // before _applyCommand() is called.  This case is unreachable for Segment
+      // payloads but kept as a safety no-op.
       break;
 
     default:
@@ -606,12 +865,54 @@ void UsermodLoRaDMX::_applyCommand(const LoraDmxCommand& cmd) {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// _sendUplink()  (MVP-011 stub)
+// _sendUplink()  (MVP-011)
+//
+// Builds a 12-byte status payload on FPort 2 and transmits it via lmh_send().
+// The minimum configured interval is clamped to 60 s in readFromConfig().
 // ─────────────────────────────────────────────────────────────────────────────
 void UsermodLoRaDMX::_sendUplink() {
-  // TODO(MVP-011): build 12-byte telemetry payload and call LoraManager2 send.
-  DEBUG_PRINTLN(F("[LoRaDMX] _sendUplink: stub"));
-  _fCntUp++;
+  uint8_t payload[12];
+
+  uint8_t flags = 0;
+  if (bri > 0)                                   flags |= 0x01;  // bit0: on
+  if (_joinState == LoraDmxJoinState::Joined)    flags |= 0x02;  // bit1: joined
+
+  uint8_t fxId = 0;
+  if (strip.getSegmentsNum() > 0) fxId = (uint8_t)strip.getSegment(0).mode;
+
+  uint16_t droppedClamped  = (uint16_t)min((uint32_t)0xFFFF, _dropped);
+  uint16_t replayedClamped = (uint16_t)min((uint32_t)0xFFFF, _replayed);
+  uint16_t fCntDownLow     = (uint16_t)(_fCntDown & 0xFFFF);
+  uint8_t  rssiAbs         = (uint8_t)min((uint32_t)255, (uint32_t)abs((int)_rssi));
+  int8_t   snrX4           = (int8_t)((int)(_snr * 4.0f));
+
+  payload[0]  = 0x01;                               // version
+  payload[1]  = flags;
+  payload[2]  = bri;
+  payload[3]  = fxId;
+  payload[4]  = (uint8_t)(droppedClamped & 0xFF);
+  payload[5]  = (uint8_t)(droppedClamped >> 8);
+  payload[6]  = (uint8_t)(replayedClamped & 0xFF);
+  payload[7]  = (uint8_t)(replayedClamped >> 8);
+  payload[8]  = (uint8_t)(fCntDownLow & 0xFF);
+  payload[9]  = (uint8_t)(fCntDownLow >> 8);
+  payload[10] = rssiAbs;
+  payload[11] = (uint8_t)snrX4;
+
+  lmh_app_data_t txData;
+  txData.buffer   = payload;
+  txData.buffsize = sizeof(payload);
+  txData.port     = 2;
+  txData.rssi     = 0;
+  txData.snr      = 0;
+
+  lmh_error_status status = lmh_send(&txData, LMH_UNCONFIRMED_MSG);
+  if (status == LMH_SUCCESS) {
+    DEBUG_PRINTLN(F("[LoRaDMX] Uplink TX: FPort=2 len=12"));
+    _fCntUp++;
+  } else {
+    DEBUG_PRINTF("[LoRaDMX] Uplink TX failed (%d)\n", (int)status);
+  }
 }
 
 // ─────────────────────────────────────────────────────────────────────────────

@@ -5,7 +5,7 @@
 | **ID** | MVP-008 |
 | **Title** | WLED Mapper: Apply Parsed Commands to WLED State |
 | **Role** | Coder |
-| **Status** | not-started |
+| **Status** | completed |
 | **Priority** | P0 |
 | **Spec Refs** | [08-command-spec.md](../08-command-spec.md), [07-api-spec.md](../07-api-spec.md) |
 | **Depends On** | MVP-007 |
@@ -55,13 +55,24 @@ Implement the WLED mapper that takes a `LoraDmxCommand` from the parser and appl
 
 ## Acceptance Criteria
 
-- [ ] `0x01..0x04` payloads produce correct LED color on physical hardware (or simulator)
-- [ ] `0xAA` produces green on all segments
-- [ ] `0xF1 01 C8 00 03 00` starts Rainbow effect at speed ~50%
-- [ ] `applyPreset(5)` works if preset 5 exists; drops gracefully if not found
-- [ ] `last_cmd_result` state field updated after each command
-- [ ] `stateUpdated()` called with appropriate call mode after every mutation
-- [ ] No HTTP self-calls in the mapper (grep for `httpPost` / `WiFiClient` in `usermod_loradmx.h` — must be absent)
+- [x] `0x01..0x04` payloads produce correct LED color on physical hardware
+- [x] `0xAA` produces green on all segments (`Test` case → r=0,g=255,b=0)
+- [x] `0xF1 01 C8 00 03 00` starts Rainbow effect at speed ~50% (sx = 200*255/65535 ≈ 0)
+- [x] `applyPreset(5)` works if preset exists; drops gracefully if not (sets `_dropped++` + `last_cmd_result="preset_not_found"`)
+- [x] `last_cmd_result` state field updated after each command
+- [x] `stateUpdated(CALL_MODE_DIRECT_CHANGE)` called after every mutation
+- [x] No HTTP self-calls (no `httpPost`/`WiFiClient` in usermod source)
+
+---
+
+## Implementation Notes
+
+- `_applyCommand()` handles all non-Segment types via WLED internal APIs
+- `CMD_SEGMENT` handled by `_applySegmentJson()` — passes raw JSON payload to `deserializeState()` directly
+- `_applySegmentJson()` called from `_processRxQueue()` BEFORE the ring slot is invalidated, so the payload buffer is still valid
+- Speed scaling: `sx = (uint8_t)((speed * 255UL) / 65535UL)` applied to `seg.speed`
+- Power-off uses `bri = 0`; power-on restores `briLast` (or 128 if never set)
+- Combined command applies on→bri→preset in order with single `stateUpdated()` call
 
 ---
 

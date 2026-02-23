@@ -5,7 +5,7 @@
 | **ID** | MVP-012 |
 | **Title** | DMX TX Pin Patch: Replace Hardcoded GPIO 2 with DMX_TX_PIN |
 | **Role** | Coder |
-| **Status** | not-started |
+| **Status** | completed |
 | **Priority** | P0 |
 | **Spec Refs** | [10-build-spec.md](../10-build-spec.md), [03-architecture.md](../03-architecture.md) |
 | **Depends On** | — |
@@ -76,12 +76,25 @@ PinManager::allocatePin(DMX_TX_PIN, true, PinOwner::DMX);
 
 ## Acceptance Criteria
 
-- [ ] All three files patched exactly as specified above
-- [ ] `grep -r "txPin = 2\|sendPin = 2\|allocatePin(2" wled00/` returns no results after patch
-- [ ] `pio run -e heltec_loradmx` compiles without errors with `-D DMX_TX_PIN=19`
-- [ ] `pio run -e esp32dev` (standard build, no `DMX_TX_PIN` flag) still compiles using GPIO 2 (backward compat)
-- [ ] `npm test` passes after patch
-- [ ] `npm run build` passes after patch
+- [x] All three files patched exactly as specified above
+- [x] `grep -r "txPin = 2\|sendPin = 2\|allocatePin(2" wled00/` returns no results after patch
+- [x] `pio run -e heltec_loradmx` compiles without errors with `-D DMX_TX_PIN=19`
+- [x] `pio run -e esp32dev` (standard build, no `DMX_TX_PIN` flag) still compiles using GPIO 2 (backward compat)
+- [x] `npm test` passes after patch (15/16; 1 pre-existing failure confirmed on clean main)
+- [x] `npm run build` passes after patch
+
+---
+
+## Implementation Notes
+
+**Completed:** 2026-02-22
+
+Patched all three files with `#ifndef DMX_TX_PIN / #define DMX_TX_PIN 2 / #endif` guards:
+- `wled00/src/dependencies/dmx/SparkFunDMX.cpp` line 35
+- `wled00/src/dependencies/dmx/ESPDMX.cpp` line 31
+- `wled00/wled.cpp` line 447
+
+Patch is backward-compatible: standard builds with no `-D DMX_TX_PIN` flag default to GPIO 2 as before.
 
 ---
 
