@@ -28,7 +28,10 @@
 #define BREAKFORMAT    SERIAL_8N1
 
 bool dmxStarted = false;
-int sendPin = 2;		//default on ESP8266
+#ifndef DMX_TX_PIN
+#define DMX_TX_PIN 2
+#endif
+int sendPin = DMX_TX_PIN;		//default on ESP8266
 
 //DMX value array and size. Entry 0 will hold startbyte, so we need 512+1 elements
 uint8_t dmxDataStore[dmxMaxChannel+1] = {};
