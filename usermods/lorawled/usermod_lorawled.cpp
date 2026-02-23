@@ -577,8 +577,12 @@ void UsermodLoRaWLED::_pushDownlink(const uint8_t* buf, uint8_t len,
 }
 
 void UsermodLoRaWLED::_onJoinSuccess() {
-  DEBUG_PRINTLN(F("[LoRaWLED] Joined network — Class C active"));
+  DEBUG_PRINTLN(F("[LoRaWLED] Joined network — requesting Class C"));
   _joinState = LoraDmxJoinState::Joined;
+  // After OTAA join the MAC resets to Class A. Request Class C explicitly so
+  // the continuous RX2 window is opened and downlinks arrive within seconds
+  // rather than waiting for the next uplink RX window.
+  lmh_class_request(CLASS_C);
 }
 
 void UsermodLoRaWLED::_onJoinFailed() {
