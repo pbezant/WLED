@@ -583,8 +583,10 @@ class WledCloudUsermod : public Usermod {
 
   void addToJsonState(JsonObject& root) override {
     if (!initDone || !enabled) return;
-    JsonObject um = root[FPSTR(_name)];
-    if (um.isNull()) um = root.createNestedObject(FPSTR(_name));
+    JsonObject user = root["u"];
+    if (user.isNull()) user = root.createNestedObject("u");
+    JsonObject um = user[FPSTR(_name)];
+    if (um.isNull()) um = user.createNestedObject(FPSTR(_name));
     um["connected"] = wsConnected;
     um["claimCode"] = (strlen(claimCode) > 0) ? claimCode : "";
   }
