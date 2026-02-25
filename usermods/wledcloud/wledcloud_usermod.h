@@ -42,6 +42,7 @@ class WledCloudUsermod : public Usermod {
   // ── Runtime state (not persisted) ───────────────────────────────────────────
   bool     initDone       = false;
   bool     wsConnected    = false;
+  bool     wsConnecting   = false;  // true while handshake in progress
   char     claimCode[9]   = "";     // e.g. "X7K-9P2\0"
   ClaimState claimState   = ClaimState::IDLE;
 
@@ -55,6 +56,17 @@ class WledCloudUsermod : public Usermod {
   uint8_t  reconnectAttempts = 0;
   bool     pendingConfigSave = false;
   bool     stateChanged      = false;
+  bool     needsStateSync    = false;  // set in WS callback, handled in loop()
+
+  // ── Pending command (buffered in WS callback, applied safely in loop()) ─────
+  // Storing the serialized JSON avoids keeping a dangling JsonDocument reference
+  // across the callback boundary. 512 bytes handles all payloads we send.
+  bool     hasPendingCommand = false;
+  char     pendingCmdId[37]  = "";
+  char     pendingStateJson[512] = "";
+
+  // ── Shared send buffer (class member to avoid 1KB stack allocation in callback) ──
+  char     sendBuf[1024];
 
   // ── WebSocket client ─────────────────────────────────────────────────────────
   WebSocketsClient ws;
@@ -190,13 +202,15 @@ class WledCloudUsermod : public Usermod {
     ws.begin(serverHost, serverPort, path);
 #endif
 
-    ws.setReconnectInterval(0); // reconnection managed in loop()
+    ws.setReconnectInterval(5000); // library handles reconnection
+    wsConnecting = true;
     DEBUG_PRINTF("[WledCloud] Connecting WS → %s:%u%s\n", serverHost, serverPort, path);
   }
 
   void disconnectWebSocket() {
     ws.disconnect();
     wsConnected = false;
+    wsConnecting = false;
   }
 
   // ── WebSocket: event handler ─────────────────────────────────────────────────
@@ -204,37 +218,48 @@ class WledCloudUsermod : public Usermod {
     switch (type) {
       case WStype_CONNECTED:
         wsConnected = true;
+        wsConnecting = false;
         reconnectAttempts = 0;
         lastPingRecv = millis();
         DEBUG_PRINTLN(F("[WledCloud] WebSocket connected"));
-        sendStateUpdate();
+        // Don't call sendStateUpdate() here — the server sends request_state
+        // on connect, which sets needsStateSync. Calling it here inside the
+        // callback risks stack overflow (1KB buf + DynamicJsonDocument) and
+        // produces a duplicate state send.
         break;
 
       case WStype_DISCONNECTED:
         wsConnected = false;
+        wsConnecting = false;
         DEBUG_PRINTLN(F("[WledCloud] WebSocket disconnected"));
         break;
 
       case WStype_TEXT: {
-        DynamicJsonDocument doc(1024);
+        DynamicJsonDocument doc(2048);
         DeserializationError err = deserializeJson(doc, payload, length);
         if (err) { DEBUG_PRINTLN(F("[WledCloud] JSON parse error")); return; }
 
         const char* msgType = doc["type"] | "";
         if (strcmp(msgType, "command") == 0) {
-          JsonObject state = doc["state"].as<JsonObject>();
-          processCommand(state, doc["id"] | "");
+          // Buffer the command for safe processing in loop() — calling
+          // deserializeState() here (inside a WS callback) would invoke
+          // strip.suspend()/waitForIt() and trigger the watchdog.
+          const char* cmdId = doc["id"] | "";
+          strlcpy(pendingCmdId, cmdId, sizeof(pendingCmdId));
+          size_t written = serializeJson(doc["state"], pendingStateJson, sizeof(pendingStateJson));
+          hasPendingCommand = (written > 0 && written < sizeof(pendingStateJson));
         } else if (strcmp(msgType, "ping") == 0) {
           lastPingRecv = millis();
           sendPong(doc["ts"] | 0);
         } else if (strcmp(msgType, "request_state") == 0) {
-          sendStateUpdate();
+          needsStateSync = true;  // defer to loop()
         }
         break;
       }
 
       case WStype_ERROR:
         wsConnected = false;
+        wsConnecting = false;
         DEBUG_PRINTLN(F("[WledCloud] WebSocket error"));
         break;
 
@@ -299,9 +324,10 @@ class WledCloudUsermod : public Usermod {
 
     doc["ts"] = millis() / 1000UL;
 
-    char buf[1024];
-    size_t len = serializeJson(doc, buf, sizeof(buf));
-    ws.sendTXT(buf, len);
+    // Use class-member sendBuf[] instead of stack-local buffer.
+    // This function MUST only be called from loop() context.
+    size_t len = serializeJson(doc, sendBuf, sizeof(sendBuf));
+    ws.sendTXT(sendBuf, len);
     lastStateSync = millis();
   }
 
@@ -323,7 +349,17 @@ class WledCloudUsermod : public Usermod {
   }
 
   // ── Command execution ────────────────────────────────────────────────────────
-  void processCommand(JsonObject& state, const char* cmdId) {
+  // Called from loop() (never from a WS callback) so strip operations are safe.
+  void processCommand(const char* stateJson, const char* cmdId) {
+    DynamicJsonDocument doc(2048);
+    DeserializationError err = deserializeJson(doc, stateJson);
+    if (err) {
+      DEBUG_PRINTF("[WledCloud] processCommand JSON parse error: %s\n", err.c_str());
+      return;
+    }
+
+    JsonObject state = doc.as<JsonObject>();
+
     // Check for OTA command
     if (state.containsKey("ota")) {
       const char* url = state["ota"]["url"] | "";
@@ -331,8 +367,8 @@ class WledCloudUsermod : public Usermod {
       return;
     }
 
-    // Apply state using WLED's JSON handler
-    // CALL_MODE_NOTIFICATION prevents onStateChange from echoing back to cloud
+    // Apply state using WLED's JSON handler.
+    // CALL_MODE_NOTIFICATION prevents onStateChange from echoing back to cloud.
     deserializeState(state, CALL_MODE_NOTIFICATION);
 
     // Send acknowledgment
@@ -340,6 +376,7 @@ class WledCloudUsermod : public Usermod {
     snprintf(buf, sizeof(buf),
              "{\"type\":\"command_ack\",\"id\":\"%s\",\"ts\":%lu}", cmdId, millis() / 1000UL);
     ws.sendTXT(buf);
+    DEBUG_PRINTF("[WledCloud] command_ack sent for %s\n", cmdId);
   }
 
   // ── OTA update ──────────────────────────────────────────────────────────────
@@ -508,6 +545,8 @@ class WledCloudUsermod : public Usermod {
 
       case ClaimState::CONNECT_WS:
         connectWebSocket();
+        lastReconnect = millis();   // prevent reconnect logic from immediately retriggering
+        reconnectAttempts = 0;
         claimState = ClaimState::IDLE; // WS lib takes over from here
         break;
     }
@@ -515,6 +554,19 @@ class WledCloudUsermod : public Usermod {
     // ── WebSocket maintenance (only when past claim phase) ───────────────────
     if (claimState == ClaimState::IDLE && strlen(deviceToken) > 0) {
       ws.loop();
+
+      // Apply any buffered command now that we're in loop() and the strip
+      // is not updating — safe to call deserializeState().
+      if (hasPendingCommand) {
+        hasPendingCommand = false;
+        processCommand(pendingStateJson, pendingCmdId);
+      }
+
+      // Server requested a state sync (deferred from WS callback to loop)
+      if (needsStateSync) {
+        needsStateSync = false;
+        sendStateUpdate();
+      }
 
       // Pending state sync
       if (stateChanged && wsConnected) {
@@ -534,16 +586,13 @@ class WledCloudUsermod : public Usermod {
       }
 
       // Heartbeat timeout — 45s without a ping = dead connection
-      if (wsConnected && lastPingRecv > 0 && now - lastPingRecv > 45000UL) {
-        DEBUG_PRINTLN(F("[WledCloud] Ping timeout — reconnecting"));
-        disconnectWebSocket();
-      }
-
-      // Reconnect with backoff
-      if (!wsConnected && now - lastReconnect > getReconnectDelay()) {
-        reconnectAttempts++;
-        lastReconnect = now;
-        connectWebSocket();
+      // MUST use millis() here (not cached `now`), because ws.loop() above may
+      // have fired a callback that set lastPingRecv = millis() — which is later
+      // than the cached `now`, causing unsigned wrap-around to a huge value.
+      if (wsConnected && lastPingRecv > 0 && millis() - lastPingRecv > 45000UL) {
+        DEBUG_PRINTLN(F("[WledCloud] Ping timeout — forcing reconnect"));
+        wsConnected = false;
+        // Library's built-in reconnect (setReconnectInterval) handles re-establishing
       }
     }
   }
@@ -578,6 +627,13 @@ class WledCloudUsermod : public Usermod {
     if (enabled) {
       JsonArray srv = user.createNestedArray(F("Cloud Server"));
       srv.add(serverHost);
+
+      // Connection info
+      JsonArray dbg = user.createNestedArray(F("Cloud Status"));
+      char info[48];
+      snprintf(info, sizeof(info), "conn=%d att=%d",
+               wsConnected, reconnectAttempts);
+      dbg.add(info);
     }
   }
 
