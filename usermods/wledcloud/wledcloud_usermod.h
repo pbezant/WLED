@@ -58,6 +58,15 @@ class WledCloudUsermod : public Usermod {
   bool     stateChanged      = false;
   bool     needsStateSync    = false;  // set in WS callback, handled in loop()
 
+  // ── Conflict policy state ──────────────────────────────────────────────────
+  // Tracks cloud-priority lock (suppress local echoes after cloud command)
+  // and local-lock-ttl state (reject cloud commands when device is active).
+  unsigned long cloudLockSetAt  = 0;          // millis() when cloud hold was applied
+  uint32_t      cloudHoldMs     = 0;          // hold duration in ms (0 = inactive)
+  unsigned long lastLocalChange = 0;          // millis() of last non-cloud state change
+  uint16_t      localLockTtl   = 5000;        // local-lock-ttl window in ms
+  char          conflictPolicy[20] = "last-write-wins";
+
   // ── Pending command (buffered in WS callback, applied safely in loop()) ─────
   // Storing the serialized JSON avoids keeping a dangling JsonDocument reference
   // across the callback boundary. 512 bytes handles all payloads we send.
@@ -367,6 +376,48 @@ class WledCloudUsermod : public Usermod {
       return;
     }
 
+    // ── _config: runtime conflict policy update ───────────────────────────────
+    if (state.containsKey("_config")) {
+      JsonObject cfg = state["_config"];
+      const char* pol = cfg["conflictPolicy"] | (const char*)nullptr;
+      if (pol && strlen(pol) > 0) strlcpy(conflictPolicy, pol, sizeof(conflictPolicy));
+      if (cfg.containsKey("conflictLockTtl")) {
+        int ttl = cfg["conflictLockTtl"].as<int>();
+        localLockTtl = (uint16_t)constrain(ttl, 500, 60000);
+      }
+      pendingConfigSave = true;
+      char buf[128];
+      snprintf(buf, sizeof(buf),
+               "{\"type\":\"command_ack\",\"id\":\"%s\",\"ts\":%lu}", cmdId, millis() / 1000UL);
+      ws.sendTXT(buf);
+      DEBUG_PRINTLN(F("[WledCloud] Conflict policy updated from _config"));
+      return;
+    }
+
+    // ── local-lock-ttl: reject if device was recently interacted with ─────────
+    if (strcmp(conflictPolicy, "local-lock-ttl") == 0 && lastLocalChange > 0) {
+      unsigned long elapsed = millis() - lastLocalChange;
+      if (elapsed < (unsigned long)localLockTtl) {
+        uint16_t retryAfter = (uint16_t)(localLockTtl - (uint16_t)elapsed);
+        char buf[200];
+        snprintf(buf, sizeof(buf),
+                 "{\"type\":\"command_nack\",\"id\":\"%s\",\"reason\":\"local_lock\",\"retryAfter\":%u}",
+                 cmdId, retryAfter);
+        ws.sendTXT(buf);
+        DEBUG_PRINTF("[WledCloud] command_nack: local_lock, retry in %ums\n", retryAfter);
+        return;
+      }
+    }
+
+    // ── cloud-priority: arm the local-change suppression window ──────────────
+    {
+      uint32_t holdMs = state["_cloudHold"] | 0U;
+      if (holdMs > 0) {
+        cloudLockSetAt = millis();
+        cloudHoldMs    = holdMs;
+      }
+    }
+
     // Apply state using WLED's JSON handler.
     // CALL_MODE_NOTIFICATION prevents onStateChange from echoing back to cloud.
     deserializeState(state, CALL_MODE_NOTIFICATION);
@@ -602,6 +653,10 @@ class WledCloudUsermod : public Usermod {
     if (!enabled || !wsConnected) return;
     // Don't echo back changes we just applied from cloud
     if (mode == CALL_MODE_NOTIFICATION) return;
+    // cloud-priority: suppress local echoes during the hold window
+    if (cloudHoldMs > 0 && millis() - cloudLockSetAt < cloudHoldMs) return;
+    // Record timestamp for local-lock-ttl policy
+    lastLocalChange = millis();
     stateChanged = true;
   }
 
@@ -662,6 +717,8 @@ class WledCloudUsermod : public Usermod {
     top["venueId"]   = venueId;
     top["syncSec"]   = syncInterval;
     top["telemetry"] = sendTelemetry;
+    top["conflictPolicy"]  = conflictPolicy;
+    top["localLockTtlMs"]  = localLockTtl;
   }
 
   bool readFromConfig(JsonObject& root) override {
@@ -677,10 +734,15 @@ class WledCloudUsermod : public Usermod {
     strlcpy(venueId,     top["venueId"] | "", sizeof(venueId));
     complete &= getJsonValue(top["syncSec"],   syncInterval, (uint16_t)30);
     complete &= getJsonValue(top["telemetry"], sendTelemetry, true);
+    strlcpy(conflictPolicy, top["conflictPolicy"] | "last-write-wins", sizeof(conflictPolicy));
+    getJsonValue(top["localLockTtlMs"], localLockTtl, (uint16_t)5000);
 
     // Clamp syncInterval to sane range
     if (syncInterval < 10)  syncInterval = 10;
     if (syncInterval > 300) syncInterval = 300;
+    // Clamp localLockTtl to 500ms–60s
+    if (localLockTtl < 500)   localLockTtl = 500;
+    if (localLockTtl > 60000) localLockTtl = 60000;
 
     return complete;
   }
