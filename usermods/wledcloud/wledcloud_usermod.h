@@ -52,6 +52,7 @@ class WledCloudUsermod : public Usermod {
   unsigned long lastClaimPoll   = 0;
   unsigned long lastReconnect   = 0;
   unsigned long claimStarted    = 0; // millis() when claim code was generated
+  unsigned long lastRegisterAttempt = 0; // throttle register-code HTTP calls
 
   uint8_t  reconnectAttempts = 0;
   bool     pendingConfigSave = false;
@@ -88,13 +89,14 @@ class WledCloudUsermod : public Usermod {
   void generateClaimCode() {
     // charset excludes ambiguous chars: 0 O 1 I L
     static const char charset[] = "23456789ABCDEFGHJKMNPQRSTUVWXYZ";
-    claimCode[0] = charset[random(0, 32)];
-    claimCode[1] = charset[random(0, 32)];
-    claimCode[2] = charset[random(0, 32)];
+    static const int charsetLen = sizeof(charset) - 1; // 30
+    claimCode[0] = charset[random(0, charsetLen)];
+    claimCode[1] = charset[random(0, charsetLen)];
+    claimCode[2] = charset[random(0, charsetLen)];
     claimCode[3] = '-';
-    claimCode[4] = charset[random(0, 32)];
-    claimCode[5] = charset[random(0, 32)];
-    claimCode[6] = charset[random(0, 32)];
+    claimCode[4] = charset[random(0, charsetLen)];
+    claimCode[5] = charset[random(0, charsetLen)];
+    claimCode[6] = charset[random(0, charsetLen)];
     claimCode[7] = '\0';
     DEBUG_PRINTF("[WledCloud] Claim code: %s\n", claimCode);
   }
@@ -109,6 +111,8 @@ class WledCloudUsermod : public Usermod {
              useTLS ? "https" : "http", serverHost, serverPort);
 
     http.begin(url);
+    http.setConnectTimeout(3000);  // 3s connect timeout — avoid WDT trigger
+    http.setTimeout(5000);         // 5s total timeout
     http.addHeader(F("Content-Type"), F("application/json"));
     // Skip TLS cert validation for self-hosted servers
     // (production uses trusted cert — acceptable trade-off per spec)
@@ -150,6 +154,8 @@ class WledCloudUsermod : public Usermod {
              useTLS ? "https" : "http", serverHost, serverPort, claimCode);
 
     http.begin(url);
+    http.setConnectTimeout(3000);  // 3s connect timeout — avoid WDT trigger
+    http.setTimeout(5000);         // 5s total timeout
     int code = http.GET();
 
     if (code != 200 && code != 202 && code != 410) {
@@ -548,11 +554,16 @@ class WledCloudUsermod : public Usermod {
         break;
 
       case ClaimState::REGISTER_CODE:
+        // Throttle registration attempts to every 10s — each HTTP call blocks
+        // for up to 3s on connect timeout; hammering it every loop() would
+        // starve the main loop and trigger the ESP32 task watchdog.
+        if (now - lastRegisterAttempt < 10000UL && lastRegisterAttempt > 0) break;
+        lastRegisterAttempt = now;
         if (registerCodeWithCloud()) {
           lastClaimPoll = now;
           claimState = ClaimState::DISPLAY_CODE;
         } else {
-          // Retry after 60s
+          // Give up and regenerate after 60s of failures
           if (now - claimStarted > 60000UL) {
             claimState = ClaimState::GENERATE_CODE;
           }
