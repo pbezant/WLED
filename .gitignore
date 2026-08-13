@@ -30,3 +30,7 @@ wled-update.sh
 /wled00/wled00.ino.cpp
 /wled00/html_*.h
 /wled00/js_*.h
+
+# Claude Code — personal overrides and scratch worktrees, not shared config
+.claude/settings.local.json
+.claude/worktrees/
