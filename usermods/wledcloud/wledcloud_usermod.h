@@ -138,7 +138,10 @@ class WledCloudUsermod : public Usermod {
     auto* lorawled = static_cast<UsermodLoRaWLED*>(usermods.lookup(USERMOD_ID_LORAWLED));
     if (lorawled) {
       auto creds = lorawled->getCredentials();
-      if (creds.provisioned && strlen(creds.devEUI) == 16 && strlen(creds.appKey) == 32) {
+      // joinEUI is required by the cloud — it routes the join-request to a join
+      // server, so an unset one produces a device that can never join.
+      if (creds.provisioned && strlen(creds.devEUI) == 16 && strlen(creds.joinEUI) == 16 &&
+          strlen(creds.appKey) == 32) {
         strlcpy(loraDevEUI, creds.devEUI, sizeof(loraDevEUI));
         strlcpy(loraJoinEUI, creds.joinEUI, sizeof(loraJoinEUI));
         strlcpy(loraAppKey, creds.appKey, sizeof(loraAppKey));
