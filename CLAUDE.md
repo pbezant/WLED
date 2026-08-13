@@ -8,18 +8,40 @@ Fork of [WLED](https://github.com/Aircoookie/WLED) with the `wledcloud` usermod 
 
 PlatformIO C++ project targeting ESP32 (primary) and ESP8266 (best-effort). The wledcloud usermod lives at `usermods/wledcloud/`. Do **not** modify WLED core files (`wled00/*.cpp`, `wled00/*.h`) unless absolutely necessary.
 
-## Build Commands
+## Build Environments
+
+Three envs in `platformio_override.ini`. They are deliberately separate builds —
+a device is either a WiFi cloud device or a LoRaWAN device, not both.
+
+| Env | Usermods | Target | Reaches the cloud via |
+|-----|----------|--------|-----------------------|
+| `esp32dev_wledcloud` | `wledcloud` | Generic ESP32 | WiFi → Socket.IO `/ws/device` |
+| `heltec_lorawled` | `lorawled` | Heltec WiFi LoRa 32 V3 | LoRaWAN → LNS (TTN) → cloud |
+| `heltec_wledcloud` | `lorawled wledcloud` | Heltec WiFi LoRa 32 V3 | Both — see caveat below |
 
 ```bash
-# Build for generic ESP32
+# WiFi cloud device (the common case)
 pio run -e esp32dev_wledcloud
-
-# Flash to device
 pio run -e esp32dev_wledcloud --target upload
+
+# LoRaWAN device
+pio run -e heltec_lorawled
+pio run -e heltec_lorawled --target upload
 
 # Serial monitor
 pio device monitor -b 115200
 ```
+
+**Pick the env before debugging a missing feature.** Code in the wledcloud
+usermod that touches LoRa is guarded by `#ifdef USERMOD_LORAWLED`, which is only
+defined by `heltec_wledcloud`. Building `esp32dev_wledcloud` compiles that code
+out silently — the device claims itself as `connectionType: "wifi"` and never
+sends its LoRa credentials, with no error anywhere to explain why.
+
+`heltec_wledcloud` is the combined build used for WiFi-assisted LoRa
+commissioning: the device joins WiFi once to claim itself and hand its
+devEUI/AppKey to the cloud, then runs over LoRaWAN. It is not the normal
+deployment target.
 
 ## Usermod Files
 
@@ -29,7 +51,15 @@ usermods/wledcloud/
   wledcloud_usermod.cpp    # Implementation
   library.json             # PlatformIO dependencies
   README.md                # Setup and configuration guide
+
+usermods/lorawled/
+  usermod_lorawled.h       # LoRaWAN radio, OTAA join, Class C, downlink decode
+  usermod_lorawled.cpp     # Implementation
 ```
+
+The two usermods are independent. `lorawled` does not depend on `wledcloud`;
+`wledcloud` reaches into `lorawled` only through `usermods.lookup()` behind
+`#ifdef USERMOD_LORAWLED`.
 
 ## Cloud Repo Specs (Read These First)
 
