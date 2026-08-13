@@ -114,8 +114,6 @@ class WledCloudUsermod : public Usermod {
     http.setConnectTimeout(3000);  // 3s connect timeout — avoid WDT trigger
     http.setTimeout(5000);         // 5s total timeout
     http.addHeader(F("Content-Type"), F("application/json"));
-    // Skip TLS cert validation for self-hosted servers
-    // (production uses trusted cert — acceptable trade-off per spec)
 
     // Build payload
     char mac[18];
@@ -127,10 +125,44 @@ class WledCloudUsermod : public Usermod {
              (uint8_t)(ESP.getEfuseMac() >> 8),
              (uint8_t)(ESP.getEfuseMac()));
 
-    char payload[256];
-    snprintf(payload, sizeof(payload),
-             "{\"claimCode\":\"%s\",\"macAddress\":\"%s\",\"firmwareVersion\":\"%s\",\"numLeds\":%u}",
-             claimCode, mac, versionString, strip.getLengthTotal());
+    // Detect lorawled usermod and collect LoRa credentials if present
+    bool hasLora = false;
+    char loraDevEUI[17] = "";
+    char loraJoinEUI[17] = "";
+    char loraAppKey[33] = "";
+
+#ifdef USERMOD_LORAWLED
+    // Forward-declare to avoid requiring the full header include order to be exact.
+    // USERMOD_ID_LORAWLED is defined in usermod_lorawled.h which must be compiled
+    // in the same build when USERMOD_LORAWLED is defined.
+    auto* lorawled = static_cast<UsermodLoRaWLED*>(usermods.lookup(USERMOD_ID_LORAWLED));
+    if (lorawled) {
+      auto creds = lorawled->getCredentials();
+      if (creds.provisioned && strlen(creds.devEUI) == 16 && strlen(creds.appKey) == 32) {
+        strlcpy(loraDevEUI, creds.devEUI, sizeof(loraDevEUI));
+        strlcpy(loraJoinEUI, creds.joinEUI, sizeof(loraJoinEUI));
+        strlcpy(loraAppKey, creds.appKey, sizeof(loraAppKey));
+        hasLora = true;
+      }
+    }
+#endif
+
+    // NOTE: AppKey is a sensitive root key. Transmission over plain HTTP is
+    // acceptable during the initial WiFi AP setup phase (LAN-only), but
+    // production deployments should set useTLS=true.
+    char payload[512];
+    if (hasLora) {
+      snprintf(payload, sizeof(payload),
+               "{\"claimCode\":\"%s\",\"macAddress\":\"%s\",\"firmwareVersion\":\"%s\","
+               "\"numLeds\":%u,\"connectionType\":\"lorawan\","
+               "\"devEUI\":\"%s\",\"joinEUI\":\"%s\",\"appKey\":\"%s\"}",
+               claimCode, mac, versionString, strip.getLengthTotal(),
+               loraDevEUI, loraJoinEUI, loraAppKey);
+    } else {
+      snprintf(payload, sizeof(payload),
+               "{\"claimCode\":\"%s\",\"macAddress\":\"%s\",\"firmwareVersion\":\"%s\",\"numLeds\":%u}",
+               claimCode, mac, versionString, strip.getLengthTotal());
+    }
 
     int code = http.POST((uint8_t *)payload, strlen(payload));
     http.end();
@@ -680,8 +712,8 @@ class WledCloudUsermod : public Usermod {
     if (!enabled) {
       cloud.add(F("Disabled"));
     } else if (strlen(claimCode) > 0) {
-      cloud.add(claimCode);
-      cloud.add(F(" (enter in dashboard)"));
+      // Brief status — full copyable code is in the Usermods settings page
+      cloud.add(F("Claiming — see Usermods page for code"));
     } else if (wsConnected) {
       cloud.add(F("Connected"));
     } else if (strlen(deviceToken) > 0) {
@@ -730,6 +762,11 @@ class WledCloudUsermod : public Usermod {
     top["telemetry"] = sendTelemetry;
     top["conflictPolicy"]  = conflictPolicy;
     top["localLockTtlMs"]  = localLockTtl;
+    // Read-only: claim code shown here so it is selectable/copyable in the
+    // Usermods settings page. Omitted once the device is claimed.
+    if (strlen(claimCode) > 0) {
+      top["claimCode"] = claimCode;
+    }
   }
 
   bool readFromConfig(JsonObject& root) override {

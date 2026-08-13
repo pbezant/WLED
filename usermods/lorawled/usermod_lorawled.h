@@ -106,6 +106,17 @@ class UsermodLoRaWLED : public Usermod {
   void _onJoinSuccess();
   void _onJoinFailed();
 
+  // ── Credential accessor — used by WledCloudUsermod during claiming ────────
+  struct Credentials {
+    const char* devEUI;   // 16 hex chars (read-only pointer into _devEUI)
+    const char* joinEUI;  // 16 hex chars (read-only pointer into _joinEUI)
+    const char* appKey;   // 32 hex chars (read-only pointer into _appKey)
+    bool provisioned;
+  };
+  Credentials getCredentials() const {
+    return { _devEUI, _joinEUI, _appKey, _credentialsProvisioned };
+  }
+
  private:
   // ── Config (persisted) ────────────────────────────────────────────────────
   bool     _enabled               = true;
