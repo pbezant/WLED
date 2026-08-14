@@ -27,6 +27,62 @@ const char UsermodLoRaWLED::_keyCredProv[]      PROGMEM = "credentialsProvisione
 const char UsermodLoRaWLED::_keyUplinkInterval[] PROGMEM = "uplinkInterval";
 const char UsermodLoRaWLED::_keyJoinRetry[]     PROGMEM = "joinRetryInterval";
 const char UsermodLoRaWLED::_keyCmdThrottle[]   PROGMEM = "cmdThrottleMs";
+const char UsermodLoRaWLED::_keyRegion[]        PROGMEM = "region";
+const char UsermodLoRaWLED::_keySubBand[]       PROGMEM = "subBand";
+const char UsermodLoRaWLED::_keyAdrEnable[]     PROGMEM = "adrEnable";
+const char UsermodLoRaWLED::_keyTxDataRate[]    PROGMEM = "txDataRate";
+
+// ─── Region table (M6-014) ──────────────────────────────────────────────────
+// One row per supported region. Region, default data rate, sub-band
+// applicability and duty-cycle obligation are four columns of the same fact —
+// keeping them in one row makes an illegal or unjoinable combination
+// unrepresentable.
+//
+// dutyCycleOn is NOT operator-settable anywhere. In EU868 and AS923 the duty
+// cycle limit is enforced by regulation (ETSI EN 300 220 / ARIB STD-T108); in
+// US915 and AU915 FCC part 15.247 governs dwell time instead, and the stack's
+// duty-cycle limiter must stay off.
+//
+// maxDataRate is the highest uplink DR valid for the region (FSK/LR-FHSS rates
+// excluded). A configured txDataRate above it is rejected in _attemptJoin().
+//
+// defaultDataRate must name a 125 kHz rate in the 64+8 channel plans (US915,
+// AU915) — see M6-016. In those plans the channel a frame goes out on is chosen
+// purely from the data rate: Channels[0..63] carry DR_0–DR_3 at 125 kHz and
+// Channels[64..71] carry DR_4 (US915) / DR_6 (AU915) at 500 kHz, and nothing
+// else. Pinning uplinks to the 500 kHz rate therefore pins them to eight
+// frequencies spread across the whole band, of which an 8-channel gateway
+// watches at most one — while OTAA still succeeds, because RegionAlternateDr()
+// sends eight of every nine join trials at DR_0 on the 125 kHz channels the
+// gateway does hear. US915 DR_1 is the lowest 125 kHz rate whose 53-byte
+// payload ceiling clears the 12-byte status uplink; DR_0 caps at 11 bytes and
+// LoRaMacQueryTxPossible() rejects the frame outright.
+struct LoraRegionInfo {
+  char           name[7];
+  LoRaMacRegion_t macRegion;
+  int8_t         defaultDataRate;
+  int8_t         maxDataRate;
+  uint8_t        defaultSubBand;   // 0 when the region has no sub-band mask
+  bool           subBandApplies;
+  bool           dutyCycleOn;
+};
+
+static const LoraRegionInfo LORA_REGION_TABLE[] PROGMEM = {
+  // name      macRegion             defDR  maxDR  defSub  subBand  dutyCycle
+  { "US915", LORAMAC_REGION_US915,  DR_1,  DR_4,   2,     true,    false },
+  { "EU868", LORAMAC_REGION_EU868,  DR_5,  DR_5,   0,     false,   true  },
+  { "AU915", LORAMAC_REGION_AU915,  DR_2,  DR_6,   2,     true,    false },
+  { "AS923", LORAMAC_REGION_AS923,  DR_2,  DR_5,   0,     false,   true  },
+};
+static const uint8_t LORA_REGION_COUNT =
+  sizeof(LORA_REGION_TABLE) / sizeof(LORA_REGION_TABLE[0]);
+
+// Copies one region row out of PROGMEM. Out-of-range indices fall back to the
+// default region rather than reading past the table.
+static void loraRegionInfo(uint8_t idx, LoraRegionInfo& out) {
+  if (idx >= LORA_REGION_COUNT) idx = (uint8_t)LORAWLED_REGION_DEFAULT;
+  memcpy_P(&out, &LORA_REGION_TABLE[idx], sizeof(LoraRegionInfo));
+}
 
 // ─── Pattern → WLED fx ID mapping ───────────────────────────────────────────
 static const uint8_t PATTERN_FX_MAP[] = {
@@ -41,6 +97,31 @@ static const uint8_t PATTERN_FX_MAP_SIZE = sizeof(PATTERN_FX_MAP);
 
 // ─── Single-instance pointer for LoRaWAN C-style callbacks ──────────────────
 static UsermodLoRaWLED* s_loraDmxInstance = nullptr;
+
+// ─── Secret redaction for GET /json/cfg ─────────────────────────────────────
+//
+// WLED reuses addToConfig() for two very different jobs: writing cfg.json to
+// flash, and answering GET /json/cfg — which is unauthenticated and readable by
+// anything on the LAN or the WLED-AP. Core WLED keeps its own secrets out of
+// the second (the WiFi PSK is reported as a length, the MQTT password as a run
+// of asterisks) but usermods get no separate hook, so this has to make the same
+// distinction itself. The only signal available is which module holds the
+// shared JSON buffer: serializeConfigToFS() takes it as JSON_LOCK_CFG_SER,
+// serveJson() as JSON_LOCK_SERVEJSON.
+static bool loraCfgIsForFlash() {
+  return jsonBufferLock == JSON_LOCK_CFG_SER;
+}
+
+// Same-length asterisk run, matching core WLED's MQTT-password convention, so
+// the usermod settings page still shows that a key is set. Posting the mask
+// back unchanged is recognised by isAsterisksOnly() in readFromConfig() and
+// leaves the stored key alone.
+static void loraMaskSecret(const char* src, char* out, size_t outLen) {
+  size_t n = strlen(src);
+  if (n > outLen - 1) n = outLen - 1;
+  memset(out, '*', n);
+  out[n] = '\0';
+}
 
 // ─── Hex string → byte array helper ─────────────────────────────────────────
 // hex: must be exactly outLen*2 chars; returns false on length mismatch.
@@ -152,6 +233,14 @@ void UsermodLoRaWLED::setup() {
 void UsermodLoRaWLED::loop() {
   if (!_enabled || !_radioReady) return;
 
+  // M6-014: region/data-rate change needs a fresh lmh_init(). Calling it twice
+  // in one boot is not supported by the stack, so reboot is the reset path.
+  if (_radioConfigDirty) {
+    _radioConfigDirty = false;
+    doReboot = true;
+    return;
+  }
+
   // MVP-015: loop time budget instrumentation
   uint32_t loopStartUs = micros();
 
@@ -159,6 +248,20 @@ void UsermodLoRaWLED::loop() {
 
   // Single-iteration do-while so any sub-section can `break` to reach timing
   do {
+    // ── Join watchdog ───────────────────────────────────────────────────────
+    // The retry branch below only re-fires from NotJoined/JoinFailed, and the
+    // only things that move us out of Joining are the radio stack's own
+    // _onJoinSuccess/_onJoinFailed callbacks. A single lost DIO1 edge or
+    // swallowed MAC event therefore parks the device in Joining forever: one
+    // JoinRequest goes out, nothing comes back, and the link is dead until
+    // someone power-cycles the board. Time the attempt out here so a retry is
+    // always scheduled no matter what the stack does.
+    if (_joinState == LoraDmxJoinState::Joining &&
+        now - _joinStartedMs >= LORAWLED_JOIN_TIMEOUT_MS) {
+      DEBUG_PRINTLN(F("[LoRaWLED] join timed out with no callback — retrying"));
+      _joinState = LoraDmxJoinState::JoinFailed;
+    }
+
     // ── Join retry (MVP-004) ────────────────────────────────────────────────
     if (_joinState == LoraDmxJoinState::NotJoined ||
         _joinState == LoraDmxJoinState::JoinFailed) {
@@ -226,6 +329,35 @@ void UsermodLoRaWLED::addToJsonInfo(JsonObject& root) {
   obj[F("devEUI")]               = devEuiFormatted;
   obj[F("joinEUI")]              = joinEuiFormatted;
   obj[F("joinState")]            = joinStateStr(_joinState);
+
+  // Regional radio config (M6-014) — duty cycle is shown as derived state so a
+  // field report can be checked against the region without a serial console.
+  {
+    LoraRegionInfo region;
+    loraRegionInfo(_region, region);
+    obj[F("region")]     = region.name;
+    obj[F("subBand")]    = region.subBandApplies
+                             ? (_subBand ? _subBand : region.defaultSubBand) : 0;
+    obj[F("dutyCycle")]  = region.dutyCycleOn;
+    obj[F("adr")]        = _adrEnable;
+    obj[F("dataRate")]   = _lorawanInitDone ? _effectiveDataRate
+                                            : region.defaultDataRate;
+  }
+
+  // M6-016 uplink diagnostics. `fCntUp` counts frames this usermod handed to
+  // the MAC; `fCntUpMac` is the MAC's own uplink counter, which is what the
+  // network server's last_f_cnt_up should track. The two disagreeing points at
+  // the usermod; both climbing while the NS stays at 0 points at the air.
+  if (_lorawanInitDone) {
+    MibRequestConfirm_t mibReq;
+    mibReq.Type = MIB_UPLINK_COUNTER;
+    if (LoRaMacMibGetRequestConfirm(&mibReq) == LORAMAC_STATUS_OK) {
+      obj[F("fCntUpMac")] = mibReq.Param.UpLinkCounter;
+    }
+  }
+  obj[F("classC")]     = _classC;
+  obj[F("txErrors")]   = _txErrors;
+  obj[F("lastTx")]     = _lastTxStatus;
   obj[F("credentialsProvisioned")] = _credentialsProvisioned;
   obj[F("version")]              = LORAWLED_VERSION;
   obj[F("fCntUp")]               = _fCntUp;
@@ -303,11 +435,27 @@ void UsermodLoRaWLED::addToConfig(JsonObject& root) {
   obj[FPSTR(_keyEnabled)]        = _enabled;
   obj[FPSTR(_keyDevEUI)]         = _devEUI;
   obj[FPSTR(_keyJoinEUI)]        = _joinEUI;
-  obj[FPSTR(_keyAppKey)]         = _appKey;   // stored to disk; never returned via addToJsonInfo
+  // The AppKey is the device's only OTAA root secret — anyone holding it can
+  // impersonate the device on the network. It goes to flash verbatim and to
+  // /json/cfg masked.
+  char appKeyOut[sizeof(_appKey)];
+  if (loraCfgIsForFlash()) {
+    strlcpy(appKeyOut, _appKey, sizeof(appKeyOut));
+  } else {
+    loraMaskSecret(_appKey, appKeyOut, sizeof(appKeyOut));
+  }
+  obj[FPSTR(_keyAppKey)]         = appKeyOut;
   obj[FPSTR(_keyCredProv)]       = _credentialsProvisioned;
   obj[FPSTR(_keyUplinkInterval)] = _uplinkInterval;
   obj[FPSTR(_keyJoinRetry)]      = _joinRetryInterval;
   obj[FPSTR(_keyCmdThrottle)]    = _cmdThrottleMs;
+
+  // Regional radio config (M6-014). No duty-cycle field is written — duty cycle
+  // is a property of the region, not a setting.
+  obj[FPSTR(_keyRegion)]         = _region;
+  obj[FPSTR(_keySubBand)]        = _subBand;
+  obj[FPSTR(_keyAdrEnable)]      = _adrEnable;
+  obj[FPSTR(_keyTxDataRate)]     = _txDataRate;
 
   // SPI pins (allow user override via settings)
   obj[F("pinSck")]  = _pinSck;
@@ -340,6 +488,34 @@ bool UsermodLoRaWLED::readFromConfig(JsonObject& root) {
   // Enforce minimum uplink interval (duty cycle)
   if (_uplinkInterval < 60000) _uplinkInterval = 60000;
 
+  // ── Regional radio config (M6-014) ────────────────────────────────────────
+  // An install written before this ticket has no `region` key. Report that as
+  // incomplete config so WLED re-saves with the defaults written out, rather
+  // than leaving the field silently unset.
+  uint8_t prevRegion   = _region;
+  uint8_t prevSubBand  = _subBand;
+  int8_t  prevDataRate = _txDataRate;
+  bool    prevAdr      = _adrEnable;
+
+  if (obj[FPSTR(_keyRegion)].isNull()) {
+    allFound = false;
+  } else {
+    uint8_t r = obj[FPSTR(_keyRegion)] | (uint8_t)LORAWLED_REGION_DEFAULT;
+    _region = (r < LORA_REGION_COUNT) ? r : (uint8_t)LORAWLED_REGION_DEFAULT;
+  }
+  if (!obj[FPSTR(_keySubBand)].isNull())    _subBand    = obj[FPSTR(_keySubBand)];
+  if (!obj[FPSTR(_keyAdrEnable)].isNull())  _adrEnable  = obj[FPSTR(_keyAdrEnable)];
+  if (!obj[FPSTR(_keyTxDataRate)].isNull()) _txDataRate = obj[FPSTR(_keyTxDataRate)];
+
+  // The LoRaWAN stack cannot be re-initialised in place, so a change after join
+  // is flagged here and handled by loop() (see _radioConfigDirty).
+  if (_lorawanInitDone &&
+      (_region != prevRegion || _subBand != prevSubBand ||
+       _txDataRate != prevDataRate || _adrEnable != prevAdr)) {
+    DEBUG_PRINTLN(F("[LoRaWLED] radio config changed — reboot to re-init stack"));
+    _radioConfigDirty = true;
+  }
+
   // SPI pins
   if (!obj[F("pinSck")].isNull())  _pinSck  = obj[F("pinSck")];
   if (!obj[F("pinMiso")].isNull()) _pinMiso = obj[F("pinMiso")];
@@ -351,10 +527,40 @@ bool UsermodLoRaWLED::readFromConfig(JsonObject& root) {
 
   // Credentials (required fields)
   if (!obj[FPSTR(_keyDevEUI)].isNull() && !obj[FPSTR(_keyAppKey)].isNull()) {
+    char prevDevEUI[sizeof(_devEUI)];
+    char prevJoinEUI[sizeof(_joinEUI)];
+    char prevAppKey[sizeof(_appKey)];
+    strlcpy(prevDevEUI,  _devEUI,  sizeof(prevDevEUI));
+    strlcpy(prevJoinEUI, _joinEUI, sizeof(prevJoinEUI));
+    strlcpy(prevAppKey,  _appKey,  sizeof(prevAppKey));
+
     strlcpy(_devEUI, obj[FPSTR(_keyDevEUI)] | "", sizeof(_devEUI));
     strlcpy(_joinEUI, obj[FPSTR(_keyJoinEUI)] | "0000000000000000", sizeof(_joinEUI));
-    strlcpy(_appKey, obj[FPSTR(_keyAppKey)] | "", sizeof(_appKey));
+    // An all-asterisk value is the mask addToConfig() served to /json/cfg being
+    // posted straight back by the settings page — it means "unchanged". Storing
+    // it would overwrite the real key with asterisks and permanently break the
+    // join, so only a genuinely new value is taken.
+    const char* appKeyIn = obj[FPSTR(_keyAppKey)] | "";
+    if (!isAsterisksOnly(appKeyIn, sizeof(_appKey))) {
+      strlcpy(_appKey, appKeyIn, sizeof(_appKey));
+    }
     _credentialsProvisioned = obj[FPSTR(_keyCredProv)] | false;
+
+    // Credentials reach the radio stack exactly once per boot: _attemptJoin()
+    // calls lmh_setDevEui/setAppEui/setAppKey inside `if (!_lorawanInitDone)`,
+    // and the stack cannot be re-initialised in place. So an operator who
+    // pastes a corrected AppKey into the settings page changes cfg.json and
+    // what /json/cfg reports, while the radio keeps using the key from boot —
+    // the join then fails its MIC against a key that reads back as correct
+    // everywhere you would think to look. Treat a credential change exactly
+    // like a region change and take the same reboot path.
+    if (_lorawanInitDone &&
+        (strcmp(_devEUI,  prevDevEUI)  != 0 ||
+         strcmp(_joinEUI, prevJoinEUI) != 0 ||
+         strcmp(_appKey,  prevAppKey)  != 0)) {
+      DEBUG_PRINTLN(F("[LoRaWLED] credentials changed — reboot to re-init stack"));
+      _radioConfigDirty = true;
+    }
   } else {
     allFound = false;
   }
@@ -493,6 +699,53 @@ void UsermodLoRaWLED::_initRadio() {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
+// loraApplySubBandMask()  (M6-016)
+//
+// Pins the enabled uplink channels to one sub-band of a 64+8 channel plan
+// (US915 / AU915), covering the 500 kHz channel as well as the eight 125 kHz
+// ones. lmh_setSubBandChannels() cannot be used on its own for this, twice over:
+//
+//   • It only ever writes mask words 0–3, so ChannelsMask[4] — the eight 500 kHz
+//     channels 64–71 — is left cleared. Sub-band 2 comes out as channels 8–15
+//     and no 500 kHz channel at all.
+//   • RegionAlternateDr(), which runs on every OTAA join trial, then sets
+//     ChannelsMask[4] = 0x00FF unconditionally — all eight 500 kHz channels,
+//     band-wide, ignoring the sub-band. Nothing puts that back: the join-accept
+//     CFList that would normally reprogram the mask is discarded, because
+//     RegionUS915ApplyCFList() is an empty function in this library.
+//
+// So the mask a device actually holds after joining is "my sub-band's 125 kHz
+// channels, plus every 500 kHz channel in the band" — and that is the mask the
+// first data uplink is scheduled against. Re-applying this after the join is
+// what keeps a 500 kHz uplink inside the sub-band the gateway listens to.
+//
+// Sub-band n (1-based) owns 125 kHz channels (n-1)*8 … (n-1)*8+7 and the single
+// 500 kHz channel 64+(n-1). Since 8 divides the 16-bit mask words evenly, the
+// 125 kHz half is always one byte of word (n-1)/2.
+static bool loraApplySubBandMask(uint8_t subBand) {
+  if (subBand < 1 || subBand > 8) return false;
+
+  uint16_t mask[6] = { 0, 0, 0, 0, 0, 0 };
+  uint8_t  idx     = (uint8_t)(subBand - 1);
+  mask[idx / 2] = (idx % 2 == 0) ? 0x00FF : 0xFF00;  // eight 125 kHz channels
+  mask[4]       = (uint16_t)(1u << idx);             // one 500 kHz channel
+
+  MibRequestConfirm_t mibReq;
+  mibReq.Type                     = MIB_CHANNELS_DEFAULT_MASK;
+  mibReq.Param.ChannelsDefaultMask = mask;
+  bool ok = (LoRaMacMibSetRequestConfirm(&mibReq) == LORAMAC_STATUS_OK);
+
+  mibReq.Type              = MIB_CHANNELS_MASK;
+  mibReq.Param.ChannelsMask = mask;
+  ok = (LoRaMacMibSetRequestConfirm(&mibReq) == LORAMAC_STATUS_OK) && ok;
+
+  if (!ok) {
+    DEBUG_PRINTLN(F("[LoRaWLED] channel mask set rejected by MAC"));
+  }
+  return ok;
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
 // _attemptJoin()  (MVP-004)
 //
 // On first call: initializes the LoRaWAN stack (lmh_init), sets US915
@@ -518,32 +771,75 @@ void UsermodLoRaWLED::_attemptJoin() {
     lmh_setAppEui(joinEui);
     lmh_setAppKey(appKey);
 
-    static lmh_param_t lmhParam = {
-      .adr_enable          = LORAWAN_ADR_OFF,
-      .tx_data_rate        = DR_4,       // SF8BW500 — Helium-recommended for US915
-      .enable_public_network = LORAWAN_PUBLIC_NETWORK,
-      .nb_trials           = 3,
-      .tx_power            = TX_POWER_0,
-      .duty_cycle          = LORAWAN_DUTYCYCLE_OFF,
-    };
+    // ── Regional radio configuration (M6-014) ────────────────────────────────
+    LoraRegionInfo region;
+    loraRegionInfo(_region, region);
 
+    // Data rate: an operator value outside the region's valid range is rejected
+    // rather than handed to lmh_init(), which would silently mis-configure the
+    // radio for that region (DR_4 is SF8BW500 in US915 but SF8BW125 in EU868).
+    int8_t dataRate = region.defaultDataRate;
+    if (_txDataRate >= 0) {
+      if (_txDataRate <= region.maxDataRate) {
+        dataRate = _txDataRate;
+      } else {
+        DEBUG_PRINTF("[LoRaWLED] txDataRate DR_%d invalid for %s (max DR_%d) — using DR_%d\n",
+                     (int)_txDataRate, region.name, (int)region.maxDataRate,
+                     (int)region.defaultDataRate);
+      }
+    }
+    _effectiveDataRate = dataRate;
+
+    static lmh_param_t lmhParam;
+    lmhParam.adr_enable            = _adrEnable ? LORAWAN_ADR_ON : LORAWAN_ADR_OFF;
+    lmhParam.tx_data_rate          = dataRate;
+    lmhParam.enable_public_network = LORAWAN_PUBLIC_NETWORK;
+    lmhParam.nb_trials             = 3;
+    lmhParam.tx_power              = TX_POWER_0;
+    // Duty cycle follows the region table only — see LORA_REGION_TABLE.
+    lmhParam.duty_cycle            = region.dutyCycleOn ? LORAWAN_DUTYCYCLE_ON
+                                                        : LORAWAN_DUTYCYCLE_OFF;
+
+    // Join as Class A even though this device runs Class C. The MAC drops back
+    // to Class A across an OTAA join regardless, and joining *as* Class C
+    // changes how the stack ends the join cycle: OnRadioRxTimeout() skips
+    // `MacDone = 1` for Class C at the RX2 slot and re-opens continuous RX2
+    // instead, so the cycle can only be closed by the AckTimeout timer. That
+    // leaves a single fragile path between a missed join accept and the
+    // lmh_has_joined_failed callback we depend on. _onJoinSuccess() requests
+    // Class C the moment the join lands, which is what the stack's own examples
+    // do and what actually opens the continuous RX2 window.
     lmh_error_status err = lmh_init(&s_loraCallbacks, lmhParam,
-                                     true /*otaa*/, CLASS_C,
-                                     LORAMAC_REGION_US915);
+                                     true /*otaa*/, CLASS_A,
+                                     region.macRegion);
     if (err != LMH_SUCCESS) {
       DEBUG_PRINTF("[LoRaWLED] lmh_init failed (%d)\n", (int)err);
       _joinState = LoraDmxJoinState::JoinFailed;
       return;
     }
 
-    // US915 subband 2 — channels 8-15 (uplink) + 65 (500 kHz uplink)
-    lmh_setSubBandChannels(2);
+    // Sub-band channel masks only exist in the 64+8 channel plans (US915,
+    // AU915). EU868 and AS923 have no sub-bands — masking there would disable
+    // legitimate channels.
+    if (region.subBandApplies) {
+      uint8_t subBand = _subBand ? _subBand : region.defaultSubBand;
+      if (subBand < 1 || subBand > 8) subBand = region.defaultSubBand;
+      _effectiveSubBand = subBand;
+      lmh_setSubBandChannels(subBand);
+      // …then correct the 500 kHz half of the mask it leaves cleared (M6-016).
+      loraApplySubBandMask(subBand);
+      DEBUG_PRINTF("[LoRaWLED] region %s sub-band %u DR_%d\n",
+                   region.name, subBand, (int)dataRate);
+    } else {
+      DEBUG_PRINTF("[LoRaWLED] region %s (no sub-band mask)\n", region.name);
+    }
 
     _lorawanInitDone = true;
     DEBUG_PRINTLN(F("[LoRaWLED] LoRaWAN stack init OK, sending JoinRequest"));
   }
 
-  _joinState = LoraDmxJoinState::Joining;
+  _joinState     = LoraDmxJoinState::Joining;
+  _joinStartedMs = millis();
   lmh_join();
 }
 
@@ -579,15 +875,41 @@ void UsermodLoRaWLED::_pushDownlink(const uint8_t* buf, uint8_t len,
 void UsermodLoRaWLED::_onJoinSuccess() {
   DEBUG_PRINTLN(F("[LoRaWLED] Joined network — requesting Class C"));
   _joinState = LoraDmxJoinState::Joined;
+
+  // M6-016: the join we just completed ran RegionAlternateDr() once per trial,
+  // and every one of those calls re-enabled all eight 500 kHz channels
+  // band-wide. Put the sub-band mask back before the first data uplink is
+  // scheduled against it. Safe here: this callback only runs with the MAC in
+  // LORAMAC_IDLE, which is what LoRaMacMibSetRequestConfirm() requires.
+  if (_effectiveSubBand) loraApplySubBandMask(_effectiveSubBand);
+
   // After OTAA join the MAC resets to Class A. Request Class C explicitly so
   // the continuous RX2 window is opened and downlinks arrive within seconds
   // rather than waiting for the next uplink RX window.
   lmh_class_request(CLASS_C);
+
+  // lmh_class_request() reports LMH_ERROR for a successful A→C switch (it sets
+  // the error before testing the MIB result), so its return value cannot be
+  // used. Read the class back instead — a device that silently stayed in
+  // Class A looks identical from the outside until a downlink goes missing.
+  DeviceClass_t cls = CLASS_A;
+  lmh_class_get(&cls);
+  _classC = (cls == CLASS_C);
+  if (!_classC) {
+    DEBUG_PRINTLN(F("[LoRaWLED] WARNING: Class C switch did not take — still Class A"));
+  }
+
+  // The network server holds the new session as pending until it sees an uplink
+  // on it, and queues Class C downlinks rather than sending them meanwhile. A
+  // device that waits a full uplink interval here is unreachable for that whole
+  // period after every join. Bring the first uplink forward instead.
+  _lastUplinkMs = millis() - _uplinkInterval + LORAWLED_POST_JOIN_UPLINK_MS;
 }
 
 void UsermodLoRaWLED::_onJoinFailed() {
   DEBUG_PRINTLN(F("[LoRaWLED] Join failed"));
   _joinState = LoraDmxJoinState::JoinFailed;
+  _classC    = false;   // the MAC drops back to Class A across a failed join
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -945,10 +1267,12 @@ void UsermodLoRaWLED::_trackCmdId(uint32_t cmdId) {
 //
 // On each iteration:
 //   • Waits up to 10 ms for _loraTxSem (set by _sendUplink() when a frame is
-//     ready).  The 10 ms timeout also acts as the Radio.IrqProcess() poll rate
-//     for Class C RX windows.
-//   • Calls Radio.IrqProcess() unconditionally — handles DIO1 interrupts for
-//     both RX and TX events without touching the main loop.
+//     ready).
+//   • Calls Radio.IrqProcess().  NOTE: on ESP32 this is a no-op — SX126x-Arduino
+//     compiles the body only for ESP8266.  DIO1 edges are serviced by the
+//     library's own "LORA" FreeRTOS task, which its ISR wakes through a
+//     semaphore and which calls Radio.BgIrqProcess() itself.  The call is kept
+//     for the ESP8266 build; do not read it as this task driving RX/TX events.
 //   • If the semaphore fired, calls lmh_send() with the pre-built payload
 //     stored in _pendingTx / _txPayloadBuf.
 // ─────────────────────────────────────────────────────────────────────────────
@@ -958,12 +1282,22 @@ void UsermodLoRaWLED::_loraTxTaskFn(void* arg) {
     bool doTx = (xSemaphoreTake(self->_loraTxSem, pdMS_TO_TICKS(10)) == pdTRUE);
     Radio.IrqProcess();
     if (doTx) {
+      // LMH_SUCCESS means the MAC accepted the frame for scheduling — it is not
+      // evidence that anything was transmitted, and _fCntUp is not evidence
+      // either (M6-016). The authoritative reading is the network server's
+      // last_f_cnt_up; addToJsonInfo() reports the MAC's own uplink counter
+      // alongside ours so the two can be compared without a serial console.
       lmh_error_status status = lmh_send(&self->_pendingTx, LMH_UNCONFIRMED_MSG);
       if (status == LMH_SUCCESS) {
-        DEBUG_PRINTLN(F("[LoRaWLED] Uplink TX: FPort=2 len=12"));
+        DEBUG_PRINTLN(F("[LoRaWLED] Uplink accepted by MAC: FPort=2 len=12"));
         self->_fCntUp++;
+        strlcpy(self->_lastTxStatus, "accepted", sizeof(self->_lastTxStatus));
       } else {
         DEBUG_PRINTF("[LoRaWLED] Uplink TX failed (%d)\n", (int)status);
+        self->_txErrors++;
+        strlcpy(self->_lastTxStatus,
+                status == LMH_BUSY ? "busy" : "error",
+                sizeof(self->_lastTxStatus));
       }
     }
   }
