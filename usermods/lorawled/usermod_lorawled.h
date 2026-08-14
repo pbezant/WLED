@@ -41,6 +41,26 @@
 #define LORAWLED_RX_RING_SIZE  4
 #define LORAWLED_PAYLOAD_MAX   242   // LoRaWAN max payload bytes
 
+// ─── Join watchdog ───────────────────────────────────────────────────────────
+// Ceiling on how long a join attempt may sit in `Joining` before we give up on
+// the radio stack ever calling back. A full OTAA cycle is three trials of
+// RX1 (5 s) + RX2 (6 s) plus inter-trial backoff, so a healthy failure reports
+// in well under 60 s — this only fires when an event was genuinely lost.
+#define LORAWLED_JOIN_TIMEOUT_MS  60000UL
+
+// ─── LoRaWAN region (M6-014) ─────────────────────────────────────────────────
+// Index into LORA_REGION_TABLE in usermod_lorawled.cpp. The stored config value
+// is this index, so the order must never be reshuffled — append only.
+enum class LoraRegionId : uint8_t {
+  US915 = 0,
+  EU868,
+  AU915,
+  AS923,
+  _Count
+};
+
+#define LORAWLED_REGION_DEFAULT  LoraRegionId::US915
+
 // ─── Join state ──────────────────────────────────────────────────────────────
 enum class LoraDmxJoinState : uint8_t {
   NotJoined = 0,
@@ -128,6 +148,13 @@ class UsermodLoRaWLED : public Usermod {
   uint32_t _joinRetryInterval     = 30000;  // ms (30 s)
   uint32_t _cmdThrottleMs         = 100;
 
+  // Regional radio configuration (M6-014). Duty cycle is deliberately absent —
+  // it is derived from the region table and is never operator-settable.
+  uint8_t  _region                = (uint8_t)LORAWLED_REGION_DEFAULT;
+  uint8_t  _subBand               = 0;    // 0 = region default
+  bool     _adrEnable             = false;
+  int8_t   _txDataRate            = -1;   // -1 = region default
+
   // SPI pin config — user can override via /json/cfg
   int8_t _pinSck  = LORAWLED_PIN_SCK;
   int8_t _pinMiso = LORAWLED_PIN_MISO;
@@ -148,6 +175,7 @@ class UsermodLoRaWLED : public Usermod {
   uint32_t           _lastUplinkMs      = 0;
   uint32_t           _lastDownlinkMs    = 0;
   uint32_t           _lastJoinAttemptMs = 0;
+  uint32_t           _joinStartedMs     = 0;   // millis() of the in-flight join
   uint32_t           _lastCmdMs         = 0;
   uint32_t           _dropped           = 0;
   uint32_t           _replayed          = 0;
@@ -155,6 +183,13 @@ class UsermodLoRaWLED : public Usermod {
   bool               _loopWarn          = false;
   uint32_t           _maxLoopUs         = 0;    // worst-case loop() µs (MVP-015)
   char               _lastCmdResult[32] = "none";
+
+  // M6-014: set when readFromConfig() sees a region/sub-band/DR change after the
+  // stack is already initialised. lmh_init() cannot safely run twice, so loop()
+  // takes the only supported reset path — a reboot — and the new region is
+  // picked up on the next _attemptJoin().
+  bool               _radioConfigDirty  = false;
+  int8_t             _effectiveDataRate = -1;   // DR actually passed to lmh_init()
 
   // ── FreeRTOS TX task (MVP-016) ─────────────────────────────────────────────
   // All blocking SPI radio work (lmh_send + Radio.IrqProcess) runs here so the
@@ -205,4 +240,8 @@ class UsermodLoRaWLED : public Usermod {
   static const char _keyUplinkInterval[];
   static const char _keyJoinRetry[];
   static const char _keyCmdThrottle[];
+  static const char _keyRegion[];
+  static const char _keySubBand[];
+  static const char _keyAdrEnable[];
+  static const char _keyTxDataRate[];
 };
