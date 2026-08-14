@@ -927,9 +927,18 @@ void UsermodLoRaWLED::_processRxQueue() {
     return;
   }
 
+  // The spec frames the JSON fallback as opcode 0xFF followed by the UTF-8
+  // bytes; a bare `{` is the legacy form this usermod shipped with and stays
+  // accepted. `jsonAt`/`jsonLen` carry whichever offset applies through to the
+  // Segment path below, which re-parses the same bytes.
   LoraDmxCommand cmd;
-  if (entry.len > 0 && entry.payload[0] == '{') {
-    cmd = _parseJSON(entry.payload, entry.len);
+  const bool     taggedJson = (entry.len > 1 && entry.payload[0] == 0xFF);
+  const bool     bareJson   = (entry.len > 0 && entry.payload[0] == '{');
+  const uint8_t* jsonAt     = entry.payload + (taggedJson ? 1 : 0);
+  const uint16_t jsonLen    = entry.len     - (taggedJson ? 1 : 0);
+
+  if (taggedJson || bareJson) {
+    cmd = _parseJSON(jsonAt, jsonLen);
   } else {
     cmd = _parseBinary(entry.payload, entry.len);
   }
@@ -938,7 +947,7 @@ void UsermodLoRaWLED::_processRxQueue() {
   // directly.  Do this before invalidating the ring slot so the payload buffer
   // is still valid, then skip the generic _applyCommand() call.
   if (cmd.type == LoraDmxCmdType::Segment) {
-    _applySegmentJson(entry.payload, entry.len);
+    _applySegmentJson(jsonAt, jsonLen);
     strlcpy(_lastCmdResult, "ok", sizeof(_lastCmdResult));
     // fall through to ring advance + return
     entry.valid = false;
@@ -964,6 +973,23 @@ void UsermodLoRaWLED::_processRxQueue() {
 
 // ─────────────────────────────────────────────────────────────────────────────
 // _parseBinary()  (MVP-007)
+//
+// Implements the downlink opcode table in WLED Cloud's
+// docs/11-lns-integration.md, which is the authoritative protocol definition
+// and what src/lns/binary-encoder.ts on the cloud side emits.
+//
+// This previously implemented a different, colour-name-per-opcode table
+// (0x01=red, 0x02=green, 0x03=blue, 0x04=white) that happened to overlap the
+// spec's opcode numbers with entirely different meanings. Because both tables
+// consider 0x01–0x04 valid, every cloud command decoded as a *plausible* one
+// and was applied with "ok" — a cloud "set colour to <anything>" (0x03 r g b)
+// discarded the RGB bytes and set solid blue, forever. Nothing counted as
+// dropped, so no diagnostic on either side showed a problem. Verified
+// 2026-08-14 on live hardware: the device sat at [0,0,255] while fCntDown
+// advanced on every send.
+//
+// Every case validates its own length before indexing. The old table only
+// checked the 0xF1 pattern payload, so a truncated frame read past `len`.
 // ─────────────────────────────────────────────────────────────────────────────
 LoraDmxCommand UsermodLoRaWLED::_parseBinary(const uint8_t* data, uint16_t len) {
   LoraDmxCommand cmd;
@@ -973,21 +999,30 @@ LoraDmxCommand UsermodLoRaWLED::_parseBinary(const uint8_t* data, uint16_t len) 
     return cmd;
   }
 
+  // Every opcode below carries a fixed number of argument bytes; reject a short
+  // frame once here rather than in each case.
+  const uint16_t need = _binaryArgBytes(data[0]);
+  if (need != 0xFFFF && len < (uint16_t)(1 + need)) {
+    _dropped++;
+    strlcpy(_lastCmdResult, "parse_error", sizeof(_lastCmdResult));
+    return cmd;
+  }
+
   switch (data[0]) {
+    // ── Legacy LoRaDMX opcodes kept for the bench test rig ──────────────────
+    // These sit outside the spec's 0x01–0x10 range and so cannot collide with
+    // it. 0xF0 is the one that had to move: the spec assigns it request-state,
+    // where this usermod used it for pattern-stop (now 0xF2). Nothing outside
+    // this file ever emitted the pattern opcodes, so the remap is safe.
     case 0x00:
       cmd.type = LoraDmxCmdType::Power;
       cmd.on   = false;
       break;
-    case 0x01: cmd.type = LoraDmxCmdType::ColorNamed; cmd.r=255; cmd.g=0;   cmd.b=0;   break;
-    case 0x02: cmd.type = LoraDmxCmdType::ColorNamed; cmd.r=0;   cmd.g=255; cmd.b=0;   break;
-    case 0x03: cmd.type = LoraDmxCmdType::ColorNamed; cmd.r=0;   cmd.g=0;   cmd.b=255; break;
-    case 0x04: cmd.type = LoraDmxCmdType::ColorNamed; cmd.r=255; cmd.g=255; cmd.b=255; break;
-    case 0xAA: cmd.type = LoraDmxCmdType::Test;       cmd.r=0;   cmd.g=255; cmd.b=0;   break;
-    case 0xF0:
+    case 0xAA: cmd.type = LoraDmxCmdType::Test; cmd.r=0; cmd.g=255; cmd.b=0; break;
+    case 0xF2:
       cmd.type = LoraDmxCmdType::PatternStop;
       break;
     case 0xF1:
-      if (len < 6) { _dropped++; strlcpy(_lastCmdResult, "parse_error", sizeof(_lastCmdResult)); return cmd; }
       cmd.type        = LoraDmxCmdType::PatternStart;
       cmd.patternType = data[1];
       cmd.speed       = (uint16_t)(data[2]) | ((uint16_t)(data[3]) << 8);
@@ -999,6 +1034,50 @@ LoraDmxCommand UsermodLoRaWLED::_parseBinary(const uint8_t* data, uint16_t len) 
         return cmd;
       }
       break;
+
+    // ── WLED Cloud protocol ─────────────────────────────────────────────────
+    case 0x01:
+      cmd.type = LoraDmxCmdType::Brightness;
+      cmd.bri  = data[1];
+      break;
+    case 0x02:
+      cmd.type = LoraDmxCmdType::Power;
+      cmd.on   = (data[1] != 0);
+      break;
+    case 0x03:
+      cmd.type = LoraDmxCmdType::Color;
+      cmd.r = data[1]; cmd.g = data[2]; cmd.b = data[3];
+      break;
+    case 0x04:
+      cmd.type = LoraDmxCmdType::Effect;
+      cmd.fx   = data[1];
+      break;
+    case 0x05:
+      cmd.type = LoraDmxCmdType::Speed;
+      cmd.sx   = data[1];
+      break;
+    case 0x06:
+      cmd.type = LoraDmxCmdType::Intensity;
+      cmd.ix   = data[1];
+      break;
+    case 0x07:
+      cmd.type = LoraDmxCmdType::Palette;
+      cmd.pal  = data[1];
+      break;
+    case 0x10:
+      cmd.type = LoraDmxCmdType::FullState;
+      cmd.bri  = data[1];
+      cmd.r    = data[2]; cmd.g = data[3]; cmd.b = data[4];
+      cmd.fx   = data[5];
+      cmd.sx   = data[6];
+      cmd.ix   = data[7];
+      cmd.pal  = data[8];
+      cmd.on   = (data[9] != 0);
+      break;
+    case 0xF0:
+      cmd.type = LoraDmxCmdType::RequestState;
+      break;
+
     default:
       _dropped++;
       strlcpy(_lastCmdResult, "drop", sizeof(_lastCmdResult));
@@ -1007,6 +1086,20 @@ LoraDmxCommand UsermodLoRaWLED::_parseBinary(const uint8_t* data, uint16_t len) 
 
   strlcpy(_lastCmdResult, "ok", sizeof(_lastCmdResult));
   return cmd;
+}
+
+// Argument-byte count for a binary opcode, or 0xFFFF for "unknown opcode"
+// (left to the switch's default case to reject).
+uint16_t UsermodLoRaWLED::_binaryArgBytes(uint8_t opcode) {
+  switch (opcode) {
+    case 0x00: case 0xAA: case 0xF0: case 0xF2: return 0;
+    case 0x01: case 0x02: case 0x04:
+    case 0x05: case 0x06: case 0x07:            return 1;
+    case 0x03:                                  return 3;
+    case 0xF1:                                  return 5;
+    case 0x10:                                  return 9;
+    default:                                    return 0xFFFF;
+  }
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -1184,6 +1277,72 @@ void UsermodLoRaWLED::_applyCommand(const LoraDmxCommand& cmd) {
       }
       if (cmd.preset > 0) applyPreset(cmd.preset);
       stateUpdated(CALL_MODE_DIRECT_CHANGE);
+      break;
+
+    // ── WLED Cloud protocol ─────────────────────────────────────────────────
+
+    // Unlike ColorNamed above, this deliberately does NOT force Solid. The
+    // cloud's 0x03 means "set the primary colour", the same as moving the
+    // colour picker in WLED's own UI, which leaves the running effect alone.
+    case LoraDmxCmdType::Color:
+      bri = (bri == 0) ? 255 : bri;  // a colour command on a dark strip shows nothing
+      for (uint8_t s = 0; s < strip.getSegmentsNum(); s++) {
+        strip.getSegment(s).setColor(0, RGBW32(cmd.r, cmd.g, cmd.b, 0));
+      }
+      stateUpdated(CALL_MODE_DIRECT_CHANGE);
+      break;
+
+    case LoraDmxCmdType::Effect:
+      for (uint8_t s = 0; s < strip.getSegmentsNum(); s++) {
+        strip.getSegment(s).setMode(cmd.fx, true);
+      }
+      stateUpdated(CALL_MODE_DIRECT_CHANGE);
+      break;
+
+    case LoraDmxCmdType::Speed:
+      for (uint8_t s = 0; s < strip.getSegmentsNum(); s++) {
+        strip.getSegment(s).speed = cmd.sx;
+      }
+      stateUpdated(CALL_MODE_DIRECT_CHANGE);
+      break;
+
+    case LoraDmxCmdType::Intensity:
+      for (uint8_t s = 0; s < strip.getSegmentsNum(); s++) {
+        strip.getSegment(s).intensity = cmd.ix;
+      }
+      stateUpdated(CALL_MODE_DIRECT_CHANGE);
+      break;
+
+    case LoraDmxCmdType::Palette:
+      for (uint8_t s = 0; s < strip.getSegmentsNum(); s++) {
+        strip.getSegment(s).setPalette(cmd.pal);
+      }
+      stateUpdated(CALL_MODE_DIRECT_CHANGE);
+      break;
+
+    case LoraDmxCmdType::FullState:
+      for (uint8_t s = 0; s < strip.getSegmentsNum(); s++) {
+        Segment& seg = strip.getSegment(s);
+        seg.setColor(0, RGBW32(cmd.r, cmd.g, cmd.b, 0));
+        seg.setMode(cmd.fx, true);
+        seg.speed     = cmd.sx;
+        seg.intensity = cmd.ix;
+        seg.setPalette(cmd.pal);
+      }
+      // Applied last: setting bri before the segment writes would let a
+      // 0-brightness frame be undone by the colour path's "not off" guard.
+      if (cmd.on) {
+        bri = (cmd.bri > 0) ? cmd.bri : ((briLast > 0) ? briLast : 255);
+      } else {
+        bri = 0;
+      }
+      stateUpdated(CALL_MODE_DIRECT_CHANGE);
+      break;
+
+    // The cloud asks the device to report its own state; the periodic status
+    // uplink is exactly that payload, so just trigger one now.
+    case LoraDmxCmdType::RequestState:
+      _sendUplink();
       break;
 
     case LoraDmxCmdType::Segment:

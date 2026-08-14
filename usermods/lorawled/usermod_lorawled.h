@@ -98,6 +98,8 @@ enum class LoraDmxCmdType : uint8_t {
   Off = 0, ColorNamed, Test,
   PatternStart, PatternStop,
   Preset, Power, Brightness, Segment, Combined,
+  // Opcodes from the WLED Cloud downlink protocol (docs/11-lns-integration.md).
+  Color, Effect, Speed, Intensity, Palette, FullState, RequestState,
   Drop
 };
 
@@ -110,6 +112,10 @@ struct LoraDmxCommand {
   uint8_t  preset       = 0;          // PRESET / COMBINED
   bool     on           = true;       // POWER / COMBINED
   uint8_t  bri          = 255;        // BRIGHTNESS / COMBINED
+  uint8_t  fx           = 0;          // EFFECT / FULL_STATE
+  uint8_t  sx           = 128;        // SPEED / FULL_STATE
+  uint8_t  ix           = 128;        // INTENSITY / FULL_STATE
+  uint8_t  pal          = 0;          // PALETTE / FULL_STATE
   uint32_t cmdId        = 0xFFFFFFFF; // replay protection
 };
 
@@ -235,6 +241,7 @@ class UsermodLoRaWLED : public Usermod {
   void     _attemptJoin();
   void     _processRxQueue();
   LoraDmxCommand _parseBinary(const uint8_t* data, uint16_t len);
+  static uint16_t _binaryArgBytes(uint8_t opcode);
   LoraDmxCommand _parseJSON(const uint8_t* data, uint16_t len);
   void     _applyCommand(const LoraDmxCommand& cmd);
   void     _applySegmentJson(const uint8_t* data, uint16_t len);
