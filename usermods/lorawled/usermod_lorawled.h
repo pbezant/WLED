@@ -48,6 +48,13 @@
 // in well under 60 s — this only fires when an event was genuinely lost.
 #define LORAWLED_JOIN_TIMEOUT_MS  60000UL
 
+// ─── Post-join uplink (M6-016) ───────────────────────────────────────────────
+// The network server keeps a freshly joined session pending until it receives
+// an uplink on it, and holds Class C downlinks until then. Waiting a full
+// uplink interval after every join leaves the device unreachable for that
+// whole period, so the first uplink is brought forward to this delay instead.
+#define LORAWLED_POST_JOIN_UPLINK_MS  5000UL
+
 // ─── LoRaWAN region (M6-014) ─────────────────────────────────────────────────
 // Index into LORA_REGION_TABLE in usermod_lorawled.cpp. The stored config value
 // is this index, so the order must never be reshuffled — append only.
@@ -190,6 +197,14 @@ class UsermodLoRaWLED : public Usermod {
   // picked up on the next _attemptJoin().
   bool               _radioConfigDirty  = false;
   int8_t             _effectiveDataRate = -1;   // DR actually passed to lmh_init()
+  uint8_t            _effectiveSubBand  = 0;    // 0 = region has no sub-band mask
+
+  // M6-016 diagnostics. _classC is read back from the MAC after the post-join
+  // class request rather than assumed — see _onJoinSuccess(). _txErrors counts
+  // frames the MAC refused; neither it nor _fCntUp says anything about airtime.
+  bool               _classC            = false;
+  uint32_t           _txErrors          = 0;
+  char               _lastTxStatus[16]  = "none";
 
   // ── FreeRTOS TX task (MVP-016) ─────────────────────────────────────────────
   // All blocking SPI radio work (lmh_send + Radio.IrqProcess) runs here so the

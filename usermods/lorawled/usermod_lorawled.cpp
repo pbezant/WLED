@@ -45,6 +45,18 @@ const char UsermodLoRaWLED::_keyTxDataRate[]    PROGMEM = "txDataRate";
 //
 // maxDataRate is the highest uplink DR valid for the region (FSK/LR-FHSS rates
 // excluded). A configured txDataRate above it is rejected in _attemptJoin().
+//
+// defaultDataRate must name a 125 kHz rate in the 64+8 channel plans (US915,
+// AU915) — see M6-016. In those plans the channel a frame goes out on is chosen
+// purely from the data rate: Channels[0..63] carry DR_0–DR_3 at 125 kHz and
+// Channels[64..71] carry DR_4 (US915) / DR_6 (AU915) at 500 kHz, and nothing
+// else. Pinning uplinks to the 500 kHz rate therefore pins them to eight
+// frequencies spread across the whole band, of which an 8-channel gateway
+// watches at most one — while OTAA still succeeds, because RegionAlternateDr()
+// sends eight of every nine join trials at DR_0 on the 125 kHz channels the
+// gateway does hear. US915 DR_1 is the lowest 125 kHz rate whose 53-byte
+// payload ceiling clears the 12-byte status uplink; DR_0 caps at 11 bytes and
+// LoRaMacQueryTxPossible() rejects the frame outright.
 struct LoraRegionInfo {
   char           name[7];
   LoRaMacRegion_t macRegion;
@@ -57,7 +69,7 @@ struct LoraRegionInfo {
 
 static const LoraRegionInfo LORA_REGION_TABLE[] PROGMEM = {
   // name      macRegion             defDR  maxDR  defSub  subBand  dutyCycle
-  { "US915", LORAMAC_REGION_US915,  DR_4,  DR_4,   2,     true,    false },
+  { "US915", LORAMAC_REGION_US915,  DR_1,  DR_4,   2,     true,    false },
   { "EU868", LORAMAC_REGION_EU868,  DR_5,  DR_5,   0,     false,   true  },
   { "AU915", LORAMAC_REGION_AU915,  DR_2,  DR_6,   2,     true,    false },
   { "AS923", LORAMAC_REGION_AS923,  DR_2,  DR_5,   0,     false,   true  },
@@ -331,6 +343,21 @@ void UsermodLoRaWLED::addToJsonInfo(JsonObject& root) {
     obj[F("dataRate")]   = _lorawanInitDone ? _effectiveDataRate
                                             : region.defaultDataRate;
   }
+
+  // M6-016 uplink diagnostics. `fCntUp` counts frames this usermod handed to
+  // the MAC; `fCntUpMac` is the MAC's own uplink counter, which is what the
+  // network server's last_f_cnt_up should track. The two disagreeing points at
+  // the usermod; both climbing while the NS stays at 0 points at the air.
+  if (_lorawanInitDone) {
+    MibRequestConfirm_t mibReq;
+    mibReq.Type = MIB_UPLINK_COUNTER;
+    if (LoRaMacMibGetRequestConfirm(&mibReq) == LORAMAC_STATUS_OK) {
+      obj[F("fCntUpMac")] = mibReq.Param.UpLinkCounter;
+    }
+  }
+  obj[F("classC")]     = _classC;
+  obj[F("txErrors")]   = _txErrors;
+  obj[F("lastTx")]     = _lastTxStatus;
   obj[F("credentialsProvisioned")] = _credentialsProvisioned;
   obj[F("version")]              = LORAWLED_VERSION;
   obj[F("fCntUp")]               = _fCntUp;
@@ -672,6 +699,53 @@ void UsermodLoRaWLED::_initRadio() {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
+// loraApplySubBandMask()  (M6-016)
+//
+// Pins the enabled uplink channels to one sub-band of a 64+8 channel plan
+// (US915 / AU915), covering the 500 kHz channel as well as the eight 125 kHz
+// ones. lmh_setSubBandChannels() cannot be used on its own for this, twice over:
+//
+//   • It only ever writes mask words 0–3, so ChannelsMask[4] — the eight 500 kHz
+//     channels 64–71 — is left cleared. Sub-band 2 comes out as channels 8–15
+//     and no 500 kHz channel at all.
+//   • RegionAlternateDr(), which runs on every OTAA join trial, then sets
+//     ChannelsMask[4] = 0x00FF unconditionally — all eight 500 kHz channels,
+//     band-wide, ignoring the sub-band. Nothing puts that back: the join-accept
+//     CFList that would normally reprogram the mask is discarded, because
+//     RegionUS915ApplyCFList() is an empty function in this library.
+//
+// So the mask a device actually holds after joining is "my sub-band's 125 kHz
+// channels, plus every 500 kHz channel in the band" — and that is the mask the
+// first data uplink is scheduled against. Re-applying this after the join is
+// what keeps a 500 kHz uplink inside the sub-band the gateway listens to.
+//
+// Sub-band n (1-based) owns 125 kHz channels (n-1)*8 … (n-1)*8+7 and the single
+// 500 kHz channel 64+(n-1). Since 8 divides the 16-bit mask words evenly, the
+// 125 kHz half is always one byte of word (n-1)/2.
+static bool loraApplySubBandMask(uint8_t subBand) {
+  if (subBand < 1 || subBand > 8) return false;
+
+  uint16_t mask[6] = { 0, 0, 0, 0, 0, 0 };
+  uint8_t  idx     = (uint8_t)(subBand - 1);
+  mask[idx / 2] = (idx % 2 == 0) ? 0x00FF : 0xFF00;  // eight 125 kHz channels
+  mask[4]       = (uint16_t)(1u << idx);             // one 500 kHz channel
+
+  MibRequestConfirm_t mibReq;
+  mibReq.Type                     = MIB_CHANNELS_DEFAULT_MASK;
+  mibReq.Param.ChannelsDefaultMask = mask;
+  bool ok = (LoRaMacMibSetRequestConfirm(&mibReq) == LORAMAC_STATUS_OK);
+
+  mibReq.Type              = MIB_CHANNELS_MASK;
+  mibReq.Param.ChannelsMask = mask;
+  ok = (LoRaMacMibSetRequestConfirm(&mibReq) == LORAMAC_STATUS_OK) && ok;
+
+  if (!ok) {
+    DEBUG_PRINTLN(F("[LoRaWLED] channel mask set rejected by MAC"));
+  }
+  return ok;
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
 // _attemptJoin()  (MVP-004)
 //
 // On first call: initializes the LoRaWAN stack (lmh_init), sets US915
@@ -750,8 +824,12 @@ void UsermodLoRaWLED::_attemptJoin() {
     if (region.subBandApplies) {
       uint8_t subBand = _subBand ? _subBand : region.defaultSubBand;
       if (subBand < 1 || subBand > 8) subBand = region.defaultSubBand;
+      _effectiveSubBand = subBand;
       lmh_setSubBandChannels(subBand);
-      DEBUG_PRINTF("[LoRaWLED] region %s sub-band %u\n", region.name, subBand);
+      // …then correct the 500 kHz half of the mask it leaves cleared (M6-016).
+      loraApplySubBandMask(subBand);
+      DEBUG_PRINTF("[LoRaWLED] region %s sub-band %u DR_%d\n",
+                   region.name, subBand, (int)dataRate);
     } else {
       DEBUG_PRINTF("[LoRaWLED] region %s (no sub-band mask)\n", region.name);
     }
@@ -797,15 +875,41 @@ void UsermodLoRaWLED::_pushDownlink(const uint8_t* buf, uint8_t len,
 void UsermodLoRaWLED::_onJoinSuccess() {
   DEBUG_PRINTLN(F("[LoRaWLED] Joined network — requesting Class C"));
   _joinState = LoraDmxJoinState::Joined;
+
+  // M6-016: the join we just completed ran RegionAlternateDr() once per trial,
+  // and every one of those calls re-enabled all eight 500 kHz channels
+  // band-wide. Put the sub-band mask back before the first data uplink is
+  // scheduled against it. Safe here: this callback only runs with the MAC in
+  // LORAMAC_IDLE, which is what LoRaMacMibSetRequestConfirm() requires.
+  if (_effectiveSubBand) loraApplySubBandMask(_effectiveSubBand);
+
   // After OTAA join the MAC resets to Class A. Request Class C explicitly so
   // the continuous RX2 window is opened and downlinks arrive within seconds
   // rather than waiting for the next uplink RX window.
   lmh_class_request(CLASS_C);
+
+  // lmh_class_request() reports LMH_ERROR for a successful A→C switch (it sets
+  // the error before testing the MIB result), so its return value cannot be
+  // used. Read the class back instead — a device that silently stayed in
+  // Class A looks identical from the outside until a downlink goes missing.
+  DeviceClass_t cls = CLASS_A;
+  lmh_class_get(&cls);
+  _classC = (cls == CLASS_C);
+  if (!_classC) {
+    DEBUG_PRINTLN(F("[LoRaWLED] WARNING: Class C switch did not take — still Class A"));
+  }
+
+  // The network server holds the new session as pending until it sees an uplink
+  // on it, and queues Class C downlinks rather than sending them meanwhile. A
+  // device that waits a full uplink interval here is unreachable for that whole
+  // period after every join. Bring the first uplink forward instead.
+  _lastUplinkMs = millis() - _uplinkInterval + LORAWLED_POST_JOIN_UPLINK_MS;
 }
 
 void UsermodLoRaWLED::_onJoinFailed() {
   DEBUG_PRINTLN(F("[LoRaWLED] Join failed"));
   _joinState = LoraDmxJoinState::JoinFailed;
+  _classC    = false;   // the MAC drops back to Class A across a failed join
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -1178,12 +1282,22 @@ void UsermodLoRaWLED::_loraTxTaskFn(void* arg) {
     bool doTx = (xSemaphoreTake(self->_loraTxSem, pdMS_TO_TICKS(10)) == pdTRUE);
     Radio.IrqProcess();
     if (doTx) {
+      // LMH_SUCCESS means the MAC accepted the frame for scheduling — it is not
+      // evidence that anything was transmitted, and _fCntUp is not evidence
+      // either (M6-016). The authoritative reading is the network server's
+      // last_f_cnt_up; addToJsonInfo() reports the MAC's own uplink counter
+      // alongside ours so the two can be compared without a serial console.
       lmh_error_status status = lmh_send(&self->_pendingTx, LMH_UNCONFIRMED_MSG);
       if (status == LMH_SUCCESS) {
-        DEBUG_PRINTLN(F("[LoRaWLED] Uplink TX: FPort=2 len=12"));
+        DEBUG_PRINTLN(F("[LoRaWLED] Uplink accepted by MAC: FPort=2 len=12"));
         self->_fCntUp++;
+        strlcpy(self->_lastTxStatus, "accepted", sizeof(self->_lastTxStatus));
       } else {
         DEBUG_PRINTF("[LoRaWLED] Uplink TX failed (%d)\n", (int)status);
+        self->_txErrors++;
+        strlcpy(self->_lastTxStatus,
+                status == LMH_BUSY ? "busy" : "error",
+                sizeof(self->_lastTxStatus));
       }
     }
   }
