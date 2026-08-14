@@ -3,6 +3,10 @@
 #include <WebSocketsClient.h>
 #include <HTTPClient.h>
 
+#ifdef USERMOD_LORAWLED
+#include "../lorawled/usermod_lorawled.h"  // UsermodLoRaWLED, USERMOD_ID_LORAWLED
+#endif
+
 /*
  * WledCloudUsermod — connects WLED to WLED Cloud
  *
@@ -15,6 +19,31 @@
  * See: /docs/12-usermod-spec.md for full specification
  */
 
+// ── Secret redaction for GET /json/cfg ────────────────────────────────────────
+//
+// WLED reuses addToConfig() for two very different jobs: writing cfg.json to
+// flash, and answering GET /json/cfg — which is unauthenticated and readable by
+// anything on the LAN or the WLED-AP. Core WLED keeps its own secrets out of
+// the second (the WiFi PSK is reported as a length, the MQTT password as a run
+// of asterisks) but usermods get no separate hook, so this has to make the same
+// distinction itself. The only signal available is which module holds the
+// shared JSON buffer: serializeConfigToFS() takes it as JSON_LOCK_CFG_SER,
+// serveJson() as JSON_LOCK_SERVEJSON.
+static bool wledCloudCfgIsForFlash() {
+  return jsonBufferLock == JSON_LOCK_CFG_SER;
+}
+
+// Same-length asterisk run, matching core WLED's MQTT-password convention, so
+// the usermod settings page still shows that a value is set. Posting the mask
+// back unchanged is recognised by isAsterisksOnly() in readFromConfig() and
+// leaves the stored secret alone.
+static void wledCloudMaskSecret(const char* src, char* out, size_t outLen) {
+  size_t n = strlen(src);
+  if (n > outLen - 1) n = outLen - 1;
+  memset(out, '*', n);
+  out[n] = '\0';
+}
+
 // ── Claim flow state machine ──────────────────────────────────────────────────
 enum class ClaimState : uint8_t {
   IDLE = 0,
@@ -24,7 +53,8 @@ enum class ClaimState : uint8_t {
   DISPLAY_CODE,    // waiting, polling every 5s
   POLL,
   SAVE_TOKEN,
-  CONNECT_WS
+  CONNECT_WS,
+  SELF_REGISTER    // POST /api/device-auth/self-register (venue key configured)
 };
 
 class WledCloudUsermod : public Usermod {
@@ -38,6 +68,10 @@ class WledCloudUsermod : public Usermod {
   char     venueId[37]   = "";      // set by claim flow
   uint16_t syncInterval  = 30;      // seconds
   bool     sendTelemetry = true;
+  // Venue enrolment key (M6-012) — 64 hex chars + NUL. When set and no device
+  // token exists, the device registers itself instead of showing a claim code.
+  // Bearer credential: never surfaced in /json/info or on the serial console.
+  char     venueKey[65]  = "";
 
   // ── Runtime state (not persisted) ───────────────────────────────────────────
   bool     initDone       = false;
@@ -45,6 +79,12 @@ class WledCloudUsermod : public Usermod {
   bool     wsConnecting   = false;  // true while handshake in progress
   char     claimCode[9]   = "";     // e.g. "X7K-9P2\0"
   ClaimState claimState   = ClaimState::IDLE;
+
+  // Self-registration (M6-012). Set once the server has rejected the key
+  // outright (401/403) — a dead key must fall back to the claim-code flow
+  // rather than retry forever, so commissioning still completes by hand.
+  bool     selfRegisterRejected = false;
+  char     selfRegisterStatus[40] = "";
 
   unsigned long lastStateSync   = 0;
   unsigned long lastTelemetry   = 0;
@@ -132,10 +172,7 @@ class WledCloudUsermod : public Usermod {
     char loraAppKey[33] = "";
 
 #ifdef USERMOD_LORAWLED
-    // Forward-declare to avoid requiring the full header include order to be exact.
-    // USERMOD_ID_LORAWLED is defined in usermod_lorawled.h which must be compiled
-    // in the same build when USERMOD_LORAWLED is defined.
-    auto* lorawled = static_cast<UsermodLoRaWLED*>(usermods.lookup(USERMOD_ID_LORAWLED));
+    auto* lorawled = static_cast<UsermodLoRaWLED*>(UsermodManager::lookup(USERMOD_ID_LORAWLED));
     if (lorawled) {
       auto creds = lorawled->getCredentials();
       // joinEUI is required by the cloud — it routes the join-request to a join
@@ -176,6 +213,96 @@ class WledCloudUsermod : public Usermod {
     }
     DEBUG_PRINTF("[WledCloud] register-code failed: %d\n", code);
     return false;
+  }
+
+  // ── HTTP: self-register with a venue enrolment key (M6-012) ─────────────────
+  //
+  // POST /api/device-auth/self-register — the key *is* the credential, so there
+  // is no claim code, no polling and no human relaying a 7-character string.
+  //
+  // Returns: 1 = registered (deviceToken filled), 0 = retry later,
+  //         -1 = key rejected, do not retry (fall back to the claim code).
+  int selfRegisterWithCloud() {
+    if (!WLED_CONNECTED) return 0;
+
+    HTTPClient http;
+    char url[200];
+    snprintf(url, sizeof(url), "%s://%s:%u/api/device-auth/self-register",
+             useTLS ? "https" : "http", serverHost, serverPort);
+
+    http.begin(url);
+    http.setConnectTimeout(3000);  // 3s connect timeout — avoid WDT trigger
+    http.setTimeout(5000);         // 5s total timeout
+    http.addHeader(F("Content-Type"), F("application/json"));
+
+    char mac[18];
+    snprintf(mac, sizeof(mac), "%02X:%02X:%02X:%02X:%02X:%02X",
+             (uint8_t)(ESP.getEfuseMac() >> 40),
+             (uint8_t)(ESP.getEfuseMac() >> 32),
+             (uint8_t)(ESP.getEfuseMac() >> 24),
+             (uint8_t)(ESP.getEfuseMac() >> 16),
+             (uint8_t)(ESP.getEfuseMac() >> 8),
+             (uint8_t)(ESP.getEfuseMac()));
+
+    // The device name is user-set and goes into hand-built JSON, so strip the
+    // two characters that would break out of the string literal.
+    char name[33];
+    strlcpy(name, serverDescription, sizeof(name));
+    for (char* p = name; *p; p++) {
+      if (*p == '"' || *p == '\\') *p = ' ';
+    }
+    if (name[0] == '\0') strlcpy(name, "WLED", sizeof(name));
+
+    // The venue key is a bearer credential. It goes in the body and is never
+    // logged — see the deliberate absence of the key in every DEBUG_PRINT here.
+    char payload[320];
+    snprintf(payload, sizeof(payload),
+             "{\"venueKey\":\"%s\",\"name\":\"%s\",\"macAddress\":\"%s\","
+             "\"firmwareVersion\":\"%s\",\"numLeds\":%u}",
+             venueKey, name, mac, versionString, strip.getLengthTotal());
+
+    int code = http.POST((uint8_t *)payload, strlen(payload));
+
+    // 401 = revoked / expired / exhausted / unknown, 403 = wrong scope. Both
+    // mean this key will never work, so stop rather than loop forever.
+    if (code == 401 || code == 403) {
+      http.end();
+      DEBUG_PRINTF("[WledCloud] self-register rejected: %d\n", code);
+      snprintf(selfRegisterStatus, sizeof(selfRegisterStatus),
+               code == 403 ? "Venue key not valid for enrolment"
+                           : "Venue key rejected (revoked or used up)");
+      return -1;
+    }
+
+    if (code != 201 && code != 200) {
+      http.end();
+      DEBUG_PRINTF("[WledCloud] self-register failed: %d\n", code);
+      snprintf(selfRegisterStatus, sizeof(selfRegisterStatus),
+               "Enrolling — server error %d", code);
+      return 0;
+    }
+
+    String body = http.getString();
+    http.end();
+
+    int tStart = body.indexOf("\"deviceToken\":\"");
+    if (tStart >= 0) {
+      tStart += 15;
+      int tEnd = body.indexOf("\"", tStart);
+      if (tEnd > tStart && (tEnd - tStart) < (int)sizeof(deviceToken)) {
+        body.substring(tStart, tEnd).toCharArray(deviceToken, sizeof(deviceToken));
+      }
+    }
+
+    if (strlen(deviceToken) == 0) {
+      DEBUG_PRINTLN(F("[WledCloud] self-register: no token in response"));
+      snprintf(selfRegisterStatus, sizeof(selfRegisterStatus), "Enrolling — bad response");
+      return 0;
+    }
+
+    DEBUG_PRINTLN(F("[WledCloud] Self-registered with venue key"));
+    snprintf(selfRegisterStatus, sizeof(selfRegisterStatus), "Enrolled with venue key");
+    return 1;
   }
 
   // ── HTTP: poll for claim completion ─────────────────────────────────────────
@@ -540,6 +667,18 @@ class WledCloudUsermod : public Usermod {
     return base + (unsigned long)random(-jitter, jitter + 1);
   }
 
+  // ── Which enrolment path to take (M6-012) ───────────────────────────────────
+  //
+  // An already-claimed device is never re-enrolled: a device token always wins,
+  // so self-registration cannot run on top of an existing claim.
+  ClaimState nextEnrolmentState() {
+    if (strlen(deviceToken) > 0) return ClaimState::CONNECT_WS;
+    // The server requires at least 16 characters; a shorter value is a typo and
+    // would only burn a round-trip to be told so.
+    if (!selfRegisterRejected && strlen(venueKey) >= 16) return ClaimState::SELF_REGISTER;
+    return ClaimState::GENERATE_CODE;
+  }
+
  public:
   // ── Lifecycle ─────────────────────────────────────────────────────────────────
   void setup() override {
@@ -549,11 +688,7 @@ class WledCloudUsermod : public Usermod {
   void connected() override {
     if (!enabled || !initDone) return;
 
-    if (strlen(deviceToken) > 0) {
-      claimState = ClaimState::CONNECT_WS;
-    } else {
-      claimState = ClaimState::GENERATE_CODE;
-    }
+    claimState = nextEnrolmentState();
   }
 
   void loop() override {
@@ -575,12 +710,28 @@ class WledCloudUsermod : public Usermod {
         break;
 
       case ClaimState::CHECK_TOKEN:
-        if (strlen(deviceToken) > 0) {
-          claimState = ClaimState::CONNECT_WS;
-        } else {
+        claimState = nextEnrolmentState();
+        break;
+
+      case ClaimState::SELF_REGISTER: {
+        // Same 10s throttle as REGISTER_CODE: each attempt blocks the main loop
+        // for up to the 3s connect timeout, and an unthrottled call here would
+        // reproduce the watchdog crash-loop fixed in 6287cea0.
+        if (now - lastRegisterAttempt < 10000UL && lastRegisterAttempt > 0) break;
+        lastRegisterAttempt = now;
+
+        int result = selfRegisterWithCloud();
+        if (result == 1) {
+          claimState = ClaimState::SAVE_TOKEN;
+        } else if (result == -1) {
+          // Key is dead. Fall back so an installer on a ladder can still
+          // commission the device by hand instead of needing a reflash.
+          selfRegisterRejected = true;
           claimState = ClaimState::GENERATE_CODE;
         }
+        // result == 0: transient (server down, no route) — retry on the throttle
         break;
+      }
 
       case ClaimState::GENERATE_CODE:
         generateClaimCode();
@@ -725,6 +876,27 @@ class WledCloudUsermod : public Usermod {
       cloud.add(F("Not claimed"));
     }
 
+    // Enrolment status (M6-012). Reports only *whether* a key is configured and
+    // how enrolment went — the key itself is never rendered here.
+    if (enabled && strlen(venueKey) > 0) {
+      JsonArray enrol = user.createNestedArray(F("Cloud Enrolment"));
+      if (selfRegisterRejected) {
+        enrol.add(strlen(selfRegisterStatus) > 0 ? selfRegisterStatus
+                                                 : "Venue key rejected");
+      } else if (strlen(deviceToken) > 0) {
+        enrol.add(F("Venue key configured"));
+      } else if (strlen(venueKey) < 16) {
+        // nextEnrolmentState() never attempts self-registration below 16 chars,
+        // so anything shorter has already been silently abandoned. Saying
+        // "enrolling" here would leave a typo'd key looking permanently
+        // in-progress instead of pointing at the actual problem.
+        enrol.add(F("Venue key too short — needs 16+ characters"));
+      } else {
+        enrol.add(strlen(selfRegisterStatus) > 0 ? selfRegisterStatus
+                                                 : "Enrolling with venue key…");
+      }
+    }
+
     if (enabled) {
       JsonArray srv = user.createNestedArray(F("Cloud Server"));
       srv.add(serverHost);
@@ -759,8 +931,21 @@ class WledCloudUsermod : public Usermod {
     top["server"]    = serverHost;
     top["port"]      = serverPort;
     top["tls"]       = useTLS;
-    top["token"]     = deviceToken;
+    // The device token is a bearer credential for this device's cloud session,
+    // and the venue key enrols *any* device into the venue — both go to flash
+    // verbatim and to /json/cfg masked.
+    char tokenOut[sizeof(deviceToken)];
+    char venueKeyOut[sizeof(venueKey)];
+    if (wledCloudCfgIsForFlash()) {
+      strlcpy(tokenOut,    deviceToken, sizeof(tokenOut));
+      strlcpy(venueKeyOut, venueKey,    sizeof(venueKeyOut));
+    } else {
+      wledCloudMaskSecret(deviceToken, tokenOut,    sizeof(tokenOut));
+      wledCloudMaskSecret(venueKey,    venueKeyOut, sizeof(venueKeyOut));
+    }
+    top["token"]     = tokenOut;
     top["venueId"]   = venueId;
+    top["venueKey"]  = venueKeyOut;
     top["syncSec"]   = syncInterval;
     top["telemetry"] = sendTelemetry;
     top["conflictPolicy"]  = conflictPolicy;
@@ -781,8 +966,29 @@ class WledCloudUsermod : public Usermod {
     strlcpy(serverHost, top["server"] | "cloud.wled.me", sizeof(serverHost));
     complete &= getJsonValue(top["port"],      serverPort, (uint16_t)3000);
     complete &= getJsonValue(top["tls"],       useTLS, false);
-    strlcpy(deviceToken, top["token"]   | "", sizeof(deviceToken));
+    // An all-asterisk value is the mask addToConfig() served to /json/cfg being
+    // posted straight back by the settings page — it means "unchanged". Storing
+    // it would replace a working credential with asterisks; an empty value is
+    // still honoured so a secret can be deliberately cleared.
+    {
+      const char* tokenIn = top["token"] | "";
+      if (!isAsterisksOnly(tokenIn, sizeof(deviceToken))) {
+        strlcpy(deviceToken, tokenIn, sizeof(deviceToken));
+      }
+    }
     strlcpy(venueId,     top["venueId"] | "", sizeof(venueId));
+    {
+      // A newly entered key clears the rejection latch, so correcting a bad key
+      // in settings retries enrolment without a factory reset. The mask must not
+      // count as "new" here or every settings save would restart enrolment.
+      const char* venueKeyIn = top["venueKey"] | "";
+      if (!isAsterisksOnly(venueKeyIn, sizeof(venueKey))) {
+        char prevKey[sizeof(venueKey)];
+        strlcpy(prevKey, venueKey, sizeof(prevKey));
+        strlcpy(venueKey, venueKeyIn, sizeof(venueKey));
+        if (strcmp(prevKey, venueKey) != 0) selfRegisterRejected = false;
+      }
+    }
     complete &= getJsonValue(top["syncSec"],   syncInterval, (uint16_t)30);
     complete &= getJsonValue(top["telemetry"], sendTelemetry, true);
     strlcpy(conflictPolicy, top["conflictPolicy"] | "last-write-wins", sizeof(conflictPolicy));
@@ -802,6 +1008,7 @@ class WledCloudUsermod : public Usermod {
     oappend(F("addInfo('WLEDCloud:server',1,'<i>hostname (no protocol)</i>');"));
     oappend(F("addInfo('WLEDCloud:port',1,'<i>443 for TLS, 80 for plain</i>');"));
     oappend(F("addInfo('WLEDCloud:syncSec',1,'<i>seconds between syncs (10–300)</i>');"));
+    oappend(F("addInfo('WLEDCloud:venueKey',1,'<i>venue enrolment key — device claims itself, no claim code</i>');"));
     oappend(F("addInfo('WLEDCloud:token',1,'<i>set automatically by claim flow</i>');"));
     oappend(F("addInfo('WLEDCloud:venueId',1,'<i>set automatically by claim flow</i>');"));
   }
