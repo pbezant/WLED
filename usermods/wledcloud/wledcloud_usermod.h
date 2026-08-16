@@ -358,8 +358,27 @@ class WledCloudUsermod : public Usermod {
   void connectWebSocket() {
     if (strlen(deviceToken) == 0) return;
 
-    char path[160];
-    snprintf(path, sizeof(path), "/ws/device?token=%s", deviceToken);
+    // Token travels in an Authorization header, not the URL.
+    //
+    // A URL is not a secret: it lands in reverse-proxy access logs, in
+    // $request_uri, and in anything sampling traffic. Device tokens are
+    // long-lived and never rotate, so one log retention window is a permanent
+    // compromise. The cloud accepts both forms during the transition, so an
+    // older build keeps working — but this one no longer puts the token
+    // anywhere a log can reach.
+    static const char WS_PATH[] PROGMEM = "/ws/device";
+    char path[16];
+    strncpy_P(path, WS_PATH, sizeof(path));
+    path[sizeof(path) - 1] = '\0';
+
+    // 22 for the prefix + up to 128 of token + NUL. setExtraHeaders assigns
+    // into a String (WebSockets.h: `String extraHeaders`), so it copies and
+    // this buffer may live on the stack.
+    char authHeader[160];
+    snprintf(authHeader, sizeof(authHeader), "Authorization: Bearer %s", deviceToken);
+    // Replaces the library default of "Origin: file://". The cloud does not
+    // check Origin on /ws/device, and dropping it saves handshake bytes.
+    ws.setExtraHeaders(authHeader);
 
     ws.onEvent([this](WStype_t type, uint8_t* payload, size_t length) {
       handleWsEvent(type, payload, length);
