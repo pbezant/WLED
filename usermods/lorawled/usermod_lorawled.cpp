@@ -1355,7 +1355,7 @@ void UsermodLoRaWLED::_applyCommand(const LoraDmxCommand& cmd) {
 // ─────────────────────────────────────────────────────────────────────────────
 // _sendUplink()  (MVP-011)
 //
-// Builds a 12-byte status payload on FPort 2 and transmits it via lmh_send().
+// Builds a 16-byte status payload on FPort 2 and transmits it via lmh_send().
 // The minimum configured interval is clamped to 60 s in readFromConfig().
 // ─────────────────────────────────────────────────────────────────────────────
 void UsermodLoRaWLED::_sendUplink() {
@@ -1363,8 +1363,20 @@ void UsermodLoRaWLED::_sendUplink() {
   if (bri > 0)                                   flags |= 0x01;  // bit0: on
   if (_joinState == LoraDmxJoinState::Joined)    flags |= 0x02;  // bit1: joined
 
-  uint8_t fxId = 0;
-  if (strip.getSegmentsNum() > 0) fxId = (uint8_t)strip.getSegment(0).mode;
+  // Palette and primary colour ride along so the cloud can show what the strip
+  // is actually running. Without them the cloud could only echo what it last
+  // *sent*, which goes stale the moment anyone changes the device locally and
+  // never recovers, because no uplink carried the truth.
+  uint8_t fxId = 0, palId = 0, colR = 0, colG = 0, colB = 0;
+  if (strip.getSegmentsNum() > 0) {
+    Segment& seg = strip.getSegment(0);
+    fxId  = (uint8_t)seg.mode;
+    palId = (uint8_t)seg.palette;
+    uint32_t c = seg.colors[0];
+    colR = (uint8_t)(c >> 16);
+    colG = (uint8_t)(c >> 8);
+    colB = (uint8_t)(c);
+  }
 
   uint16_t droppedClamped  = (uint16_t)min((uint32_t)0xFFFF, _dropped);
   uint16_t replayedClamped = (uint16_t)min((uint32_t)0xFFFF, _replayed);
@@ -1385,6 +1397,15 @@ void UsermodLoRaWLED::_sendUplink() {
   _txPayloadBuf[9]  = (uint8_t)(fCntDownLow >> 8);
   _txPayloadBuf[10] = rssiAbs;
   _txPayloadBuf[11] = (uint8_t)snrX4;
+  // Appended in v1.1 of the frame. New fields go on the end and the version
+  // byte stays 0x01 on purpose: a cloud that predates them reads the first 12
+  // bytes and ignores the rest, and a newer cloud length-checks before reading
+  // them. Bumping the version would have made old decoders reject the frame
+  // outright, breaking every device mid-rollout.
+  _txPayloadBuf[12] = palId;
+  _txPayloadBuf[13] = colR;
+  _txPayloadBuf[14] = colG;
+  _txPayloadBuf[15] = colB;
 
   _pendingTx.buffer   = _txPayloadBuf;
   _pendingTx.buffsize = sizeof(_txPayloadBuf);
@@ -1395,7 +1416,7 @@ void UsermodLoRaWLED::_sendUplink() {
   // Hand off to the TX task — returns immediately, never blocks main loop
   if (_loraTxSem) {
     xSemaphoreGive(_loraTxSem);
-    DEBUG_PRINTLN(F("[LoRaWLED] Uplink TX queued: FPort=2 len=12"));
+    DEBUG_PRINTLN(F("[LoRaWLED] Uplink TX queued: FPort=2 len=16"));
   }
 }
 
