@@ -215,7 +215,7 @@ class UsermodLoRaWLED : public Usermod {
   // ── FreeRTOS TX task (MVP-016) ─────────────────────────────────────────────
   // All blocking SPI radio work (lmh_send + Radio.IrqProcess) runs here so the
   // WLED main loop is never stalled waiting on the SX1262 BUSY pin.
-  uint8_t           _txPayloadBuf[12]  = {};   // pre-built uplink payload
+  uint8_t           _txPayloadBuf[16]  = {};   // pre-built uplink payload
   lmh_app_data_t    _pendingTx         = {};   // points into _txPayloadBuf
   SemaphoreHandle_t _loraTxSem         = nullptr;
   TaskHandle_t      _loraTxTask        = nullptr;
