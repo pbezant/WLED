@@ -98,30 +98,30 @@ static const uint8_t PATTERN_FX_MAP_SIZE = sizeof(PATTERN_FX_MAP);
 // ─── Single-instance pointer for LoRaWAN C-style callbacks ──────────────────
 static UsermodLoRaWLED* s_loraDmxInstance = nullptr;
 
-// ─── Secret redaction for GET /json/cfg ─────────────────────────────────────
+// ─── AppKey visibility in GET /json/cfg ─────────────────────────────────────
 //
-// WLED reuses addToConfig() for two very different jobs: writing cfg.json to
-// flash, and answering GET /json/cfg — which is unauthenticated and readable by
-// anything on the LAN or the WLED-AP. Core WLED keeps its own secrets out of
-// the second (the WiFi PSK is reported as a length, the MQTT password as a run
-// of asterisks) but usermods get no separate hook, so this has to make the same
-// distinction itself. The only signal available is which module holds the
-// shared JSON buffer: serializeConfigToFS() takes it as JSON_LOCK_CFG_SER,
-// serveJson() as JSON_LOCK_SERVEJSON.
-static bool loraCfgIsForFlash() {
-  return jsonBufferLock == JSON_LOCK_CFG_SER;
-}
-
-// Same-length asterisk run, matching core WLED's MQTT-password convention, so
-// the usermod settings page still shows that a key is set. Posting the mask
-// back unchanged is recognised by isAsterisksOnly() in readFromConfig() and
-// leaves the stored key alone.
-static void loraMaskSecret(const char* src, char* out, size_t outLen) {
-  size_t n = strlen(src);
-  if (n > outLen - 1) n = outLen - 1;
-  memset(out, '*', n);
-  out[n] = '\0';
-}
+// The AppKey is served in the clear, so the usermod settings page shows the
+// real value and it can be selected and copied.
+//
+// This is a deliberate, operator-chosen tradeoff, reversed from the original
+// design. The problem it solves: a new board generates a random AppKey on
+// first boot and previously printed it to serial exactly once. Miss that line
+// and the key could not be read back at all, so the board could not be
+// provisioned into TTN without regenerating its credentials.
+//
+// What it costs: WLED reuses addToConfig() both for writing cfg.json to flash
+// and for answering GET /json/cfg, which is unauthenticated and readable by
+// anything on the LAN or the WLED-AP. Core WLED redacts its own secrets there
+// (the WiFi PSK as a length, the MQTT password as asterisks); this usermod no
+// longer does. Anyone who can reach the device on the network can read the
+// OTAA root secret and impersonate it on the LoRaWAN network.
+//
+// Treat any network the device sits on as trusted, or revert this by restoring
+// the mask (see git history for loraCfgIsForFlash/loraMaskSecret).
+//
+// NOTE: the isAsterisksOnly() guard in readFromConfig() is deliberately KEPT.
+// A cfg.json backup captured while masking was still active contains a run of
+// asterisks, and posting that back must not overwrite a real stored key.
 
 // ─── Hex string → byte array helper ─────────────────────────────────────────
 // hex: must be exactly outLen*2 chars; returns false on length mismatch.
@@ -381,7 +381,9 @@ void UsermodLoRaWLED::addToJsonInfo(JsonObject& root) {
     obj[F("lastUplink")]   = nullptr;
     obj[F("lastDownlink")] = nullptr;
   }
-  // appKey is intentionally omitted — write-only
+  // appKey is intentionally omitted here — this is the diagnostics surface, and
+  // the key has no diagnostic value. It is readable from /json/cfg (the usermod
+  // settings page) for TTN provisioning.
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -435,16 +437,10 @@ void UsermodLoRaWLED::addToConfig(JsonObject& root) {
   obj[FPSTR(_keyEnabled)]        = _enabled;
   obj[FPSTR(_keyDevEUI)]         = _devEUI;
   obj[FPSTR(_keyJoinEUI)]        = _joinEUI;
-  // The AppKey is the device's only OTAA root secret — anyone holding it can
-  // impersonate the device on the network. It goes to flash verbatim and to
-  // /json/cfg masked.
-  char appKeyOut[sizeof(_appKey)];
-  if (loraCfgIsForFlash()) {
-    strlcpy(appKeyOut, _appKey, sizeof(appKeyOut));
-  } else {
-    loraMaskSecret(_appKey, appKeyOut, sizeof(appKeyOut));
-  }
-  obj[FPSTR(_keyAppKey)]         = appKeyOut;
+  // Served verbatim to both flash and /json/cfg so the settings page shows a
+  // copyable key for TTN provisioning. See the note at the top of this file for
+  // the security tradeoff this represents.
+  obj[FPSTR(_keyAppKey)]         = _appKey;
   obj[FPSTR(_keyCredProv)]       = _credentialsProvisioned;
   obj[FPSTR(_keyUplinkInterval)] = _uplinkInterval;
   obj[FPSTR(_keyJoinRetry)]      = _joinRetryInterval;
