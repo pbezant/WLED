@@ -77,7 +77,15 @@ enum class LoraRegionId : uint8_t {
 #define LORAWLED_MAX_STATE_SEGMENTS 8
 // Spacing between fragments of one report. The MAC rejects a second frame while
 // the first is still in flight, and a tight loop would just burn LMH_BUSY.
-#define LORAWLED_STATE_FRAG_GAP_MS 3000
+// Spacing between fragments of one report. The MAC rejects a second frame
+// while the first is still in flight — and right after a downlink a Class C
+// device is still working through its RX windows, which is where the first
+// attempt was observed failing with LMH_BUSY.
+#define LORAWLED_STATE_FRAG_GAP_MS 5000
+// A busy MAC is transient, so a refused fragment is retried rather than lost.
+// Losing one silently is worse than giving up loudly: the cloud cannot
+// assemble a set with a hole in it, so the whole report is wasted airtime.
+#define LORAWLED_STATE_FRAG_MAX_ATTEMPTS 5
 
 // ─── Join state ──────────────────────────────────────────────────────────────
 enum class LoraDmxJoinState : uint8_t {
@@ -247,6 +255,12 @@ class UsermodLoRaWLED : public Usermod {
   uint8_t  _stateNameIds[LORAWLED_MAX_STATE_SEGMENTS] = {};
   uint8_t  _stateNameCount   = 0;
   uint32_t _lastStateFragMs  = 0;
+  uint8_t  _stateFragAttempts = 0;
+  // Written by the lora_tx task, read by loop(). A fragment is only counted as
+  // sent once the MAC has actually accepted it.
+  volatile bool _stateFragInFlight = false;
+  volatile bool _stateFragAccepted = false;
+  bool     _stateFragPending = false;
 
   // Replay protection — ring of last 16 cmd IDs
   static const uint8_t REPLAY_RING_SIZE = 16;

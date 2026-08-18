@@ -288,9 +288,33 @@ void UsermodLoRaWLED::loop() {
     // This sits ahead of the uplink timer so a report the operator asked for is
     // not interleaved with a heartbeat.
     if (_stateFragCount > 0 && _joinState == LoraDmxJoinState::Joined) {
-      if (_lastStateFragMs == 0 || now - _lastStateFragMs >= LORAWLED_STATE_FRAG_GAP_MS) {
-        _sendNextStateFragment();
+      if (_stateFragInFlight) break;                                   // TX task still on it
+      if (now - _lastStateFragMs < LORAWLED_STATE_FRAG_GAP_MS) break;  // let the MAC settle
+
+      // Judge the previous fragment before moving on. Advancing regardless is
+      // what made the first bench test fail: the MAC refused a fragment with
+      // LMH_BUSY, this walked past it anyway, and the cloud was left holding a
+      // set with a hole in it that could never assemble.
+      if (_stateFragPending) {
+        if (_stateFragAccepted) {
+          _stateFragNext++;
+          _stateFragAttempts = 0;
+          if (_stateFragNext >= _stateFragCount) {
+            _stateFragCount   = 0;
+            _stateFragPending = false;
+            DEBUG_PRINTLN(F("[LoRaWLED] full state report complete"));
+            break;
+          }
+        } else if (++_stateFragAttempts >= LORAWLED_STATE_FRAG_MAX_ATTEMPTS) {
+          DEBUG_PRINTF("[LoRaWLED] full state report abandoned at fragment %u/%u\n",
+                       (unsigned)(_stateFragNext + 1), (unsigned)_stateFragCount);
+          _stateFragCount   = 0;
+          _stateFragPending = false;
+          break;
+        }
       }
+
+      _sendNextStateFragment();
       break;
     }
 
@@ -1484,9 +1508,15 @@ void UsermodLoRaWLED::_beginFullStateReport() {
   }
 
   _stateReportId++;
-  _stateFragNext   = 0;
-  _stateFragCount  = 1 + _stateSegReported + _stateNameCount;
-  _lastStateFragMs = 0;   // send the first fragment on the next loop pass
+  _stateFragNext     = 0;
+  _stateFragCount    = 1 + _stateSegReported + _stateNameCount;
+  _stateFragAttempts = 0;
+  _stateFragPending  = false;
+  _stateFragInFlight = false;
+  // Wait one gap before the first fragment rather than firing immediately: the
+  // request arrived as a downlink, and the MAC is still working through the RX
+  // windows that delivered it.
+  _lastStateFragMs   = millis();
 
   DEBUG_PRINTF("[LoRaWLED] full state report #%u: %u fragments (%u/%u segments)\n",
                (unsigned)_stateReportId, (unsigned)_stateFragCount,
@@ -1656,15 +1686,21 @@ void UsermodLoRaWLED::_sendNextStateFragment() {
   _pendingTx.rssi     = 0;
   _pendingTx.snr      = 0;
 
+  // Marked in flight before the semaphore, not after: the TX task can run to
+  // completion between the give and the next line.
+  _stateFragPending = true;
+  _stateFragAccepted = false;
+  _stateFragInFlight = true;
+  _lastStateFragMs = millis();
+
   if (_loraTxSem) {
     xSemaphoreGive(_loraTxSem);
-    DEBUG_PRINTF("[LoRaWLED] state frag %u/%u queued: FPort=3 len=%u\n",
-                 (unsigned)(_stateFragNext + 1), (unsigned)_stateFragCount, (unsigned)len);
+    DEBUG_PRINTF("[LoRaWLED] state frag %u/%u queued: FPort=3 len=%u (attempt %u)\n",
+                 (unsigned)(_stateFragNext + 1), (unsigned)_stateFragCount, (unsigned)len,
+                 (unsigned)(_stateFragAttempts + 1));
+  } else {
+    _stateFragInFlight = false;
   }
-
-  _stateFragNext++;
-  _lastStateFragMs = millis();
-  if (_stateFragNext >= _stateFragCount) _stateFragCount = 0;   // report complete
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -1710,7 +1746,12 @@ void UsermodLoRaWLED::_loraTxTaskFn(void* arg) {
       // either (M6-016). The authoritative reading is the network server's
       // last_f_cnt_up; addToJsonInfo() reports the MAC's own uplink counter
       // alongside ours so the two can be compared without a serial console.
+      const bool isStateFragment = (self->_pendingTx.port == 3);
       lmh_error_status status = lmh_send(&self->_pendingTx, LMH_UNCONFIRMED_MSG);
+      if (isStateFragment) {
+        self->_stateFragAccepted = (status == LMH_SUCCESS);
+        self->_stateFragInFlight = false;
+      }
       if (status == LMH_SUCCESS) {
         DEBUG_PRINTF("[LoRaWLED] Uplink accepted by MAC: FPort=%u len=%u\n",
                      (unsigned)self->_pendingTx.port, (unsigned)self->_pendingTx.buffsize);
