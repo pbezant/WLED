@@ -282,6 +282,18 @@ void UsermodLoRaWLED::loop() {
       break;
     }
 
+    // ── Full state report in progress ──────────────────────────────────────
+    // One fragment per pass, spaced out: the MAC refuses a second frame while
+    // the first is still in flight, so a tight loop would only burn LMH_BUSY.
+    // This sits ahead of the uplink timer so a report the operator asked for is
+    // not interleaved with a heartbeat.
+    if (_stateFragCount > 0 && _joinState == LoraDmxJoinState::Joined) {
+      if (_lastStateFragMs == 0 || now - _lastStateFragMs >= LORAWLED_STATE_FRAG_GAP_MS) {
+        _sendNextStateFragment();
+      }
+      break;
+    }
+
     // ── Uplink timer (MVP-011) ─────────────────────────────────────────────
     if (_joinState == LoraDmxJoinState::Joined) {
       if (now - _lastUplinkMs >= _uplinkInterval) {
@@ -1073,6 +1085,9 @@ LoraDmxCommand UsermodLoRaWLED::_parseBinary(const uint8_t* data, uint16_t len) 
     case 0xF0:
       cmd.type = LoraDmxCmdType::RequestState;
       break;
+    case 0xF3:
+      cmd.type = LoraDmxCmdType::RequestFullState;
+      break;
 
     default:
       _dropped++;
@@ -1088,7 +1103,7 @@ LoraDmxCommand UsermodLoRaWLED::_parseBinary(const uint8_t* data, uint16_t len) 
 // (left to the switch's default case to reject).
 uint16_t UsermodLoRaWLED::_binaryArgBytes(uint8_t opcode) {
   switch (opcode) {
-    case 0x00: case 0xAA: case 0xF0: case 0xF2: return 0;
+    case 0x00: case 0xAA: case 0xF0: case 0xF2: case 0xF3: return 0;
     case 0x01: case 0x02: case 0x04:
     case 0x05: case 0x06: case 0x07:            return 1;
     case 0x03:                                  return 3;
@@ -1341,6 +1356,12 @@ void UsermodLoRaWLED::_applyCommand(const LoraDmxCommand& cmd) {
       _sendUplink();
       break;
 
+    // The status frame carries five fields. This carries the whole of what a
+    // WiFi device would publish over /json/state, as a fragment set on FPort 3.
+    case LoraDmxCmdType::RequestFullState:
+      _beginFullStateReport();
+      break;
+
     case LoraDmxCmdType::Segment:
       // Segment commands are handled in _processRxQueue() via _applySegmentJson()
       // before _applyCommand() is called.  This case is unreachable for Segment
@@ -1407,8 +1428,11 @@ void UsermodLoRaWLED::_sendUplink() {
   _txPayloadBuf[14] = colG;
   _txPayloadBuf[15] = colB;
 
+  // Explicitly 16, not sizeof(_txPayloadBuf): the buffer is sized for the
+  // largest full-state fragment now, and sending its full length here would
+  // pad the status frame with 37 bytes of whatever the last report left behind.
   _pendingTx.buffer   = _txPayloadBuf;
-  _pendingTx.buffsize = sizeof(_txPayloadBuf);
+  _pendingTx.buffsize = 16;
   _pendingTx.port     = 2;
   _pendingTx.rssi     = 0;
   _pendingTx.snr      = 0;
@@ -1416,8 +1440,231 @@ void UsermodLoRaWLED::_sendUplink() {
   // Hand off to the TX task — returns immediately, never blocks main loop
   if (_loraTxSem) {
     xSemaphoreGive(_loraTxSem);
-    DEBUG_PRINTLN(F("[LoRaWLED] Uplink TX queued: FPort=2 len=16"));
+    DEBUG_PRINTLN(F("[LoRaWLED] Status uplink queued: FPort=2 len=16"));
   }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Full state report — FPort 3, frame v2  (docs/11-lns-integration.md)
+//
+// The FPort 2 status frame reports on/bri/fx/pal/col[0]. Everything else a
+// WiFi device publishes over /json/state — speed, intensity, the other colour
+// slots, custom sliders, and every per-segment setting — had no way to reach
+// the cloud at all. This is that message.
+//
+// It does not fit in one uplink: US915 DR1 caps an application payload at 53
+// bytes. So it is a fragment set, and it is sent ONLY in reply to 0xF3. TTN's
+// fair-use budget is about 30 s of airtime per device per day; a periodic
+// version of this would eat it.
+// ─────────────────────────────────────────────────────────────────────────────
+
+// Header is 5 bytes: version, report id, fragment index, fragment count, type.
+static const uint8_t STATE_FRAG_HEADER = 5;
+static const uint8_t STATE_FRAG_ROOT   = 0x00;
+static const uint8_t STATE_FRAG_SEG    = 0x01;
+static const uint8_t STATE_FRAG_NAME   = 0x02;
+
+void UsermodLoRaWLED::_beginFullStateReport() {
+  if (_joinState != LoraDmxJoinState::Joined) {
+    DEBUG_PRINTLN(F("[LoRaWLED] full state requested before join — ignored"));
+    return;
+  }
+
+  uint8_t segs = strip.getSegmentsNum();
+  _stateSegReported = segs > LORAWLED_MAX_STATE_SEGMENTS ? LORAWLED_MAX_STATE_SEGMENTS : segs;
+
+  // Only segments that actually carry a name get a name fragment. Most do not,
+  // and an empty one is pure airtime.
+  _stateNameCount = 0;
+  for (uint8_t i = 0; i < _stateSegReported; i++) {
+    const Segment& seg = strip.getSegment(i);
+    if (seg.name != nullptr && seg.name[0] != '\0') {
+      _stateNameIds[_stateNameCount++] = i;
+    }
+  }
+
+  _stateReportId++;
+  _stateFragNext   = 0;
+  _stateFragCount  = 1 + _stateSegReported + _stateNameCount;
+  _lastStateFragMs = 0;   // send the first fragment on the next loop pass
+
+  DEBUG_PRINTF("[LoRaWLED] full state report #%u: %u fragments (%u/%u segments)\n",
+               (unsigned)_stateReportId, (unsigned)_stateFragCount,
+               (unsigned)_stateSegReported, (unsigned)segs);
+}
+
+/**
+ * Write fragment `index` into _txPayloadBuf and return its total length.
+ *
+ * Fragments are built here, one at a time, rather than staged as a set when the
+ * request arrives: staging all of them would cost ~900 bytes of RAM to buy an
+ * atomicity the report does not need. A state change mid-report is possible and
+ * harmless — the report ID marks which set a fragment belongs to, so the cloud
+ * never splices two reports together.
+ */
+uint8_t UsermodLoRaWLED::_buildStateFragment(uint8_t index) {
+  uint8_t* p = _txPayloadBuf;
+  p[0] = 0x02;               // frame version
+  p[1] = _stateReportId;
+  p[2] = index;
+  p[3] = _stateFragCount;
+
+  uint8_t* b = p + STATE_FRAG_HEADER;
+
+  // ── Fragment 0: root state ────────────────────────────────────────────────
+  if (index == 0) {
+    p[4] = STATE_FRAG_ROOT;
+
+    uint8_t flags = 0;
+    if (bri > 0)             flags |= 0x01;
+    if (nightlightActive)    flags |= 0x02;
+    if (sendNotificationsRT) flags |= 0x04;
+    if (receiveGroups != 0)  flags |= 0x08;
+
+    // `transition` is reported in 100 ms units, matching /json/state.
+    uint16_t trans = transitionDelay / 100;
+    int16_t  rem   = nightlightActive
+                       ? (int16_t)((int)(nightlightDelayMs - (millis() - nightlightStartTime)) / 1000)
+                       : -1;
+
+    b[0]  = flags;
+    b[1]  = briLast;
+    b[2]  = (uint8_t)(trans & 0xFF);
+    b[3]  = (uint8_t)(trans >> 8);
+    b[4]  = (uint8_t)(int8_t)(currentPreset > 0 ? (int8_t)currentPreset : -1);
+    b[5]  = (uint8_t)(int8_t)currentPlaylist;
+    b[6]  = strip.getMainSegmentId();
+    b[7]  = strip.getSegmentsNum();
+    b[8]  = _stateSegReported;
+    b[9]  = nightlightMode;
+    b[10] = nightlightDelayMins;
+    b[11] = nightlightTargetBri;
+    b[12] = (uint8_t)(rem & 0xFF);
+    b[13] = (uint8_t)((uint16_t)rem >> 8);
+    b[14] = syncGroups;
+    b[15] = receiveGroups;
+    b[16] = realtimeOverride;
+    b[17] = blendingStyle;
+    b[18] = currentLedmap;
+    return STATE_FRAG_HEADER + 19;
+  }
+
+  // ── Fragments 1..n: one segment each ──────────────────────────────────────
+  if (index <= _stateSegReported) {
+    uint8_t segId = index - 1;
+    p[4] = STATE_FRAG_SEG;
+    const Segment& seg = strip.getSegment(segId);
+
+    uint8_t flags1 = 0;
+    if (seg.on)          flags1 |= 0x01;
+    if (seg.freeze)      flags1 |= 0x02;
+    if (seg.isSelected())flags1 |= 0x04;
+    if (seg.reverse)     flags1 |= 0x08;
+    if (seg.mirror)      flags1 |= 0x10;
+#ifndef WLED_DISABLE_2D
+    if (seg.reverse_y)   flags1 |= 0x20;
+    if (seg.mirror_y)    flags1 |= 0x40;
+    if (seg.transpose)   flags1 |= 0x80;
+#endif
+
+    uint8_t flags2 = 0;
+    if (seg.check1) flags2 |= 0x01;
+    if (seg.check2) flags2 |= 0x02;
+    if (seg.check3) flags2 |= 0x04;
+
+#ifndef WLED_DISABLE_2D
+    uint16_t startY = seg.startY, stopY = seg.stopY;
+#else
+    uint16_t startY = 0, stopY = 0;
+#endif
+
+    b[0]  = segId;
+    b[1]  = (uint8_t)(seg.start & 0xFF);
+    b[2]  = (uint8_t)(seg.start >> 8);
+    b[3]  = (uint8_t)(seg.stop & 0xFF);
+    b[4]  = (uint8_t)(seg.stop >> 8);
+    b[5]  = (uint8_t)(startY & 0xFF);
+    b[6]  = (uint8_t)(startY >> 8);
+    b[7]  = (uint8_t)(stopY & 0xFF);
+    b[8]  = (uint8_t)(stopY >> 8);
+    b[9]  = seg.grouping;
+    b[10] = seg.spacing;
+    b[11] = (uint8_t)((uint16_t)seg.offset & 0xFF);
+    b[12] = (uint8_t)((uint16_t)seg.offset >> 8);
+    // /json/state reports opacity 0 as 255; mirror that rather than inventing
+    // a second meaning for the same byte.
+    b[13] = seg.opacity ? seg.opacity : 255;
+    b[14] = (uint8_t)(seg.cct & 0xFF);
+    b[15] = (uint8_t)(seg.cct >> 8);
+    b[16] = seg.set;
+    b[17] = flags1;
+    b[18] = flags2;
+    for (uint8_t c = 0; c < 3; c++) {
+      uint32_t col = seg.colors[c];
+      b[19 + c * 4] = (uint8_t)(col >> 16);   // R
+      b[20 + c * 4] = (uint8_t)(col >> 8);    // G
+      b[21 + c * 4] = (uint8_t)(col);         // B
+      b[22 + c * 4] = (uint8_t)(col >> 24);   // W
+    }
+    b[31] = seg.mode;
+    b[32] = seg.speed;
+    b[33] = seg.intensity;
+    b[34] = seg.palette;
+    b[35] = seg.custom1;
+    b[36] = seg.custom2;
+    b[37] = seg.custom3;
+    b[38] = seg.soundSim;
+    b[39] = seg.map1D2D;
+    b[40] = seg.blendMode;
+    b[41] = seg.getLightCapabilities();
+    return STATE_FRAG_HEADER + 42;
+  }
+
+  // ── Trailing fragments: segment names ─────────────────────────────────────
+  uint8_t nameIdx = index - 1 - _stateSegReported;
+  if (nameIdx >= _stateNameCount) return 0;
+
+  p[4] = STATE_FRAG_NAME;
+  uint8_t segId = _stateNameIds[nameIdx];
+  const Segment& seg = strip.getSegment(segId);
+  b[0] = segId;
+
+  const uint8_t maxName = LORAWLED_MAX_UPLINK_BYTES - STATE_FRAG_HEADER - 1;
+  uint8_t n = 0;
+  if (seg.name != nullptr) {
+    while (n < maxName && seg.name[n] != '\0') n++;
+    // Do not cut a multi-byte UTF-8 sequence in half — back up to the start of
+    // the truncated character instead of emitting an invalid string.
+    if (n == maxName && (seg.name[n] & 0xC0) == 0x80) {
+      while (n > 0 && (seg.name[n] & 0xC0) == 0x80) n--;
+    }
+    memcpy(b + 1, seg.name, n);
+  }
+  return STATE_FRAG_HEADER + 1 + n;
+}
+
+void UsermodLoRaWLED::_sendNextStateFragment() {
+  uint8_t len = _buildStateFragment(_stateFragNext);
+  if (len == 0) {                 // shouldn't happen; stop rather than spin
+    _stateFragCount = 0;
+    return;
+  }
+
+  _pendingTx.buffer   = _txPayloadBuf;
+  _pendingTx.buffsize = len;
+  _pendingTx.port     = 3;
+  _pendingTx.rssi     = 0;
+  _pendingTx.snr      = 0;
+
+  if (_loraTxSem) {
+    xSemaphoreGive(_loraTxSem);
+    DEBUG_PRINTF("[LoRaWLED] state frag %u/%u queued: FPort=3 len=%u\n",
+                 (unsigned)(_stateFragNext + 1), (unsigned)_stateFragCount, (unsigned)len);
+  }
+
+  _stateFragNext++;
+  _lastStateFragMs = millis();
+  if (_stateFragNext >= _stateFragCount) _stateFragCount = 0;   // report complete
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -1465,7 +1712,8 @@ void UsermodLoRaWLED::_loraTxTaskFn(void* arg) {
       // alongside ours so the two can be compared without a serial console.
       lmh_error_status status = lmh_send(&self->_pendingTx, LMH_UNCONFIRMED_MSG);
       if (status == LMH_SUCCESS) {
-        DEBUG_PRINTLN(F("[LoRaWLED] Uplink accepted by MAC: FPort=2 len=12"));
+        DEBUG_PRINTF("[LoRaWLED] Uplink accepted by MAC: FPort=%u len=%u\n",
+                     (unsigned)self->_pendingTx.port, (unsigned)self->_pendingTx.buffsize);
         self->_fCntUp++;
         strlcpy(self->_lastTxStatus, "accepted", sizeof(self->_lastTxStatus));
       } else {

@@ -121,6 +121,57 @@ queues downlinks rather than sending them, until it receives an uplink on that
 session. The usermod therefore brings the first post-join uplink forward to
 `LORAWLED_POST_JOIN_UPLINK_MS` (5 s) instead of waiting a full uplink interval.
 
+## Uplinks
+
+Two different messages, on two FPorts.
+
+| FPort | When | What |
+|-------|------|------|
+| **2** | Every uplink interval, and on `0xF0` | 16-byte status frame: on, brightness, effect, palette, primary colour, plus LoRa diagnostics |
+| **3** | Only on `0xF3` | Full state report — everything a WiFi device publishes over `/json/state`, as a fragment set |
+
+### Why the interval is 15 minutes
+
+TTN's fair-use policy budgets roughly **30 seconds of uplink airtime per device
+per day**. At US915 DR1 (SF9BW125) the 16-byte status frame costs about 120 ms,
+so the old 5-minute default spent ~35 s/day — over the line on the heartbeat
+alone, before any state report existed. 15 minutes brings it to ~12 s/day and
+leaves room for the on-demand reports below.
+
+### Full state report (FPort 3, frame v2)
+
+The status frame reports five fields. Speed, intensity, the other two colour
+slots, the custom sliders and every per-segment setting had no way to reach the
+cloud at all — the cloud could only ever echo what it last *sent*, which went
+stale the moment anyone touched the device locally.
+
+`0xF3` asks for all of it. It does not fit in one uplink — US915 DR1 caps an
+application payload at **53 bytes** — so it is sent as a fragment set:
+
+- Fragment 0: root state (19 bytes) — power, brightness, transition, preset,
+  playlist, nightlight, sync groups, live override, blending style, ledmap, and
+  both the true segment count and the number reported.
+- Fragments 1..n: one segment each (42 bytes) — bounds, grouping, opacity, CCT,
+  all three RGBW colour slots, effect, speed, intensity, palette, custom
+  sliders, option checkboxes, and every per-segment flag.
+- Trailing fragments: segment names, only for segments that have one.
+
+Fragments are built one at a time in `_buildStateFragment()` rather than staged
+as a set — staging would cost ~900 bytes of RAM for an atomicity the report does
+not need — and spaced `LORAWLED_STATE_FRAG_GAP_MS` apart, because the MAC
+refuses a second frame while the first is in flight.
+
+**This is request-only, and deliberately so.** A periodic version would exhaust
+the airtime budget. `LORAWLED_MAX_STATE_SEGMENTS` (8) caps a single report; the
+root fragment still carries the device's true segment count, so a truncated
+report is visibly truncated rather than quietly wrong.
+
+The byte-level layout is specified in
+[`docs/11-lns-integration.md`](../../../WLED%20Cloud/docs/11-lns-integration.md)
+— **that document is the contract**, and the cloud's decoder is written from it
+independently. An opcode or offset mismatch between the two repos does not fail
+loudly; it decodes into plausible nonsense.
+
 ## Build
 
 ```bash
