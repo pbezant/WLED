@@ -68,6 +68,25 @@ enum class LoraRegionId : uint8_t {
 
 #define LORAWLED_REGION_DEFAULT  LoraRegionId::US915
 
+// Largest application payload we will ever build. US915 DR1 — the region
+// table's default — caps an uplink at 53 bytes, and nothing here may exceed it.
+#define LORAWLED_MAX_UPLINK_BYTES 53
+// Segments included in a full state report. A device with more still reports
+// its true segment count in the root fragment, so a truncated report is
+// visibly truncated rather than quietly wrong.
+#define LORAWLED_MAX_STATE_SEGMENTS 8
+// Spacing between fragments of one report. The MAC rejects a second frame while
+// the first is still in flight, and a tight loop would just burn LMH_BUSY.
+// Spacing between fragments of one report. The MAC rejects a second frame
+// while the first is still in flight — and right after a downlink a Class C
+// device is still working through its RX windows, which is where the first
+// attempt was observed failing with LMH_BUSY.
+#define LORAWLED_STATE_FRAG_GAP_MS 5000
+// A busy MAC is transient, so a refused fragment is retried rather than lost.
+// Losing one silently is worse than giving up loudly: the cloud cannot
+// assemble a set with a hole in it, so the whole report is wasted airtime.
+#define LORAWLED_STATE_FRAG_MAX_ATTEMPTS 5
+
 // ─── Join state ──────────────────────────────────────────────────────────────
 enum class LoraDmxJoinState : uint8_t {
   NotJoined = 0,
@@ -100,6 +119,7 @@ enum class LoraDmxCmdType : uint8_t {
   Preset, Power, Brightness, Segment, Combined,
   // Opcodes from the WLED Cloud downlink protocol (docs/11-lns-integration.md).
   Color, Effect, Speed, Intensity, Palette, FullState, RequestState,
+  RequestFullState,
   Drop
 };
 
@@ -157,7 +177,10 @@ class UsermodLoRaWLED : public Usermod {
   char     _joinEUI[17]           = "";
   char     _appKey[33]            = "";   // 32 hex chars + NUL — write-only via API
   bool     _credentialsProvisioned = false;
-  uint32_t _uplinkInterval        = 300000; // ms (5 min)
+  // 15 min. At US915 DR1 a 16-byte status frame costs ~120 ms of airtime, so
+  // the old 5-minute default spent ~35 s/day against TTN's ~30 s/day fair-use
+  // budget — over the line before the on-demand state report existed.
+  uint32_t _uplinkInterval        = 900000; // ms (15 min)
   uint32_t _joinRetryInterval     = 30000;  // ms (30 s)
   uint32_t _cmdThrottleMs         = 100;
 
@@ -215,10 +238,29 @@ class UsermodLoRaWLED : public Usermod {
   // ── FreeRTOS TX task (MVP-016) ─────────────────────────────────────────────
   // All blocking SPI radio work (lmh_send + Radio.IrqProcess) runs here so the
   // WLED main loop is never stalled waiting on the SX1262 BUSY pin.
-  uint8_t           _txPayloadBuf[12]  = {};   // pre-built uplink payload
+  uint8_t           _txPayloadBuf[LORAWLED_MAX_UPLINK_BYTES] = {}; // built uplink payload
   lmh_app_data_t    _pendingTx         = {};   // points into _txPayloadBuf
   SemaphoreHandle_t _loraTxSem         = nullptr;
   TaskHandle_t      _loraTxTask        = nullptr;
+
+  // ── Full state report progress ─────────────────────────────────────────────
+  // Fragments are built one at a time, on demand, rather than staged as a set:
+  // a staged set would cost ~900 bytes of RAM to buy atomicity the report does
+  // not actually need. The report ID lets the cloud detect a set that got mixed
+  // with a later one instead of silently reassembling a state that never was.
+  uint8_t  _stateReportId    = 0;
+  uint8_t  _stateFragNext    = 0;
+  uint8_t  _stateFragCount   = 0;   // 0 = no report in progress
+  uint8_t  _stateSegReported = 0;
+  uint8_t  _stateNameIds[LORAWLED_MAX_STATE_SEGMENTS] = {};
+  uint8_t  _stateNameCount   = 0;
+  uint32_t _lastStateFragMs  = 0;
+  uint8_t  _stateFragAttempts = 0;
+  // Written by the lora_tx task, read by loop(). A fragment is only counted as
+  // sent once the MAC has actually accepted it.
+  volatile bool _stateFragInFlight = false;
+  volatile bool _stateFragAccepted = false;
+  bool     _stateFragPending = false;
 
   // Replay protection — ring of last 16 cmd IDs
   static const uint8_t REPLAY_RING_SIZE = 16;
@@ -246,6 +288,13 @@ class UsermodLoRaWLED : public Usermod {
   void     _applyCommand(const LoraDmxCommand& cmd);
   void     _applySegmentJson(const uint8_t* data, uint16_t len);
   void     _sendUplink();
+
+  // ── Full state report (FPort 3, frame v2) ──────────────────────────────────
+  // Sent only in reply to downlink 0xF3 — never on a timer. See the airtime
+  // note in docs/11-lns-integration.md.
+  void     _beginFullStateReport();
+  void     _sendNextStateFragment();
+  uint8_t  _buildStateFragment(uint8_t index);
   bool     _isDuplicate(uint32_t cmdId);
   void     _trackCmdId(uint32_t cmdId);
   bool     _allocatePins();
