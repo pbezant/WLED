@@ -1,0 +1,9 @@
+{
+  "name": "wledcloud",
+  "version": "0.1.0",
+  "description": "Connects WLED to WLED Cloud for remote control via WebSocket",
+  "build": { "libArchive": false },
+  "dependencies": {
+    "links2004/WebSockets": "^2.4.0"
+  }
+}
